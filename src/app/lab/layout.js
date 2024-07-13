@@ -17,10 +17,10 @@ export default function MdxLayout({ children }) {
   // Create any shared layout or styles here
   return (
     <div className="flex">
-      <div className="w-1/4 p-4">
+      <div className="p-2">
         <ToC headings={headings}/>
       </div>
-      <div className="flex-grow p-4">
+      <div className="flex-grow p-4 pr-10">
         {children}
       </div>
     </div>
