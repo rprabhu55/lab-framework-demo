@@ -39,3 +39,6 @@ a {
 blockquote {
   @apply border-l-4 border-orange-500 p-4 m-4;
 }
+p img {
+  @apply scale-75;
+}
