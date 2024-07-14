@@ -1,4 +1,5 @@
 // /app/components/toc.js
+import { ApiCheck } from "../components/apicheck";
 
 export function ToC( { headings }) {
     return (
@@ -11,6 +12,11 @@ export function ToC( { headings }) {
                 </li>
             ))}
             </ul>
+
+            <ApiCheck 
+                name="NGINX Ready"
+                url="http://localhost:55001"
+            />
         </div>
     )
 }

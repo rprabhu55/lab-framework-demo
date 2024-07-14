@@ -31,7 +31,7 @@ export function ApiCheck({name, url}) {
     }
 
     return (
-        <div className={"w-1/4 flex justify-center items-center ".concat(getColor())}>
+        <div className={"flex justify-center items-center ".concat(getColor())}>
         <span>
             <p className="text-gray-700 text-lg font-semibold">{name}</p>
             <p className="text-center">
