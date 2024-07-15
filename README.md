@@ -3,7 +3,19 @@ This is a [Next.js](https://nextjs.org/) demo using [Tailwinds CSS](https://tail
 
 ## Getting Started
 
-First, run the development server:
+First, install the node packages:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
+Next, run the development server:
 
 ```bash
 npm run dev
