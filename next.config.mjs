@@ -1,3 +1,13 @@
+import remarkGfm from 'remark-gfm';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [remarkGfm],
+  },
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Your existing Next.js configuration
@@ -5,4 +15,4 @@ const nextConfig = {
   reactStrictMode: true,
 };
 
-export default nextConfig;
+export default withMDX(nextConfig);
