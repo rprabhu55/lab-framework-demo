@@ -1,16 +1,16 @@
 "use client";
-import {useEffect, useState} from 'react'
-import { ToC } from '@/app/components/toc'
+import { useEffect, useState } from "react"
+import { ToC } from "@/app/components/toc"
 
 export default function MdxLayout({ children }) {
   const [headings, setHeadings] = useState([])
 
   useEffect(() => {
     // Get all the headings on the page
-    const headingElements = document.querySelectorAll('h1, h2')
+    const headingElements = document.querySelectorAll("h1, h2")
     const headings = Array.from(headingElements).map((heading) => ({
       title: heading.innerText,
-      id: heading.innerText.toLowerCase().replace(/\s/g, '-'),
+      id: heading.innerText.toLowerCase().replace(/\s/g, "-"),
     }))
     setHeadings(headings)
   }, [])
@@ -18,7 +18,7 @@ export default function MdxLayout({ children }) {
   return (
     <div className="flex">
       <div className="p-2">
-        <ToC headings={headings}/>
+        <ToC headings={headings} />
       </div>
       <div className="flex-grow p-4 pr-10">
         {children}
