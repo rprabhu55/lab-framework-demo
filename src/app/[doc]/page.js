@@ -6,17 +6,16 @@ import { compileMDX } from "next-mdx-remote/rsc"
 import { ApiCheck } from "@/app/components/apicheck"
 import { CodeBlock } from "../components/codeblock";
 import { Docker } from "../components/docker";
-
-const contentDir = path.join(process.cwd(), "src/app/docs")
+import { DOCS_PATH } from "../utils/mdxUtils";
 
 const components = {
   ApiCheck,
   CodeBlock,
   Docker,
-  h1: (props) => <h1 id={props.children.toLowerCase().replace(/\s/g, '-')} {...props} />,
-  h2: (props) => <h2 id={props.children.toLowerCase().replace(/\s/g, '-')} {...props} />,
-  h3: (props) => <h3 id={props.children.toLowerCase().replace(/\s/g, '-')} {...props} />,
-  h4: (props) => <h4 id={props.children.toLowerCase().replace(/\s/g, '-')} {...props} />,
+  h1: (props) => <h1 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
+  h2: (props) => <h2 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
+  h3: (props) => <h3 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
+  h4: (props) => <h4 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
   code: (props) => <CodeBlock {...props} />
 }
 
@@ -28,9 +27,10 @@ const options = {
 }
 
 export default async function Page({ params }) {
-  const slug = path.join(contentDir, params.doc)
+  const docsFilePath = path.join(DOCS_PATH, `${params.doc}.mdx`);
+  const source = fs.readFileSync(docsFilePath, "utf8");
   const { content, frontmatter } = await compileMDX({
-    source: fs.readFileSync(slug + ".mdx", "utf8"),
+    source: source,
     components: components,
     options: options,
   })
