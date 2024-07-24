@@ -10,13 +10,19 @@ import { getContainerStatus } from "@/lib/containers";
  * @param {String} props.image
  * @returns {JSX.Element}
  */
-export async function Docker ({ name, desc, image}) {
-    console.log('name', name)
+export async function Docker ({ name = "", desc = "", image = "", env = [], port = null }) {
+    
     const isRunning = await getContainerStatus(name)
-    console.log('getInitialIsRunningState', isRunning)
+    
     return (
         <div className="container mx-auto">
-            <DockerCard name={name} desc={desc} image={image} initialIsRunning={isRunning}/>
+            <DockerCard 
+                name={name} 
+                desc={desc} 
+                image={image} 
+                env={env}
+                port={port}
+                initialIsRunning={isRunning}/>
         </div>
     )
 }
