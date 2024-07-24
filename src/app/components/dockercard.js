@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { DockerButton } from '@/app/components/dockerbutton';
 import { ErrorMessage } from '@/app/components/error';
+import { createContainer, stopContainer } from '@/lib/containers';
 /**
  * Represents a Docker Card component.
  * @param {string} props.name - The name of the container.
@@ -15,44 +16,25 @@ export function DockerCard({ name, desc, image, initialIsRunning }) {
     const [error, setError] = useState(null);
 
     /**
-     * Handles the click event of the Docker Card component.
-     * Calls the API to start or stop the container based on its running state.
-     * @returns {Promise<void>} A Promise that resolves when the API call is complete.
+     * Handles the click event.
+     * 
+     * @returns {Promise<void>} The promise object representing the result of the operation.
      */
     const handleClick = async () => {
+        
         setError(null);
-
-        // call API to stop container
-        if (isRunning === true) {
-            const res = await fetch('/api/containers', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name }),
-            });
-            if (res.status === 500) {
-                const errorData = await res.json();
-                setError(errorData.message);
+        
+        try {
+            if (isRunning === true) {
+                await stopContainer(name);
+                setIsRunning(!isRunning);
             } else {
+                await createContainer(name, image);
                 setIsRunning(!isRunning);
             }
-            return;
-        }
-
-        // call API to run container
-        const res = await fetch('/api/containers', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ image, name }),
-        });
-        if (res.status === 500) {
-            const errorData = await res.json();
-            setError(errorData.message);
-        } else {
-            setIsRunning(!isRunning);
+        } catch (error) {
+            console.error('ERROR RETURNED', error.message);
+            setError(error.message);
         }
     };
 
