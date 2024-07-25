@@ -10,10 +10,11 @@ import { createContainer, stopContainer } from '@/lib/containers';
  * @param {string} props.image - The image of the container.
  * @param {Array} props.env - The environment variables of the container.
  * @param {Object} props.port - The port mapping of the container to the host.
+ * @param {Array} props.attrs - The attributes of the container.
  * @param {boolean} props.initialIsRunning - The initial running state of the container.
  * @returns {JSX.Element} The Docker Card component.
  */
-export function DockerCard({ name, desc, image, env, port, initialIsRunning }) {
+export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunning }) {
 
     const [isRunning, setIsRunning] = useState(initialIsRunning);
     const [error, setError] = useState(null);
@@ -32,7 +33,7 @@ export function DockerCard({ name, desc, image, env, port, initialIsRunning }) {
                 await stopContainer(name);
                 setIsRunning(!isRunning);
             } else {
-                await createContainer(name, image, env, port);
+                await createContainer(name, image, env, port, attrs);
                 setIsRunning(!isRunning);
             }
         } catch (error) {
@@ -53,8 +54,13 @@ export function DockerCard({ name, desc, image, env, port, initialIsRunning }) {
                     {port && <><b>ports: host:</b>{port.host}, <b>container:</b>{port.container}</>}
                 </p>
                 <p className="text-gray-700 text-xs">
+                    {attrs && attrs.map((a, i) => (
+                        <span key={i}><b>{a.name}:</b> {a.value} </span>
+                    ))}
+                </p>
+                <p className="text-gray-700 text-xs">
                     {env && env.map((e, i) => (
-                        <span key={i}><b>{e.name}:</b> {e.value} </span>
+                        <span key={i}><b>{e.name}:</b> {e.isSecret ? "********" : e.value} </span>
                     ))}
                 </p>
             </div>

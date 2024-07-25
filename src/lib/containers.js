@@ -9,9 +9,10 @@ import { spawn } from 'child_process';
  * @param {String} [image] - The image to use (optional).
  * @param {Array} [env] - The environment variables to set (optional).
  * @param {Object} [port] - The port mapping to use (optional).
+ * @param {Array} [attrs] - The attributes of the container (optional).
  * @returns {Promise} The promise object representing the result of the command.
  */
-async function runDockerCommand(command, name, image, env, port) {
+async function runDockerCommand(command, name, image, env, port, attrs) {
 
     return new Promise((resolve, reject) => {
         let docker_cmd = [];
@@ -29,6 +30,7 @@ async function runDockerCommand(command, name, image, env, port) {
                     'run', '-d','--name',docker_name,
                     ...env.map(({ name, value }) => `--env=${name}=${value}`),
                     ...port ? ['-p', `${port.host}:${port.container}`] : [],
+                    ...attrs.map(({ name, value }) => `--${name}=${value}`),
                     image
                 ]
                 break;
@@ -94,8 +96,8 @@ export async function getContainerStatus(name) {
  * @returns {Promise} The promise object representing the result of the command.
  * @throws {Error} If the command is invalid or the container is not running.
  */
-export async function createContainer(name, image, env, port) {
-    return runDockerCommand('run', name, image, env, port);
+export async function createContainer(name, image, env, port, attrs) {
+    return runDockerCommand('run', name, image, env, port, attrs);
 }
 
 /**

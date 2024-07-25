@@ -15,9 +15,15 @@ Go back [home](/).
     image="private-registry.nginx.com/nginx-plus/agent:debian"
     env={[
         {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
-        {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"}
+        {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+        {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+        {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+        {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
     ]}
     port={{host: 0, container: 80}}
+    attrs={[
+        {name: "hostname", useUsername: true},
+    ]}
 />
 <Docker 
     name="NGINX Plus Container 2"
