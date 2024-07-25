@@ -7,9 +7,12 @@ import { spawn } from 'child_process';
  * @param {String} command - The Docker command to run.
  * @param {String} name - The name of the container.
  * @param {String} [image] - The image to use (optional).
+ * @param {Array} [env] - The environment variables to set (optional).
+ * @param {Object} [port] - The port mapping to use (optional).
+ * @param {Array} [attrs] - The attributes of the container (optional).
  * @returns {Promise} The promise object representing the result of the command.
  */
-async function runDockerCommand(command, name, image = null) {
+async function runDockerCommand(command, name, image, env, port, attrs) {
 
     return new Promise((resolve, reject) => {
         let docker_cmd = [];
@@ -23,7 +26,13 @@ async function runDockerCommand(command, name, image = null) {
                 docker_cmd = ['rm', '-f', docker_name];
                 break;
             case 'run':
-                docker_cmd = ['run', '-d', '--name', docker_name, image];
+                docker_cmd = [
+                    'run', '-d','--name',docker_name,
+                    ...env.map(({ name, value }) => `--env=${name}=${value}`),
+                    ...port ? ['-p', `${port.host}:${port.container}`] : [],
+                    ...attrs.map(({ name, value }) => `--${name}=${value}`),
+                    image
+                ]
                 break;
             default:
                 reject(new Error('Invalid command'));
@@ -82,11 +91,13 @@ export async function getContainerStatus(name) {
  * 
  * @param {String} name - The name of the container.
  * @param {String} image - The image to use.
+ * @param {Array} env - The environment variables to set.
+ * @param {Object} port - The port mapping to use.
  * @returns {Promise} The promise object representing the result of the command.
  * @throws {Error} If the command is invalid or the container is not running.
  */
-export async function createContainer(name, image) {
-    return runDockerCommand('run', name, image);
+export async function createContainer(name, image, env, port, attrs) {
+    return runDockerCommand('run', name, image, env, port, attrs);
 }
 
 /**

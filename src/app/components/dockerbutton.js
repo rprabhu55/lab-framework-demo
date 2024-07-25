@@ -8,7 +8,6 @@
 * @returns {JSX.Element}
 */
 export function DockerButton ({ isRunning, onClick }) {
-    console.log('isRunning', isRunning)
     const getButtonColor = () => {
         if (isRunning === null) return 'bg-green-500'
         return isRunning ? 'bg-red-500' : 'bg-green-500'
