@@ -6,12 +6,16 @@ import { compileMDX } from "next-mdx-remote/rsc"
 import { ApiCheck } from "@/app/components/apicheck"
 import { CodeBlock } from "../components/codeblock";
 import { Docker } from "../components/docker";
+import { DockerStatus } from "../components/docker-status";
 import { DOCS_PATH } from "../utils/mdxUtils";
+import { UdfMetadata } from "../components/udf-metadata";
 
 const components = {
   ApiCheck,
   CodeBlock,
   Docker,
+  DockerStatus,
+  UdfMetadata,
   h1: (props) => <h1 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
   h2: (props) => <h2 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
   h3: (props) => <h3 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
