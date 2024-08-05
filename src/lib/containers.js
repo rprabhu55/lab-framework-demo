@@ -12,13 +12,16 @@ import { spawn } from 'child_process';
  * @param {Array} [attrs] - The attributes of the container (optional).
  * @returns {Promise} The promise object representing the result of the command.
  */
-async function runDockerCommand(command, name, image, env, port, attrs) {
+async function runDockerCommand(command, name = "", image, env, port, attrs) {
+
 
     return new Promise((resolve, reject) => {
         let docker_cmd = [];
         const docker_name = name.replace(/ /g, "-");
-        
-        switch(command) {
+        switch (command) {
+            case 'ps-all':
+                docker_cmd = ['ps', '-a', '--format', '{{json .}},'];
+                break;
             case 'ps':
                 docker_cmd = ['ps', '-a', '--filter', `name=${docker_name}`, '--filter', 'status=running', '--quiet'];
                 break;
@@ -27,7 +30,7 @@ async function runDockerCommand(command, name, image, env, port, attrs) {
                 break;
             case 'run':
                 docker_cmd = [
-                    'run', '-d','--name',docker_name,
+                    'run', '-d', '--name', docker_name,
                     ...env.map(({ name, value }) => `--env=${name}=${value}`),
                     ...port ? ['-p', `${port.host}:${port.container}`] : [],
                     ...attrs.map(({ name, value }) => `--${name}=${value}`),
@@ -37,9 +40,8 @@ async function runDockerCommand(command, name, image, env, port, attrs) {
             default:
                 reject(new Error('Invalid command'));
         }
-
         const docker = spawn('docker', docker_cmd);
-    
+
         let stdoutData = '';
         docker.stdout.on('data', (data) => {
             stdoutData += data.toString();
@@ -62,12 +64,32 @@ async function runDockerCommand(command, name, image, env, port, attrs) {
                         console.log('Container is running');
                         resolve(true);
                     }
+                }
+                if (command === 'ps-all') {
+                    resolve(stdoutData)
                 } else {
                     resolve(true);
                 }
             }
         });
     });
+}
+
+/**
+ * Handles the GET request to the status of all containers.
+ * 
+ * @returns {Object} The status of all containers.
+ * @throws {Error} If the container is not running.
+ */
+export async function getAllContainerStatus() {
+    try {
+        const commandResult = await runDockerCommand('ps-all')
+        // hack to remove final comma and newline
+        const parsed = JSON.parse(`[${commandResult.substring(0, commandResult.length - 2)}]`);
+        return parsed;
+    } catch (error) {
+        return false;
+    }
 }
 
 /**

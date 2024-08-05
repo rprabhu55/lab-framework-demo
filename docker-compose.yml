@@ -1,0 +1,26 @@
+services:
+  lab-framework:
+    build:
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  redis:
+    image: redis:7
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --loglevel warning
+    volumes:
+      - cache:/data
+
+volumes:
+  cache:
+    driver: local
