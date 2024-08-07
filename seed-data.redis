@@ -1,0 +1,1 @@
+JSON.SET vars $ '{"foo": "this is foo", "bar": "this is bar"}'

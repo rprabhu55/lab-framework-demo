@@ -1,7 +1,7 @@
 import { getAllContainerStatus } from "@/lib/containers";
 
 /**
- * Docker component
+ * DockerStatus component
  * 
  * @returns {JSX.Element}
  */

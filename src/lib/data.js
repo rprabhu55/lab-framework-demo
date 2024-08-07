@@ -1,9 +1,5 @@
-import Redis from "ioredis";
-
-const REDIS_URL = "redis"
-const UDF_API_URL = "http://metadata.udf"
-
-const redis = new Redis(REDIS_URL);
+import { createClient } from 'redis';
+import { REDIS_URL, UDF_API_URL, REDIS_CACHE_SECONDS } from "./constants";
 
 /**
  * Fetches data from the UDF API, and caches in Redis
@@ -14,6 +10,10 @@ const redis = new Redis(REDIS_URL);
 export async function getUdfData(path) {
 
     let start = Date.now();
+    const redis = await createClient({ url: REDIS_URL })
+        .on('error', err => console.log('Redis Client Error', err))
+        .connect();
+
     let cache = await redis.get(path)
     cache = JSON.parse(cache)
     let result = {}
@@ -32,7 +32,7 @@ export async function getUdfData(path) {
                 result.data = data
                 result.type = "api"
                 result.latency = Date.now() - start;
-                redis.set(path, JSON.stringify(result.data), "EX", 60)
+                redis.set(path, JSON.stringify(result.data), { EX: REDIS_CACHE_SECONDS })
                 return result
             })
     }
