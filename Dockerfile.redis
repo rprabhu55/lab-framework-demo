@@ -1,0 +1,4 @@
+FROM redis/redis-stack-server:6.2.6-v15
+COPY seed-data.redis /seed-data.redis
+COPY redis-bootstrap.sh /redis-bootstrap.sh
+CMD ["sh", "/redis-bootstrap.sh"]

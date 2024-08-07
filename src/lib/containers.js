@@ -45,7 +45,7 @@ async function runDockerCommand(command, name = "", image, env, port, attrs) {
         let stdoutData = '';
         docker.stdout.on('data', (data) => {
             stdoutData += data.toString();
-            console.log(`stdout: ${data}`);
+            // console.log(`stdout: ${data}`);
         });
 
         docker.stderr.on('data', (data) => {

@@ -9,6 +9,7 @@ import { Docker } from "../components/docker";
 import { DockerStatus } from "../components/docker-status";
 import { DOCS_PATH } from "../utils/mdxUtils";
 import { UdfMetadata } from "../components/udf-metadata";
+import { getRedisVariable } from "../../lib/variables"
 
 const components = {
   ApiCheck,
@@ -27,7 +28,10 @@ const options = {
   mdxOptions: {
     remarkPlugins: [remarkGfm, emoji],
   },
-  parseFrontmatter: true
+  parseFrontmatter: true,
+  scope: {
+    vars: await getRedisVariable("vars")
+  },
 }
 
 export default async function Page({ params }) {
