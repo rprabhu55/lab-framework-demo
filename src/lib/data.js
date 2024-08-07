@@ -9,31 +9,25 @@ import { REDIS_URL, UDF_API_URL, REDIS_CACHE_SECONDS } from "./constants";
  */
 export async function getUdfData(path) {
 
-    let start = Date.now();
     const redis = await createClient({ url: REDIS_URL })
         .on('error', err => console.log('Redis Client Error', err))
         .connect();
 
-    let cache = await redis.get(path)
-    cache = JSON.parse(cache)
+    let cache = await redis.json.get(path)
     let result = {}
     if (cache) {
         console.log("loading UDF metadata from cache")
-        result.data = cache
-        result.type = "redis"
-        result.latency = Date.now() - start;
-        return result
+        return cache
     } else {
-        console.log("loading from api")
-        start = Date.now();
+        console.log("loading UDF metadata from api")
         return fetch(`${UDF_API_URL}/${path}`)
             .then(r => r.json())
-            .then(data => {
-                result.data = data
-                result.type = "api"
-                result.latency = Date.now() - start;
-                redis.set(path, JSON.stringify(result.data), { EX: REDIS_CACHE_SECONDS })
-                return result
+            .then(async data => {
+                await Promise.all([
+                    redis.json.set(path, '$', result),
+                    redis.expire(path, REDIS_CACHE_SECONDS)
+                ]);
+                return data
             })
     }
 }

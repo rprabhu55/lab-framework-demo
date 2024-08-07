@@ -8,9 +8,7 @@ const UDF_DEPLOYMENT_PATH = "deployment"
  * @returns {JSX.Element}
  */
 export async function UdfMetadata({ suffix = "" }) {
-    const { data, error } = await getUdfData(UDF_DEPLOYMENT_PATH)
-    // const data = await fetch(`${process.env.APIpath}/api/udf`)
-    if (error) return "An error has occurred.";
+    const data = await getUdfData(UDF_DEPLOYMENT_PATH)
     if (!data) return "Loading...";
 
     return (
