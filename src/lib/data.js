@@ -12,9 +12,7 @@ export async function getUdfData(path) {
     const redis = await createClient({ url: REDIS_URL })
         .on('error', err => console.log('Redis Client Error', err))
         .connect();
-
     let cache = await redis.json.get(path)
-    let result = {}
     if (cache) {
         console.log("loading UDF metadata from cache")
         return cache
@@ -24,7 +22,7 @@ export async function getUdfData(path) {
             .then(r => r.json())
             .then(async data => {
                 await Promise.all([
-                    redis.json.set(path, '$', result),
+                    redis.json.set(path, '$', data),
                     redis.expire(path, REDIS_CACHE_SECONDS)
                 ]);
                 return data
