@@ -50,7 +50,7 @@ sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
-Once installed, you can configure Docker to expose its API over the network:
+Once installed, you can configure Docker to expose its API over the network (if needed):
 
 ```shell
 sudo tee /etc/docker/daemon.json > /dev/null <<'EOF'
@@ -69,6 +69,9 @@ ExecStart=/usr/bin/dockerd
 EOF
 
 sudo systemctl daemon-reload; sudo systemctl restart docker
+
+# Open up permissions to host docker socket so container can interact with it
+sudo chmod 0666 /var/run/docker.sock
 
 ```
 
