@@ -14,7 +14,9 @@ services:
       - "host.docker.internal:host-gateway"
 
   redis:
-    image: redis:7
+    build:
+      context: ..
+      dockerfile: ./Dockerfile.redis
     restart: always
     ports:
       - "6379:6379"

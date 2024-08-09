@@ -24,23 +24,22 @@ const components = {
   code: (props) => <CodeBlock {...props} />
 }
 
-const options = {
-  mdxOptions: {
-    remarkPlugins: [remarkGfm, emoji],
-  },
-  parseFrontmatter: true,
-  scope: {
-    vars: await getRedisVariable("vars")
-  },
-}
-
 export default async function Page({ params }) {
+
   const docsFilePath = path.join(DOCS_PATH, `${params.doc}.mdx`);
   const source = fs.readFileSync(docsFilePath, "utf8");
   const { content, frontmatter } = await compileMDX({
     source: source,
     components: components,
-    options: options,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [remarkGfm, emoji],
+      },
+      parseFrontmatter: true,
+      scope: {
+        vars: await getRedisVariable("vars")
+      },
+    },
   })
   return (
     <>
