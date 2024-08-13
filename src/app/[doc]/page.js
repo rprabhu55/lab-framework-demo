@@ -11,6 +11,7 @@ import { DOCS_PATH } from "../utils/mdxUtils";
 import { UdfMetadata } from "../components/udf-metadata";
 import { getRedisVariable } from "../../lib/variables"
 
+const DOCS_REPO = "https://raw.githubusercontent.com/f5devcentral/nginx-one-lab"
 const components = {
   ApiCheck,
   CodeBlock,
@@ -27,13 +28,23 @@ const components = {
 export default async function Page({ params }) {
 
   const docsFilePath = path.join(DOCS_PATH, `${params.doc}.mdx`);
-  const source = fs.readFileSync(docsFilePath, "utf8");
+  const source = await getData(`${DOCS_REPO}/main/docs/README.md`)
+  // const source = fs.readFileSync(docsFilePath, "utf8");
   const { content, frontmatter } = await compileMDX({
     source: source,
     components: components,
     options: {
       mdxOptions: {
-        remarkPlugins: [remarkGfm, emoji],
+        remarkPlugins: [
+          remarkGfm,
+          emoji,
+          [
+            imgLinks,
+            {
+              absolutePath: `${DOCS_REPO}/raw/main/docs/media`
+            },
+          ],
+        ],
       },
       parseFrontmatter: true,
       scope: {
