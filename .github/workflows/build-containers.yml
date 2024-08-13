@@ -1,0 +1,63 @@
+name: Create and publish container images
+
+on:
+  push:
+    branches: ["main"]
+
+env:
+  REGISTRY: ghcr.io
+  REPO_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push-images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for lab-framework container
+        id: meta-lab-framework
+        uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.REPO_NAME }}-lab-framework
+          tags: |
+            type=sha
+            type=raw,value=latest
+
+      - name: Build and push lab-framework image
+        uses: docker/build-push-action@0a97817b6ade9f46837855d676c4cca3a2471fc9
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta-lab-framework.outputs.tags }}
+          labels: ${{ steps.meta-lab-framework.outputs.labels }}
+
+      - name: Extract metadata (tags, labels) for redis container
+        id: meta-redis
+        uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.REPO_NAME }}-redis
+          tags: |
+            type=sha
+            type=raw,value=latest
+
+      - name: Build and push redis image
+        uses: docker/build-push-action@0a97817b6ade9f46837855d676c4cca3a2471fc9
+        with:
+          context: .
+          file: ./Dockerfile.redis
+          push: true
+          tags: ${{ steps.redis.outputs.tags }}
+          labels: ${{ steps.redis.outputs.labels }}
