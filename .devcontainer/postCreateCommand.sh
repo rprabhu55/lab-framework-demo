@@ -277,7 +277,7 @@ curl -X PUT 'http://metadata.udf:80/mockserver/expectation' \
                 "accessMethods": {
                 "https": [
                     {
-                    "host": "host1".access.udf.f5.com",
+                    "host": "host1.access.udf.f5.com",
                     "port": 443,
                     "internalIp": "10.1.1.4",
                     "internalPort": 65500,

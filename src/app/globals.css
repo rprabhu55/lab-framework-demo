@@ -22,7 +22,7 @@ ul {
   @apply list-disc list-inside m-4;
 }
 li {
-  @apply m-4 ;
+  @apply m-4;
 }
 table {
   @apply m-4 table-auto;
@@ -41,4 +41,7 @@ blockquote {
 }
 p img {
   @apply scale-75;
+}
+ol {
+  @apply list-decimal;
 }

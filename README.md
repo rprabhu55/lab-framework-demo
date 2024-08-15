@@ -75,8 +75,14 @@ sudo chmod 0666 /var/run/docker.sock
 
 ```
 
-A `docker-compose.yaml` file has been provided to orchestrate the lab framework and redis containers. In order for the lab framework to create additional containers required by the lab author, the docker calls need to specify a custom host via the `-H` parameter in order to connect to the hosts Docker API. Example:
+A `docker-compose.yaml` file has been provided to orchestrate the lab framework and redis containers. In order for the lab framework to create additional containers required by the lab author, the docker calls need to use the host's docker daemon. The above steps enable mounting docker.sock as a volume into the container.
+
+If this isn't preferred (or will not work), the host's docker daemon has been configured to allow remote hosts to call the docker API. To use this, you will specify a custom host via the `-H` parameter in order to connect to the hosts Docker API. Example:
 
 ```shell
 docker -H tcp://host.docker.internal:2375 pull ubuntu
 ```
+
+### Environment
+
+You will need to create your own `/.env` file to use remote MDX documents. Use the `/.env.example` as a template.

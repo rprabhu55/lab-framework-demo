@@ -8,7 +8,6 @@ export function ApiCheck({ name, url }) {
         console.log(url)
         if (url) {
             await fetch(url, { cache: "no-store", mode: "no-cors" })
-                // .then(response => response.text())
                 .then(response => response.ok)
                 .then(() => {
                     setIsOnline(true)

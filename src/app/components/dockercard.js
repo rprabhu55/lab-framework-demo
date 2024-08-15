@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from 'react';
-import { DockerButton } from '@/app/components/dockerbutton';
-import { ErrorMessage } from '@/app/components/error';
-import { createContainer, stopContainer } from '@/lib/containers';
+import React, { useState } from "react";
+import { DockerButton } from "@/app/components/dockerbutton";
+import { ErrorMessage } from "@/app/components/error";
+import { createContainer, stopContainer } from "@/lib/containers";
 /**
  * Represents a Docker Card component.
  * @param {string} props.name - The name of the container.
@@ -25,9 +25,9 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
      * @returns {Promise<void>} The promise object representing the result of the operation.
      */
     const handleClick = async () => {
-        
+
         setError(null);
-        
+
         try {
             if (isRunning === true) {
                 await stopContainer(name);
@@ -37,7 +37,7 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
                 setIsRunning(!isRunning);
             }
         } catch (error) {
-            console.error('ERROR RETURNED', error.message);
+            console.error("ERROR RETURNED", error.message);
             setError(error.message);
         }
     };

@@ -1,15 +1,14 @@
 "use server";
-import { createClient } from 'redis';
+import { createClient } from "redis";
 import { REDIS_URL } from "./constants";
 
-export async function GetVariable({ name }) {
+export async function getEnvVariable(name) {
     return process.env[name] || null;
 }
 
-export async function GetUsername() {
+export async function getUsername() {
     return process.env.USERNAME || null;
 }
-
 
 /**
  * Fetches data from the Redis store
@@ -19,7 +18,7 @@ export async function GetUsername() {
  */
 export async function getRedisVariable(path) {
     const redis = await createClient({ url: REDIS_URL })
-        .on('error', err => console.log('Redis Client Error', err))
+        .on("error", err => console.log("Redis Client Error", err))
         .connect();
     return await redis.json.get(path)
 }

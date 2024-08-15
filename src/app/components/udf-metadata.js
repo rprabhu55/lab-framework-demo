@@ -1,4 +1,4 @@
-import { getUdfData } from '@/lib/data';
+import { getUdfData } from "@/lib/data";
 
 const UDF_DEPLOYMENT_PATH = "deployment"
 

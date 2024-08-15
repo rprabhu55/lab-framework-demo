@@ -1,5 +1,5 @@
 "use server"
-import { spawn } from 'child_process';
+import { spawn } from "child_process";
 
 /**
  * Runs a Docker command and handles the promise resolution and rejection.
@@ -19,53 +19,53 @@ async function runDockerCommand(command, name = "", image, env, port, attrs) {
         let docker_cmd = [];
         const docker_name = name.replace(/ /g, "-");
         switch (command) {
-            case 'ps-all':
-                docker_cmd = ['ps', '-a', '--format', '{{json .}},'];
+            case "ps-all":
+                docker_cmd = ["ps", "-a", "--format", "{{json .}},"];
                 break;
-            case 'ps':
-                docker_cmd = ['ps', '-a', '--filter', `name=${docker_name}`, '--filter', 'status=running', '--quiet'];
+            case "ps":
+                docker_cmd = ["ps", "-a", "--filter", `name=${docker_name}`, "--filter", "status=running", "--quiet"];
                 break;
-            case 'rm':
-                docker_cmd = ['rm', '-f', docker_name];
+            case "rm":
+                docker_cmd = ["rm", "-f", docker_name];
                 break;
-            case 'run':
+            case "run":
                 docker_cmd = [
-                    'run', '-d', '--name', docker_name,
+                    "run", "-d", "--name", docker_name,
                     ...env.map(({ name, value }) => `--env=${name}=${value}`),
-                    ...port ? ['-p', `${port.host}:${port.container}`] : [],
+                    ...port ? ["-p", `${port.host}:${port.container}`] : [],
                     ...attrs.map(({ name, value }) => `--${name}=${value}`),
                     image
                 ]
                 break;
             default:
-                reject(new Error('Invalid command'));
+                reject(new Error("Invalid command"));
         }
-        const docker = spawn('docker', docker_cmd);
+        const docker = spawn("docker", docker_cmd);
 
-        let stdoutData = '';
-        docker.stdout.on('data', (data) => {
+        let stdoutData = "";
+        docker.stdout.on("data", (data) => {
             stdoutData += data.toString();
             // console.log(`stdout: ${data}`);
         });
 
-        docker.stderr.on('data', (data) => {
+        docker.stderr.on("data", (data) => {
             console.error(`stderr: ${data}`);
             reject(new Error(data.toString()));
         });
 
-        docker.on('close', (code) => {
+        docker.on("close", (code) => {
             if (code !== 0) {
                 reject(new Error(`Child process exited with code ${code}`));
             } else {
-                if (command === 'ps') {
-                    if (stdoutData.trim() === '') {
-                        reject(new Error('Container not running'));
+                if (command === "ps") {
+                    if (stdoutData.trim() === "") {
+                        reject(new Error("Container not running"));
                     } else {
-                        console.log('Container is running');
+                        console.log("Container is running");
                         resolve(true);
                     }
                 }
-                if (command === 'ps-all') {
+                if (command === "ps-all") {
                     resolve(stdoutData)
                 } else {
                     resolve(true);
@@ -83,7 +83,7 @@ async function runDockerCommand(command, name = "", image, env, port, attrs) {
  */
 export async function getAllContainerStatus() {
     try {
-        const commandResult = await runDockerCommand('ps-all')
+        const commandResult = await runDockerCommand("ps-all")
         // hack to remove final comma and newline
         const parsed = JSON.parse(`[${commandResult.substring(0, commandResult.length - 2)}]`);
         return parsed;
@@ -101,7 +101,7 @@ export async function getAllContainerStatus() {
  */
 export async function getContainerStatus(name) {
     try {
-        await runDockerCommand('ps', name);
+        await runDockerCommand("ps", name);
         return true;
     } catch (error) {
         return false;
@@ -119,7 +119,7 @@ export async function getContainerStatus(name) {
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function createContainer(name, image, env, port, attrs) {
-    return runDockerCommand('run', name, image, env, port, attrs);
+    return runDockerCommand("run", name, image, env, port, attrs);
 }
 
 /**
@@ -130,5 +130,5 @@ export async function createContainer(name, image, env, port, attrs) {
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function stopContainer(name) {
-    return runDockerCommand('rm', name);
+    return runDockerCommand("rm", name);
 }

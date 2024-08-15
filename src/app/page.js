@@ -1,12 +1,9 @@
-import fs from "fs";
-import matter from "gray-matter";
 import Link from "next/link";
-import path from "path";
 import Image from "next/image";
-import { docFilePaths, DOCS_PATH } from "./utils/mdxUtils";
+import { getIndexDocs } from "../lib/mdxUtils"
 
-export default function Home() {
-  const docs = getDocs()
+export default async function Home() {
+  const docs = await getIndexDocs()
   return (
     <main className="flex flex-col items-center justify-between p-24">
       <h1 className="text-4xl font-bold text-center">
@@ -26,31 +23,17 @@ export default function Home() {
       </p>
       <ul>
         {docs.map((doc) => (
-          <li key={doc.filePath}>
+          <li key={doc.location}>
             <Link
-              as={`/${doc.filePath.replace(/\.mdx?$/, "")}`}
-              href={`/[slug]`}
+              as={`/${doc.name}`}
+              href={"/[slug]"}
             >
-              {doc.data.title}
+              {doc.documentData.metadata?.title}
             </Link>
+            &nbsp;- {doc.documentData.metadata?.description}
           </li>
         ))}
       </ul>
     </main>
   );
-}
-
-function getDocs() {
-  const docs = docFilePaths.map((filePath) => {
-    const source = fs.readFileSync(path.join(DOCS_PATH, filePath));
-    const { content, data } = matter(source);
-
-    return {
-      content,
-      data,
-      filePath,
-    };
-  });
-  // console.log(docs)
-  return docs.sort((a,b) => a.data.order - b.data.order);
 }

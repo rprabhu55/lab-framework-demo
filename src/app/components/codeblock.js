@@ -1,5 +1,3 @@
-// components/CodeBlock.js
-
 "use client";
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -7,7 +5,7 @@ import { solarizedlight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useState } from "react";
 import { FiClipboard } from "react-icons/fi";
 
-export function CodeBlock ({ className, children }) {
+export function CodeBlock({ className, children }) {
   const language = className?.replace("language-", "") || "javascript";
   const [copied, setCopied] = useState(false);
 

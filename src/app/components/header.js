@@ -1,5 +1,3 @@
-//components/header.js
-
 import Image from "next/image"
 
 export function Header() {

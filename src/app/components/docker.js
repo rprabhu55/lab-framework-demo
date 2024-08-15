@@ -1,6 +1,6 @@
 import { DockerCard } from "@/app/components/dockercard";
 import { getContainerStatus } from "@/lib/containers";
-import { GetVariable, GetUsername } from "@/lib/variables";
+import { getEnvVariable, getUsername } from "@/lib/variables";
 
 /**
  * Docker component
@@ -16,14 +16,14 @@ export async function Docker ({ name = "", desc = "", image = "", env = [], port
     // process variables in the env object
     for (let i = 0; i < env.length; i++) {
         if (env[i].isVariable) {
-            env[i].value = await GetVariable({ name: env[i].name });
+            env[i].value = await getEnvVariable({ name: env[i].name });
         }
     }
 
     // process attributes in the attrs object
     for (let i = 0; i < attrs.length; i++) {
         if (attrs[i].useUsername === true) {
-            attrs[i].value = await GetUsername();
+            attrs[i].value = await getUsername();
         }
     }
 
