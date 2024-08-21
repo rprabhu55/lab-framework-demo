@@ -24,3 +24,8 @@ services:
 volumes:
   cache:
     driver: local
+
+networks:
+  default:
+    name: lab-framework
+    driver: bridge

@@ -15,6 +15,7 @@ export function ToC({ headings }) {
             <ApiCheck
                 name="NGINX Ready"
                 url="http://localhost:55001"
+                hideUrl={false}
             />
         </div>
     )
