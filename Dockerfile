@@ -39,8 +39,8 @@ RUN \
 FROM base AS runner
 WORKDIR /app
 
-# Add Docker CLI
-RUN apk add --no-cache docker-cli
+# Add Docker CLI & cURL (for troubleshooting)
+RUN apk add --no-cache docker-cli curl
 
 ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
