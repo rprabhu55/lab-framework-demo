@@ -16,7 +16,7 @@ export async function Docker ({ name = "", desc = "", image = "", env = [], port
     // process variables in the env object
     for (let i = 0; i < env.length; i++) {
         if (env[i].isVariable) {
-            env[i].value = await getEnvVariable({ name: env[i].name });
+            env[i].value = await getEnvVariable(env[i].name);
         }
     }
 
