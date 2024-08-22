@@ -36,7 +36,8 @@ services:
   mock-server:
     image: mockserver/mockserver
     ports:
-      - "80:1080"
+      - "80:1080" # for UDF mocks
+      - "5123:1080" # for petname service mocks
 
 volumes:
   cache:
