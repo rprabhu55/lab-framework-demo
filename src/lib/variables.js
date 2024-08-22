@@ -41,7 +41,8 @@ export async function getPetname() {
         if (!response.ok) {
             throw new Error(`Failed to retrieve petname from ${PETNAME_URL}`);
         }
-        petname = await response.text();
+        const petData = await response.json();
+        petname = petData.petname;
         await setRedisVariable(petnameKey, petname);
     return petname;
     } catch (error) {
@@ -62,7 +63,12 @@ export async function getRedisVariable(path) {
     const redis = await createClient({ url: REDIS_URL })
         .on("error", err => console.log("Redis Client Error", err))
         .connect();
-    return await redis.json.get(path)
+    try {
+        return await redis.json.get(path) || null;
+        } catch (error) {
+        console.error(`Error fetching Redis variable ${path}:`, error);
+        return null;
+        }
 }
 
 /**
