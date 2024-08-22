@@ -29,7 +29,6 @@ export function APICheck({url = ''}) {
       <input
         type="text"
         value={url}
-        onChange={(e) => setUrl(e.target.value)}
         placeholder="Enter a URL to test..."
         className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 bg-white rounded shadow-md mb-6"
         disabled
