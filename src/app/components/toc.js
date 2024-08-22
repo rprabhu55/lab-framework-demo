@@ -1,5 +1,3 @@
-import { ApiCheck } from "../components/apicheck";
-
 export function ToC({ headings }) {
     return (
         // <div className="w-1/4 p-4 sticky top-0">
@@ -11,12 +9,6 @@ export function ToC({ headings }) {
                     </li>
                 ))}
             </ul>
-
-            <ApiCheck
-                name="NGINX Ready"
-                url="http://localhost:55001"
-                hideUrl={false}
-            />
         </div>
     )
 }
