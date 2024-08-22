@@ -1,5 +1,83 @@
 "use server"
 import { spawn } from "child_process";
+import { setRedisVariable, removeRedisVariable } from "./variables";
+
+/**
+ * Helper function to build Docker command arguments.
+ *
+ * This function takes in various options and returns a formatted array of strings that can be used as command arguments for Docker commands.
+ *
+ * @param {string} command - The type of Docker command to perform (e.g. "ps", "rm", "run")
+ * @param {string} containerName - The name of the Docker container (used for "ps" and "rm" commands)
+ * @param {string} image - The Docker image to use for the "run" command
+ * @param {Object[]} env - An array of environment variables to set in the container (for "run" command)
+ * @param {Object} port - An object containing the host and container ports to map (for "run" command)
+ * @param {Object[]} attrs - An array of attributes to set on the container (for "run" command)
+ * @param {string} network - The Docker network to use for the "run" command
+ *
+ * @returns {string[]} An array of strings that can be used as arguments for the specified Docker command
+ */
+function buildDockerCommand(command, containerName, image, env = [], port = null, attrs = [], network) {
+    switch (command) {
+        case "ps-all":
+            return ["ps", "-a", "--format", "{{json .}},"];
+        case "ps":
+            return ["ps", "-a", "--filter", `name=${containerName}`, "--filter", "status=running", "--quiet"];
+        case "rm":
+            return ["rm", "-f", containerName];
+        case "run":
+            return [
+                "run", "-d", "--name", containerName,
+                ...env.map(({ name, value }) => `--env=${name}=${value}`),
+                ...(port ? ["-p", `${port.host}:${port.container}`] : []),
+                ...attrs.map(({ name, value }) => `--${name}=${value}`),
+                `--network=${network}`,
+                image
+            ];
+        default:
+            throw new Error("Invalid command");
+    }
+}
+
+
+/**
+ * Helper function to handle Docker process close event.
+ *
+ * This function takes in information about a completed Docker command and performs any necessary actions based on the outcome of that command.
+ *
+ * @param {string} command - The type of Docker command that was executed (e.g. "ps", "run", "rm")
+ * @param {number} code - The exit code of the Docker process
+ * @param {string} containerName - The name of the Docker container affected by this command
+ * @param {string} stdoutData - The output data from the Docker process (if any)
+ * @param {Object} port - An object containing information about the ports mapped by the "run" command (optional)
+ *
+ * @returns {Promise<boolean|*>} A promise resolving to `true` if the command was successful, or a specific value depending on the command type
+ */
+async function handleDockerClose(command, code, containerName, stdoutData, port) {
+    if (code !== 0) {
+        throw new Error(`Child process exited with code ${code}`);
+    }
+
+    switch (command) {
+        case "ps":
+            if (stdoutData.trim() === "") {
+                throw new Error("Container not running");
+            }
+            console.log("Container is running");
+            return true;
+        case "ps-all":
+            return stdoutData;
+        case "run":
+            await setRedisVariable(`components:${containerName}`, { status: 'running', ...(port && { ports: port }) });
+            break;
+        case "rm":
+            await removeRedisVariable(`components:${containerName}`);
+            break;
+        default:
+            return true;
+    }
+}
+
 
 /**
  * Runs a Docker command and handles the promise resolution and rejection.
@@ -12,65 +90,29 @@ import { spawn } from "child_process";
  * @param {Array} [attrs] - The attributes of the container (optional).
  * @returns {Promise} The promise object representing the result of the command.
  */
-async function runDockerCommand(command, name = "", image, env, port, attrs, network = "lab-framework") {
+async function runDockerCommand(command, name = "", image, env = [], port, attrs = [], network = "lab-framework") {
+    const containerName = name.replace(/ /g, "-").toLowerCase();
+    const docker_cmd = buildDockerCommand(command, containerName, image, env, port, attrs, network);
 
+    const docker = spawn("docker", docker_cmd);
+
+    let stdoutData = "";
+    docker.stdout.on("data", (data) => {
+        stdoutData += data.toString();
+    });
+
+    docker.stderr.on("data", (data) => {
+        console.error(`stderr: ${data}`);
+        throw new Error(data.toString());
+    });
 
     return new Promise((resolve, reject) => {
-        let docker_cmd = [];
-        const docker_name = name.replace(/ /g, "-");
-        switch (command) {
-            case "ps-all":
-                docker_cmd = ["ps", "-a", "--format", "{{json .}},"];
-                break;
-            case "ps":
-                docker_cmd = ["ps", "-a", "--filter", `name=${docker_name}`, "--filter", "status=running", "--quiet"];
-                break;
-            case "rm":
-                docker_cmd = ["rm", "-f", docker_name];
-                break;
-            case "run":
-                docker_cmd = [
-                    "run", "-d", "--name", docker_name,
-                    ...env.map(({ name, value }) => `--env=${name}=${value}`),
-                    ...port ? ["-p", `${port.host}:${port.container}`] : [],
-                    ...attrs.map(({ name, value }) => `--${name}=${value}`),
-                    `--network=${network}`,
-                    image
-                ]
-                break;
-            default:
-                reject(new Error("Invalid command"));
-        }
-        const docker = spawn("docker", docker_cmd);
-
-        let stdoutData = "";
-        docker.stdout.on("data", (data) => {
-            stdoutData += data.toString();
-            // console.log(`stdout: ${data}`);
-        });
-
-        docker.stderr.on("data", (data) => {
-            console.error(`stderr: ${data}`);
-            reject(new Error(data.toString()));
-        });
-
-        docker.on("close", (code) => {
-            if (code !== 0) {
-                reject(new Error(`Child process exited with code ${code}`));
-            } else {
-                if (command === "ps") {
-                    if (stdoutData.trim() === "") {
-                        reject(new Error("Container not running"));
-                    } else {
-                        console.log("Container is running");
-                        resolve(true);
-                    }
-                }
-                if (command === "ps-all") {
-                    resolve(stdoutData)
-                } else {
-                    resolve(true);
-                }
+        docker.on("close", async (code) => {
+            try {
+                const result = await handleDockerClose(command, code, containerName, stdoutData, port);
+                resolve(result);
+            } catch (error) {
+                reject(error);
             }
         });
     });
@@ -84,7 +126,7 @@ async function runDockerCommand(command, name = "", image, env, port, attrs, net
  */
 export async function getAllContainerStatus() {
     try {
-        const commandResult = await runDockerCommand("ps-all")
+        const commandResult = await runDockerCommand("ps-all");
         // hack to remove final comma and newline
         const parsed = JSON.parse(`[${commandResult.substring(0, commandResult.length - 2)}]`);
         return parsed;
