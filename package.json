@@ -16,7 +16,7 @@
     "@types/mdx": "^2.0.13",
     "gray-matter": "^4.0.3",
     "lodasync": "^1.0.7",
-    "next": "14.2.5",
+    "next": "^14.2.6",
     "next-mdx-remote": "^5.0.0",
     "react": "^18",
     "react-dom": "^18",
