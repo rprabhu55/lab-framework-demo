@@ -3,6 +3,22 @@
 # Get the docker assigned address of the host and insert it into the hosts file for use by UDF API mocks
 printf "\n`getent ahostsv4 host.docker.internal | grep STREAM | awk '{ print $1 ; exit }'` metadata.udf" | sudo tee -a /etc/hosts
 
+curl --retry 12 --retry-all-errors -X PUT 'http://host.docker.internal:5123/mockserver/expectation' \
+-H 'Content-Type: text/json; charset=utf-8' \
+-d @- <<'EOF'
+{
+    "httpRequest": {
+        "method": "GET",
+        "path": "/petname"
+    },
+    "httpResponse": {
+        "body": {
+            "petname":"drunk-sloth"
+        }
+    }
+}
+EOF
+
 curl --retry 12 --retry-all-errors -X PUT 'http://metadata.udf:80/mockserver/expectation' \
 -H 'Content-Type: text/json; charset=utf-8' \
 -d @- <<'EOF'
