@@ -4,6 +4,7 @@
 
 import { createClient } from "redis";
 import { REDIS_URL } from "./constants";
+const PETNAME_URL = "http://host.docker.internal:5123/petname"
 
 /**
  * Retrieves an environment variable by name.
@@ -25,6 +26,31 @@ export async function getUsername() {
 }
 
 /**
+ * Retrieves a random petname from the UDF petname service
+ * 
+ * @returns {string} A random petname
+ */
+export async function getPetname() {
+    const petnameKey = "petname";
+    let petname = await getRedisVariable(petnameKey);
+    if (petname) {
+        return petname;
+    }
+    try {
+        const response = await fetch(PETNAME_URL, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error(`Failed to retrieve petname from ${PETNAME_URL}`);
+        }
+        const petData = await response.json();
+        petname = petData.petname;
+        await setRedisVariable(petnameKey, petname);
+    return petname;
+    } catch (error) {
+        throw new Error('Failed to retrieve petname: ' + error.message);
+    }
+}
+
+/**
  * Fetches data from the Redis store.
  *
  * This function creates a Redis client and uses it to retrieve the specified key's value as JSON.
@@ -37,7 +63,12 @@ export async function getRedisVariable(path) {
     const redis = await createClient({ url: REDIS_URL })
         .on("error", err => console.log("Redis Client Error", err))
         .connect();
-    return await redis.json.get(path)
+    try {
+        return await redis.json.get(path) || null;
+        } catch (error) {
+        console.error(`Error fetching Redis variable ${path}:`, error);
+        return null;
+        }
 }
 
 /**
