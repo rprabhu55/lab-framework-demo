@@ -4,6 +4,7 @@
 
 import { createClient } from "redis";
 import { REDIS_URL } from "./constants";
+const PETNAME_URL = "http://host.docker.internal:5123/petname"
 
 /**
  * Retrieves an environment variable by name.
@@ -22,6 +23,30 @@ export async function getEnvVariable(name) {
  */
 export async function getUsername() {
     return process.env.USERNAME || null;
+}
+
+/**
+ * Retrieves a random petname from the UDF petname service
+ * 
+ * @returns {string} A random petname
+ */
+export async function getPetname() {
+    const petnameKey = "petname";
+    let petname = await getRedisVariable(petnameKey);
+    if (petname) {
+        return petname;
+    }
+    try {
+        const response = await fetch(PETNAME_URL, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error(`Failed to retrieve petname from ${PETNAME_URL}`);
+        }
+        petname = await response.text();
+        await setRedisVariable(petnameKey, petname);
+    return petname;
+    } catch (error) {
+        throw new Error('Failed to retrieve petname: ' + error.message);
+    }
 }
 
 /**

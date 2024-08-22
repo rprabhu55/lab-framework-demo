@@ -1,6 +1,6 @@
 "use server"
 import { spawn } from "child_process";
-import { setRedisVariable, removeRedisVariable } from "./variables";
+import { getPetname, setRedisVariable, removeRedisVariable } from "./variables";
 
 /**
  * Helper function to build Docker command arguments.
@@ -31,6 +31,7 @@ function buildDockerCommand(command, containerName, image, env = [], port = null
                 ...env.map(({ name, value }) => `--env=${name}=${value}`),
                 ...(port ? ["-p", `${port.host}:${port.container}`] : []),
                 ...attrs.map(({ name, value }) => `--${name}=${value}`),
+                `--hostname=${containerName}`,
                 `--network=${network}`,
                 image
             ];
@@ -91,7 +92,7 @@ async function handleDockerClose(command, code, containerName, stdoutData, port)
  * @returns {Promise} The promise object representing the result of the command.
  */
 async function runDockerCommand(command, name = "", image, env = [], port, attrs = [], network = "lab-framework") {
-    const containerName = name.replace(/ /g, "-").toLowerCase();
+    const containerName = (await getPetname()) + name.replace(/ /g, "-").toLowerCase();
     const docker_cmd = buildDockerCommand(command, containerName, image, env, port, attrs, network);
 
     const docker = spawn("docker", docker_cmd);
