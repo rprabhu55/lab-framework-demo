@@ -25,6 +25,7 @@
     "redis": "^4.7.0",
     "remark-emoji": "^5.0.0",
     "remark-gfm": "^4.0.0",
+    "server-only": "^0.0.1",
     "sharp": "^0.33.4"
   },
   "devDependencies": {
