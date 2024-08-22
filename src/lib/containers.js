@@ -12,7 +12,7 @@ import { spawn } from "child_process";
  * @param {Array} [attrs] - The attributes of the container (optional).
  * @returns {Promise} The promise object representing the result of the command.
  */
-async function runDockerCommand(command, name = "", image, env, port, attrs) {
+async function runDockerCommand(command, name = "", image, env, port, attrs, network = "lab-framework") {
 
 
     return new Promise((resolve, reject) => {
@@ -34,6 +34,7 @@ async function runDockerCommand(command, name = "", image, env, port, attrs) {
                     ...env.map(({ name, value }) => `--env=${name}=${value}`),
                     ...port ? ["-p", `${port.host}:${port.container}`] : [],
                     ...attrs.map(({ name, value }) => `--${name}=${value}`),
+                    `--network=${network}`,
                     image
                 ]
                 break;
