@@ -4,12 +4,14 @@ import { Docker } from "@/app/components/docker";
 import { DockerStatus } from "@/app/components/docker-status";
 import { InputVariable } from "@/app/components/input-var";
 import { UdfMetadata } from "@/app/components/udf-metadata";
+import DockerContainer from "@/app/components/docker-container";
 
 const MDXComponents = {
     APICheck,
     CodeBlock,
     Docker,
     DockerStatus,
+    DockerContainer,
     InputVariable,
     UdfMetadata,
     h1: (props) => <h1 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,

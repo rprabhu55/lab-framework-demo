@@ -1,5 +1,5 @@
 "use server"
-import { getRedisVariable } from "./variables";
+import { getComponentName, getRedisVariable } from "./variables";
 
 /**
  * Retrieves the URL for a given component name.
@@ -44,7 +44,7 @@ export async function checkAPI(urlOrComponentName, targetStatusCode = 200) {
   if (urlOrComponentName.startsWith('http://') || urlOrComponentName.startsWith('https://')) {
     url = urlOrComponentName;
   } else {
-    const componentName = urlOrComponentName.replace(/ /g, "-").toLowerCase();
+    const componentName = await getComponentName(name);
     url = await getComponentUrl(componentName);
   }
 

@@ -24,21 +24,38 @@ Go back [home](/).
 />
 
 ## Test Docker Run
-<Docker 
-    name="NGINX Plus Container 1"
-    desc="NGINX Plus R32 is the latest release of NGINX Plus, the high-performance load balancer, web server, and API gateway. NGINX Plus R32 includes new features and enhancements that make it easier to use and more powerful than ever."
-    image="private-registry.nginx.com/nginx-plus/agent:debian"
-    env={[
-        {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
-        {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
-        {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
-        {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
-        {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
-    ]}
-    port={{host: 55055, container: 80}}
-/>
-<Docker 
-    name="NGINX Plus Container 2"
-    desc="NGINX Plus R32 is the latest release of NGINX Plus, the high-performance load balancer, web server, and API gateway. NGINX Plus R32 includes new features and enhancements that make it easier to use and more powerful than ever."
-    image="private-registry.nginx.com/nginx-plus/agent:debian"
-/>
+<DockerContainer>
+    <Docker 
+        name="NGINX Plus Container 1"
+        desc="NGINX Plus R32 is the latest release of NGINX Plus, the high-performance load balancer, web server, and API gateway. NGINX Plus R32 includes new features and enhancements that make it easier to use and more powerful than ever."
+        image="private-registry.nginx.com/nginx-plus/agent:debian"
+        env={[
+            {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+            {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+            {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+            {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+            {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+        ]}
+        port={{host: 55055, container: 80}}
+    />
+    <Docker 
+        name="NGINX Plus Container 2"
+        desc="NGINX Plus R32 is the latest release of NGINX Plus, the high-performance load balancer, web server, and API gateway. NGINX Plus R32 includes new features and enhancements that make it easier to use and more powerful than ever."
+        image="private-registry.nginx.com/nginx-plus/agent:debian"
+    />
+    <Docker 
+        name="NGINX Plus Container 3"
+        desc="NGINX Plus R32 is the latest release of NGINX Plus, the high-performance load balancer, web server, and API gateway. NGINX Plus R32 includes new features and enhancements that make it easier to use and more powerful than ever."
+        image="private-registry.nginx.com/nginx-plus/agent:debian"
+    />
+    <Docker 
+        name="NGINX Plus Container 4"
+        desc="NGINX Plus R32 is the latest release of NGINX Plus, the high-performance load balancer, web server, and API gateway. NGINX Plus R32 includes new features and enhancements that make it easier to use and more powerful than ever."
+        image="private-registry.nginx.com/nginx-plus/agent:debian"
+    />
+    <Docker 
+        name="NGINX Plus Container 5"
+        desc="NGINX Plus R32 is the latest release of NGINX Plus, the high-performance load balancer, web server, and API gateway. NGINX Plus R32 includes new features and enhancements that make it easier to use and more powerful than ever."
+        image="private-registry.nginx.com/nginx-plus/agent:debian"
+    />
+</DockerContainer>
