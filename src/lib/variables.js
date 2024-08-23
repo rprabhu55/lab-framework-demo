@@ -1,3 +1,4 @@
+"use server"
 /**
  * Utility functions for interacting with environment variables and Redis.
  */
@@ -76,6 +77,17 @@ export async function getVariable(name) {
     }
     value = await getRedisVariable(name);
     return value;
+}
+
+/**
+ * Sets a variable in the storage.
+ *
+ * @param {string} key - The key of the variable to set
+ * @param {string} value - The value of the variable to set
+ 
+ */
+export async function setVariable(key, value) {
+    await setRedisVariable(key, value);
 }
 
 /**
