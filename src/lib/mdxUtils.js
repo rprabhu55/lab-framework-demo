@@ -35,7 +35,7 @@ export async function getMdxContent(params) {
       },
       parseFrontmatter: true,
       scope: {
-        vars: await getVariable("container")
+        vars: await getVariable("vars")
       },
     },
   })
