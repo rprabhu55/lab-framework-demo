@@ -18,9 +18,12 @@ async function getComponentUrl(componentName) {
   const componentData = await getRedisVariable(`components:${petname}-${componentName}`);
   if (!componentData) throw new Error('Component data is missing or invalid');
 
-  const baseUrl = componentData.hasOwnProperty('url') ? componentData.url : `http://${componentName}`;
-  const port = componentData.hasOwnProperty('ports') && componentData.ports.hasOwnProperty('host') ? componentData.ports.host : 80;
-  return `${baseUrl}:${port}`;
+  // check if on docker host or docker network
+  const port = componentData.hasOwnProperty('ports') && componentData.ports.hasOwnProperty('host') ? componentData.ports.host : null;
+  if (port)
+    return `http://host.docker.internal:${port}`
+    
+  return componentData.hasOwnProperty('url') ? componentData.url : `http://${componentName}`;
 }
 
 /**
