@@ -21,6 +21,7 @@ export async function getUdfData(path) {
         return fetch(`${UDF_API_URL}/${path}`)
             .then(r => r.json())
             .then(async data => {
+                // eslint-disable-next-line no-undef
                 await Promise.all([
                     redis.json.set(path, "$", data),
                     redis.expire(path, REDIS_CACHE_SECONDS)

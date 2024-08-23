@@ -1,5 +1,5 @@
 "use server"
-import { getPetname, getRedisVariable } from "./variables";
+import { getRedisVariable } from "./variables";
 
 /**
  * Retrieves the URL for a given component name.
@@ -19,11 +19,11 @@ async function getComponentUrl(componentName) {
   if (!componentData) throw new Error('Component data is missing or invalid');
 
   // check if on docker host or docker network
-  const port = componentData.hasOwnProperty('ports') && componentData.ports.hasOwnProperty('host') ? componentData.ports.host : null;
+  const port = Object.prototype.hasOwnProperty.call(componentData, 'ports') && Object.prototype.hasOwnProperty.call(componentData.ports, 'host') ? componentData.ports.host : null;
   if (port)
     return `http://host.docker.internal:${port}`
     
-  return componentData.hasOwnProperty('url') ? componentData.url : `http://${componentName}`;
+  return Object.prototype.hasOwnProperty.call(componentData, 'url') ? componentData.url : `http://${componentName}`;
 }
 
 /**

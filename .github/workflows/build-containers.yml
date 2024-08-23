@@ -3,6 +3,7 @@ name: Create and publish container images
 on:
   push:
     branches: ["main"]
+  pull_request:
 
 env:
   REGISTRY: ghcr.io
@@ -27,6 +28,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for lab-framework container
+        if: github.ref != 'refs/heads/main'
         id: meta-lab-framework
         uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175
         with:
@@ -40,11 +42,12 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.meta-lab-framework.outputs.tags }}
           labels: ${{ steps.meta-lab-framework.outputs.labels }}
 
       - name: Extract metadata (tags, labels) for redis container
+        if: github.ref != 'refs/heads/main'
         id: meta-redis
         uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175
         with:
@@ -58,6 +61,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile.redis
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.meta-redis.outputs.tags }}
           labels: ${{ steps.meta-redis.outputs.labels }}
