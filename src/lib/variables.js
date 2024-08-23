@@ -49,17 +49,26 @@ export async function getPetname() {
         return petname;
     }
     try {
-        const response = await fetch(PETNAME_URL, { cache: 'no-store' });
-        if (!response.ok) {
-            throw new Error(`Failed to retrieve pet name from ${PETNAME_URL}`);
-        }
-        const petData = await response.json();
-        petname = petData.petname;
-        await setRedisVariable(petnameKey, petname);
-        return petname;
+        // Fetch pet name from external service
     } catch (error) {
-        throw new Error('Failed to retrieve pet name: ' + error.message);
+        console.error("Error fetching pet name:", error);
     }
+    return null;
+}
+
+/**
+ * Retrieves a variable by first checking the environment variables and then Redis.
+ *
+ * @param {string} name - The name of the variable to retrieve
+ * @returns {string|null} The value of the variable, or null if it does not exist
+ */
+export async function getVariable(name) {
+    let value = await getEnvVariable(name);
+    if (value) {
+        return value;
+    }
+    value = await getRedisVariable(name);
+    return value;
 }
 
 /**
