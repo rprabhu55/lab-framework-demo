@@ -1,12 +1,12 @@
 import { useState } from 'react';
 /**
-* DockerButton component
+* DockerStateButton component
 *
 * @param {Boolean} props.isRunning
 * @param {Function} props.onClick
 * @returns {JSX.Element}
 */
-export function DockerButton({ isRunning, onClick }) {
+export function DockerStateButton({ isRunning, onClick }) {
     const [isDisabled, setIsDisabled] = useState(false);
 
     const getButtonColor = () => {
@@ -22,7 +22,7 @@ export function DockerButton({ isRunning, onClick }) {
 
     return (
         <button
-            className={"inline-block ".concat(getButtonColor(), " text-white font-bold py-2 px-4 rounded")}
+            className={"inline-block ".concat(getButtonColor(), " text-white font-bold py-2 px-4 rounded m-2")}
             onClick={handleButtonClick}
             disabled={isDisabled}
         >

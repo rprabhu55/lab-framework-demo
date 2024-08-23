@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { DockerButton } from "@/app/components/dockerbutton";
+import { DockerStateButton } from "@/app/components/docker-state-button";
+import { DockerLogsButton } from "@/app/components/docker-logs-button";
+import { DockerLogs } from "@/app/components/docker-logs";
 import { ErrorMessage } from "@/app/components/error";
 import { createContainer, stopContainer } from "@/lib/containers";
 /**
@@ -17,6 +19,7 @@ import { createContainer, stopContainer } from "@/lib/containers";
 export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunning }) {
 
     const [isRunning, setIsRunning] = useState(initialIsRunning);
+    const [showBox, setShowBox] = useState(false);
     const [error, setError] = useState(null);
 
     /**
@@ -44,6 +47,7 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
 
     return (
         <div className="max-w-md rounded overflow-hidden shadow-lg">
+            <DockerLogs containerName={name} showBox={showBox} setShowBox={setShowBox}/>
             <div className="px-6 py-4">
                 <div className="font-bold text-xl mb-2">{name}</div>
                 <p className="text-gray-700 text-base">{desc}</p>
@@ -64,8 +68,9 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
                     ))}
                 </p>
             </div>
-            <div className="px-6 pt-4 pb-2">
-                <DockerButton isRunning={isRunning} onClick={handleClick} />
+            <div className="px-6 pt-4 pb-2 p-8">
+                <DockerStateButton isRunning={isRunning} onClick={handleClick} />
+                <DockerLogsButton isRunning={isRunning} onClick={() => setShowBox(!showBox)} />
                 {error && <ErrorMessage message={error} />}
             </div>
         </div>

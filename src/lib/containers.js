@@ -19,6 +19,8 @@ import { getPetname, setRedisVariable, removeRedisVariable } from "./variables";
  */
 function buildDockerCommand(command, containerName, image, env = [], port = null, attrs = [], network) {
     switch (command) {
+        case "logs":
+            return ["logs", `${containerName}`];
         case "ps-all":
             return ["ps", "-a", "--format", "{{json .}},"];
         case "ps":
@@ -60,6 +62,8 @@ async function handleDockerClose(command, code, containerName, stdoutData, port)
     }
 
     switch (command) {
+        case "logs":
+            return stdoutData;
         case "ps":
             if (stdoutData.trim() === "") {
                 throw new Error("Container not running");
@@ -164,7 +168,7 @@ export async function getContainerStatus(name) {
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function createContainer(name, image, env, port, attrs) {
-    return runDockerCommand("run", name, image, env, port, attrs);
+    return await runDockerCommand("run", name, image, env, port, attrs);
 }
 
 /**
@@ -176,4 +180,24 @@ export async function createContainer(name, image, env, port, attrs) {
  */
 export async function stopContainer(name) {
     return runDockerCommand("rm", name);
+}
+
+/**
+ * Retrieves the logs for a specified Docker container.
+ * 
+ * @param {string} name - The name of the Docker container.
+ * @returns {Promise<string|null>} - The logs of the Docker container, or null if the name is not provided or an error occurs.
+ */
+export async function getContainerLogs(name) {
+    if (!name) {
+        return null;
+    }
+
+    try {
+        const logs = await runDockerCommand("logs", name);
+        return logs;
+    } catch (error) {
+        console.error(`Error retrieving logs for container ${name}:`, error.message);
+        return null;
+    }
 }
