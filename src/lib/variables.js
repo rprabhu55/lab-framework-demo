@@ -50,6 +50,14 @@ export async function getPetname() {
     }
     try {
         // Fetch pet name from external service
+        const response = await fetch(PETNAME_URL, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error(`Failed to retrieve petname from ${PETNAME_URL}`);
+        }
+        const petData = await response.json();
+        petname = petData[petnameKey];
+        await setRedisVariable(petnameKey, petname);
+    return petname;
     } catch (error) {
         console.error("Error fetching pet name:", error);
     }
