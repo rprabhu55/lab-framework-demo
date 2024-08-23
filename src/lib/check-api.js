@@ -1,5 +1,5 @@
 "use server"
-import { getPetname, getRedisVariable } from "./variables";
+import { getRedisVariable } from "./variables";
 
 /**
  * Retrieves the URL for a given component name.
