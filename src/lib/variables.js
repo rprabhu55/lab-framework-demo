@@ -3,8 +3,7 @@
  */
 
 import { createClient } from "redis";
-import { REDIS_URL } from "./constants";
-const PETNAME_URL = "http://host.docker.internal:5123/petname";
+import { REDIS_URL, PETNAME_URL } from "./constants";
 
 /**
  * Creates and connects a Redis client.
