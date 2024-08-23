@@ -2,6 +2,7 @@ import { APICheck } from "@/app/components/api-check"
 import { CodeBlock } from "../app/components/codeblock";
 import { Docker } from "../app/components/docker";
 import { DockerStatus } from "../app/components/docker-status";
+import { InputVariable } from "@/app/components/input-var";
 import { UdfMetadata } from "../app/components/udf-metadata";
 
 const MDXComponents = {
@@ -9,6 +10,7 @@ const MDXComponents = {
     CodeBlock,
     Docker,
     DockerStatus,
+    InputVariable,
     UdfMetadata,
     h1: (props) => <h1 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
     h2: (props) => <h2 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
