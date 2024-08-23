@@ -2,9 +2,12 @@
 import React, { useState } from "react";
 import { DockerStateButton } from "@/app/components/docker-state-button";
 import { DockerLogsButton } from "@/app/components/docker-logs-button";
+import { DockerTestButton } from "@/app/components/docker-test-button";
 import { DockerLogs } from "@/app/components/docker-logs";
 import { ErrorMessage } from "@/app/components/error";
 import { createContainer, stopContainer } from "@/lib/containers";
+import { checkAPI } from "@/lib/check-api";
+import { Message } from "@/app/components/msg"
 /**
  * Represents a Docker Card component.
  * @param {string} props.name - The name of the container.
@@ -21,6 +24,7 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
     const [isRunning, setIsRunning] = useState(initialIsRunning);
     const [showBox, setShowBox] = useState(false);
     const [error, setError] = useState(null);
+    const [msg, setMsg] = useState(null);
 
     /**
      * Handles the click event.
@@ -30,6 +34,7 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
     const handleClick = async () => {
 
         setError(null);
+        setMsg(null);
 
         try {
             if (isRunning === true) {
@@ -44,6 +49,26 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
             setError(error.message);
         }
     };
+
+    const handleTestClick = async () => {
+
+        setError(null);
+        setMsg(null);
+
+        try {
+            if(isRunning !== true) {
+                return null;
+            }
+            await checkAPI(name);
+            setMsg('works');
+        } catch (error) {
+            const errorMessage = error.message.includes('HTTP error')
+                ? `API request failed with status code ${error.status}: ${error.message}`
+                : error.message;
+            console.error('Error occurred while running API check:', error);
+            setError(errorMessage);
+        }
+    }
 
     return (
         <div className="max-w-md rounded overflow-hidden shadow-lg">
@@ -71,7 +96,9 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
             <div className="px-6 pt-4 pb-2 p-8">
                 <DockerStateButton isRunning={isRunning} onClick={handleClick} />
                 <DockerLogsButton isRunning={isRunning} onClick={() => setShowBox(!showBox)} />
+                <DockerTestButton isRunning={isRunning} onClick={handleTestClick} />
                 {error && <ErrorMessage message={error} />}
+                {msg && <Message message={msg} />}
             </div>
         </div>
     );
