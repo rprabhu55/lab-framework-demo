@@ -19,6 +19,21 @@ async function connectRedis() {
 }
 
 /**
+ * Returns a normalized component name prefixed with petname
+ * 
+ * @param {string} - a name
+ * @return {string} - a unique and normalized component name
+ */
+export async function getComponentName(name){
+    try {
+        const petname = await getPetname();
+        return petname + "-" + name.replace(/ /g, "-").toLowerCase();
+    } catch(error) {
+        throw new Error("Error getting component name: ", error.message)
+    }
+}
+
+/**
  * Retrieves an environment variable by name.
  *
  * @param {string} name - The name of the environment variable to retrieve
