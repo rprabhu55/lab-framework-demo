@@ -4,7 +4,7 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import imgLinks from "@pondorasti/remark-img-links";
 import emoji from "remark-emoji";
-import { getEnvVariable, getRedisVariable } from "./variables"
+import { getVariable } from "./variables"
 import MDXComponents from "./mdxComponents"
 import { mapAsync, filterAsync } from "lodasync"
 import matter from "gray-matter";
@@ -13,12 +13,12 @@ export const LOCAL_DOCS_PATH = path.join(process.cwd(), "src/app/docs");
 
 export async function getMdxContent(params) {
 
-  const remoteDocsRepoServer = await getEnvVariable("REMOTE_DOCS_REPO_SERVER")
-  const remoteDocsRepoOwner = await getEnvVariable("REMOTE_DOCS_REPO_OWNER")
-  const remoteDocsRepoName = await getEnvVariable("REMOTE_DOCS_REPO_NAME")
-  const remoteDocsRepoBranch = await getEnvVariable("REMOTE_DOCS_REPO_BRANCH")
-  const remoteDocsRepoPath = await getEnvVariable("REMOTE_DOCS_REPO_PATH")
-  const remoteDocsRepoMediaPath = await getEnvVariable("REMOTE_DOCS_REPO_MEDIA_PATH") || "media"
+  const remoteDocsRepoServer = await getVariable("REMOTE_DOCS_REPO_SERVER")
+  const remoteDocsRepoOwner = await getVariable("REMOTE_DOCS_REPO_OWNER")
+  const remoteDocsRepoName = await getVariable("REMOTE_DOCS_REPO_NAME")
+  const remoteDocsRepoBranch = await getVariable("REMOTE_DOCS_REPO_BRANCH")
+  const remoteDocsRepoPath = await getVariable("REMOTE_DOCS_REPO_PATH")
+  const remoteDocsRepoMediaPath = await getVariable("REMOTE_DOCS_REPO_MEDIA_PATH") || "media"
 
   let remarkPlugins = [
     remarkGfm,
@@ -35,7 +35,7 @@ export async function getMdxContent(params) {
       },
       parseFrontmatter: true,
       scope: {
-        vars: await getRedisVariable("vars")
+        vars: await getVariable("container")
       },
     },
   })
@@ -61,16 +61,16 @@ async function getRemoteDocument(url) {
 }
 
 export async function getIndexDocs() {
-  const remoteDocsRepoServer = await getEnvVariable("REMOTE_DOCS_REPO_SERVER")
+  const remoteDocsRepoServer = await getVariable("REMOTE_DOCS_REPO_SERVER")
   return remoteDocsRepoServer ? await getGitHubDocs() : await getLocalDocs(LOCAL_DOCS_PATH)
 }
 
 async function getGitHubDocs() {
 
-  const remoteDocsRepoApiServer = await getEnvVariable("REMOTE_DOCS_REPO_API_SERVER")
-  const remoteDocsRepoOwner = await getEnvVariable("REMOTE_DOCS_REPO_OWNER")
-  const remoteDocsRepoName = await getEnvVariable("REMOTE_DOCS_REPO_NAME")
-  const remoteDocsRepoPath = await getEnvVariable("REMOTE_DOCS_REPO_PATH")
+  const remoteDocsRepoApiServer = await getVariable("REMOTE_DOCS_REPO_API_SERVER")
+  const remoteDocsRepoOwner = await getVariable("REMOTE_DOCS_REPO_OWNER")
+  const remoteDocsRepoName = await getVariable("REMOTE_DOCS_REPO_NAME")
+  const remoteDocsRepoPath = await getVariable("REMOTE_DOCS_REPO_PATH")
 
   const url = `${remoteDocsRepoApiServer}/repos/${remoteDocsRepoOwner}/${remoteDocsRepoName}/contents/${remoteDocsRepoPath}`
 
