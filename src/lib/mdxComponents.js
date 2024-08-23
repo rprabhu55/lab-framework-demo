@@ -1,9 +1,9 @@
 import { APICheck } from "@/app/components/api-check"
-import { CodeBlock } from "../app/components/codeblock";
-import { Docker } from "../app/components/docker";
-import { DockerStatus } from "../app/components/docker-status";
+import { CodeBlock } from "@/app/components/codeblock";
+import { Docker } from "@/app/components/docker";
+import { DockerStatus } from "@/app/components/docker-status";
 import { InputVariable } from "@/app/components/input-var";
-import { UdfMetadata } from "../app/components/udf-metadata";
+import { UdfMetadata } from "@/app/components/udf-metadata";
 
 const MDXComponents = {
     APICheck,

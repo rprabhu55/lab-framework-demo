@@ -1,4 +1,4 @@
-import { getMdxContent } from "../../lib/mdxUtils"
+import { getMdxContent } from "@/lib/mdxUtils"
 
 export default async function Page({ params }) {
 

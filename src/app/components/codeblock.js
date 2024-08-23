@@ -28,4 +28,4 @@ export function CodeBlock({ className, children }) {
       </SyntaxHighlighter>
     </div>
   );
-};
+}

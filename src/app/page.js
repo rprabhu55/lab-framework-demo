@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getIndexDocs } from "../lib/mdxUtils"
+import { getIndexDocs } from "@/lib/mdxUtils"
 
 export default async function Home() {
   const docs = await getIndexDocs()
