@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for lab-framework container
-        if: github.ref != 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         id: meta-lab-framework
         uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175
         with:
