@@ -9,6 +9,41 @@ curl --retry 12 --retry-all-errors -X PUT 'http://host.docker.internal:5123/mock
 {
     "httpRequest": {
         "method": "GET",
+        "path": "/labinfo"
+    },
+    "httpResponse": {
+        "body": {
+            "LabID": "87sdf8HDJSDH66asdg",
+            "dataPlaneKey": "YXJlYWxseWxvbmd2YWx1ZWhlcmU=",
+            "description": "NGINX One Lab",
+            "ns": false,
+            "nsRoles": {
+                "group_names": null,
+                "namespace_roles": [
+                    {
+                        "namespace": "default",
+                        "role": "arolenamehere"
+                    }
+                ]
+            },
+            "site": true,
+            "siteStatic": null,
+            "sqsQueue": "reallylongstringhere",
+            "sqsURL": "https://reallylongurlhere.io",
+            "tenant": "tenantnamehere",
+            "tenantURL": "https://tenanturlhere.io",
+            "token": null
+        }
+    }
+}
+EOF
+
+curl -X PUT 'http://host.docker.internal:5123/mockserver/expectation' \
+-H 'Content-Type: text/json; charset=utf-8' \
+-d @- <<'EOF'
+{
+    "httpRequest": {
+        "method": "GET",
         "path": "/petname"
     },
     "httpResponse": {
