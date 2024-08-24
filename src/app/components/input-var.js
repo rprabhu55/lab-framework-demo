@@ -31,11 +31,8 @@ export function InputVariable({ name = '', value = '' }) {
     console.log('name', name);
     console.log('value', inputValue);
     
-    // Normalize the key
-    const normalizedname = name.replace(/ /g, "-").toLowerCase();
-
     try {
-      await setVariable(normalizedname, inputValue);
+      await setVariable(name, inputValue);
       setState({ status: true, error: null });
     } catch (error) {
       console.error('Error setting variable:', error);
