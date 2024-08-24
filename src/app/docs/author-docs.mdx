@@ -7,7 +7,7 @@ order: 1
 ## APICheck
 
 The **APICheck** allows the lab author to check an API endpoint with an optional path and HTTP response code. 
-The component will also look up the target Docker component's ephermal networking information if it's the target of the API check.
+The component will also look up the target Docker component's ephemeral networking information if it's the target of the API check.
 
 **Note**: you must supply either a **componentName** or a **url**.
 
@@ -70,7 +70,7 @@ url="http://f5.com"
 ## APIHeaderCheck
 
 The **APIHeaderCheck**  allows the lab author to check an API endpoint's headers with an optional path and HTTP response code. 
-The component will also look up the target Docker component's ephermal networking information if it's the target of the API check.
+The component will also look up the target Docker component's ephemeral networking information if it's the target of the API check.
 
 **Note**: you must supply either a **componentName** or a **url**.
 
@@ -128,7 +128,7 @@ Calling APICheck with a url:
 ## APIResponseCheck
 
 The **APIResponseCheck**  allows the lab author to check an API endpoint's response with an optional path and HTTP response code. 
-The component will also look up the target Docker component's ephermal networking information if it's the target of the API check.
+The component will also look up the target Docker component's ephemeral networking information if it's the target of the API check.
 
 **Note**: you must supply either a **componentName** or a **url**.
 
@@ -246,7 +246,7 @@ The method will look for the variable in the following locations:
 - Environment Variable
 - Redis database
 - LabInfo API (inside UDF)
-- UDF Metdata API (inside UDF)
+- UDF Metadata API (inside UDF)
 
 | Variable    | Description          | Required |
 |-------------|----------------------|----------|

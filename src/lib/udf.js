@@ -4,7 +4,7 @@
  * and then store the key:value in Redis for future lookups since the udf apis are static
  */
 
-import { LABINFO_API_URL, UDF_API_URL } from "./constants";
+import { LABINFO_API_URL, UDF_DEPLOYMENT_API_URL } from "./constants";
 import { setRedisVariable } from "./redis";
 
 /**
@@ -102,7 +102,7 @@ export async function fetchUDFInfo(variableName) {
    * todo: the udf api has multiple paths depending on what you're looking for.
    *       need to add logic that will look for the variable across all paths
    */ 
-  const variableValue = await fetchInfo(UDF_API_URL, variableName);
+  const variableValue = await fetchInfo(UDF_DEPLOYMENT_API_URL, variableName);
   await setRedisVariable(variableName, variableValue).catch(error => {
   console.error('Unable to store the lab info in redis: ', error.message);
   });
