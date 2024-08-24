@@ -1,59 +1,40 @@
-"use client"
-import { checkAPI } from '@/lib/check-api';
-import { useState } from 'react';
+import { APIBase } from '@/lib/api-base'
 
 /**
  * APICheck component
  * 
- * This component allows users to check the status of an API by providing either a URL or a component name.
- * It displays the status of the API check and any error messages if the check fails.
+ * This component renders information about an API check, including the URL and component name.
+ * It also includes the APIBase component to perform the actual API check.
  * 
- * @param {Object} props - The component props.
- * @param {string} props.url - The URL to check (optional if componentName is provided).
- * @param {string} [props.componentName=null] - The component name to check (optional if URL is provided).
- * @returns {JSX.Element} - The rendered component.
+ * @param {Object} props - The properties object.
+ * @param {string} [props.componentName=null] - The name of the component to check.
+ * @param {string} [props.path='/'] - The path to append to the URL for the API check.
+ * @param {number} [props.targetStatusCode=200] - The expected HTTP status code from the API check.
+ * @param {string} [props.url=null] - The URL to check.
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
-export function APICheck({ url = null, componentName = null, path = '/', targetStatusCode=200 }) {
-  const [state, setState] = useState({ status: null, error: null });
-
-  /**
-   * Handles the API check and updates the state accordingly.
-   * 
-   * This function calls the checkAPI function with the input value (URL or component name),
-   * and updates the component state based on the result of the API check.
-   */
-  const handleCheck = async () => {
-    try {
-      await checkAPI({url, componentName, path, targetStatusCode});
-      setState({ status: true, error: null });
-    } catch (error) {
-      const errorMessage = "The API check failed"
-      setState({ status: false, error: errorMessage });
-    }
-  };
-
+export function APICheck({ 
+  componentName = null, 
+  path = '/', 
+  targetStatusCode = 200, 
+  url = null 
+}) {
   return (
     <div className="flex flex-col">
-      <p>
+      <p className="space-y-2">
         {url && (
-          <>
-            <b>URL:</b> {url}
-          </>
+          <span className="block">
+            <b className="font-bold">URL:</b> <span className="font-normal">{url}</span>
+          </span>
         )}
         {componentName && (
-          <>
-            <b>Component Name:</b> {componentName}
-          </>
+          <span className="block">
+            <b className="font-bold">Component Name:</b> <span className="font-normal">{componentName}</span>
+          </span>
         )}
       </p>
-      <button 
-        onClick={handleCheck}
-        className="py-2 px-4 size-min bg-blue-500 hover:bg-blue-600 text-white rounded focus:ring-indigo-500 focus:border-indigo-600 active:bg-blue-700"
-      >
-        Check
-      </button>
-      {state.status && <p className="text-green-600 font-bold">Status: 200</p>}
-      {state.error && <p className="text-red-600 font-bold">Error: {state.error}</p>}
+      <APIBase componentName={componentName} path={path} targetStatusCode={targetStatusCode} url={url} />
     </div>
   );
 }

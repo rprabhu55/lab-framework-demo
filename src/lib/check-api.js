@@ -33,109 +33,61 @@ async function determineUrl(name) {
 }
 
 /**
- * Checks the API status for a given URL or component name.
+ * Checks the API status, response body, and headers for a given URL or component name.
  * 
  * This function determines if the input is a URL or a component name,
  * constructs the appropriate URL, and then makes a fetch request to
- * check if the API returns the expected status code.
+ * check if the API returns the expected status code, contains the specified string in the response body,
+ * and contains the specified header with the expected value.
  * 
  * @param {Object} params - The parameters for the function.
  * @param {string} [params.componentName=null] - The name of the component (optional if URL is provided).
+ * @param {string} [params.url=null] - The URL to check (optional if componentName is provided).
  * @param {string} [params.path="/"] - The path to append to the URL (default is "/").
- * @param {string} [params.url=null] - The URL to check (optional if componentName is provided).
+ * @param {string} [params.searchString=null] - The string to search for in the response body (optional).
+ * @param {string} [params.headerName=null] - The name of the header to check (optional).
+ * @param {string} [params.headerValue=null] - The expected value of the header (optional).
  * @param {number} [params.targetStatusCode=200] - The expected HTTP status code (default is 200).
- * @returns {Promise<boolean>} - Returns true if the API returns the expected status code.
- * @throws {Error} - Throws an error if the API request fails or returns an unexpected status code.
+ * @returns {Promise<boolean>} - Returns true if the API returns the expected status code, contains the specified string, and header.
+ * @throws {Error} - Throws an error if the API request fails or returns an unexpected status code, response body, or header.
  */
-export async function checkAPI({ componentName = null, path = "/", url = null, targetStatusCode = 200 }) {
+export async function checkAPI({
+  componentName = null,
+  url = null,
+  path = "/",
+  searchString = null,
+  headerName = null,
+  headerValue = null,
+  targetStatusCode = 200
+}) {
   if (componentName) {
-    url = await determineUrl(componentName);
-  }
-  try {
-    const response = await fetch(url + path, { mode: 'cors', cache: "no-store" });
-    if (response.status === targetStatusCode) {
-      return true;
-    }
-    console.error(`HTTP error ${response.status}: ${response.statusText}`);
-    return false;
-  } catch (error) {
-    console.error('API request failed:', error);
-    throw new Error(`Failed API request: ${error.message} (HTTP status code: ${error.status})`);
-  }
-}
-
-/**
- * Checks if a particular string exists in the API response for a given URL or component name.
- * 
- * This function determines if the input is a URL or a component name,
- * constructs the appropriate URL, and then makes a fetch request to
- * check if the API response contains the specified string.
- * 
- * @param {Object} params - The parameters for the function.
- * @param {string} [params.componentName=null] - The name of the component (optional if URL is provided).
- * @param {string} [params.url=null] - The URL to check (optional if componentName is provided).
- * @param {string} params.searchString - The string to search for in the response.
- * @param {number} [params.targetStatusCode=200] - The expected HTTP status code (default is 200).
- * @returns {Promise<boolean>} - Returns true if the API response contains the specified string.
- * @throws {Error} - Throws an error if the API request fails or returns an unexpected status code.
- */
-export async function checkAPIResponse({ componentName = null, url = null, searchString, targetStatusCode = 200 }) {
-  if (componentName) {
-    url = await determineUrl(componentName);
+    const determinedUrl = await determineUrl(componentName);
+    url = `${determinedUrl}${path}`;
   }
 
   try {
     const response = await fetch(url, { mode: 'cors', cache: "no-store" });
-    if (response.status !== targetStatusCode) {
+    if (response.status != targetStatusCode) {
       throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
     }
 
-    const responseBody = await response.text();
-    if (responseBody.includes(searchString)) {
-      return true;
-    } else {
-      throw new Error(`String "${searchString}" not found in response`);
-    }
-  } catch (error) {
-    console.error('API request failed:', error);
-    throw new Error(`Failed API request: ${error.message}`);
-  }
-}
-
-/**
- * Checks the API status and header for a given URL or component name.
- * 
- * This function determines if the input is a URL or a component name,
- * constructs the appropriate URL, and then makes a fetch request to
- * check if the API returns the expected status code and contains the specified header.
- * 
- * @param {Object} params - The parameters for the function.
- * @param {string} [params.componentName=null] - The name of the component (optional if URL is provided).
- * @param {string} [params.url=null] - The URL to check (optional if componentName is provided).
- * @param {string} params.name - The name of the header to check.
- * @param {string} params.value - The expected value of the header.
- * @param {number} [params.targetStatusCode=200] - The expected HTTP status code (default is 200).
- * @returns {Promise<boolean>} - Returns true if the API returns the expected status code and header.
- * @throws {Error} - Throws an error if the API request fails or returns an unexpected status code or header.
- */
-export async function checkAPIHeader({ componentName = null, url = null, name = '', value = '', targetStatusCode = 200 }) {
-  if(componentName) 
-      url = await determineUrl(componentName);
-
-  try {
-    const response = await fetch(url, { mode: 'cors', cache: "no-store" });
-    if (response.status !== targetStatusCode) {
-      throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
+    if (searchString) {
+      const responseBody = await response.text();
+      if (!responseBody.includes(searchString)) {
+        throw new Error(`String "${searchString}" not found in response`);
+      }
     }
 
-    const header = response.headers.get(name);
-    if (header !== value) {
-      throw new Error(`Header mismatch: expected ${name} to be ${value}, but got ${header}`);
+    if (headerName && headerValue) {
+      const header = response.headers.get(headerName);
+      if (header !== headerValue) {
+        throw new Error(`Header "${headerName}" does not match expected value "${headerValue}"`);
+      }
     }
 
     return true;
   } catch (error) {
     console.error('API request failed:', error);
-    throw new Error(`Failed API request: ${error.message} (HTTP status code: ${error.status})`);
+    throw new Error(`Failed API request: ${error.message}`);
   }
 }
