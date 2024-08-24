@@ -1,4 +1,6 @@
 import { APICheck } from "@/app/components/api-check"
+import { APIHeaderCheck } from "@/app/components/api-header-check";
+import { APIResponseCheck } from "@/app/components/api-response-check";
 import { CodeBlock } from "@/app/components/codeblock";
 import { Docker } from "@/app/components/docker";
 import { DockerStatus } from "@/app/components/docker-status";
@@ -8,6 +10,8 @@ import DockerContainer from "@/app/components/docker-container";
 
 const MDXComponents = {
     APICheck,
+    APIHeaderCheck,
+    APIResponseCheck,
     CodeBlock,
     Docker,
     DockerStatus,

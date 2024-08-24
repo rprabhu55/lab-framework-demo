@@ -14,10 +14,7 @@ export function InputVariable({ variableKey = '', value = '' }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [inputValue, setInputValue] = useState(value);
 
-  useEffect(() => {
-    console.log('Received variableKey:', variableKey);
-    console.log('Received value:', value);
-  }, [variableKey, value])
+  useEffect(() => {}, [variableKey, value])
 
   const handleButtonClick = async () => {
     setIsDisabled(true);
