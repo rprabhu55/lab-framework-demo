@@ -1,7 +1,7 @@
 ---
 title: Example Post 1 Frontmatter Title
 description: This frontmatter description will appear below the title
-order: 2
+order: 3
 ---
 
 This is an example post, with a [link](https://nextjs.org) and a React component:
@@ -47,7 +47,7 @@ Go back [home](/).
 
 ## Input Variable
 <InputVariable 
-    variableKey="test"
+    name="test"
     value=""
 />
 
@@ -78,7 +78,7 @@ Test variable from LabInfo API: <GetVariable name="LabID" />
 <APICheck
     componentName='NGINX Plus Container 2'
     path="/this-is-a-test"
-    targetStatusCode="404"
+    targetStatusCode={404}
 />
 
 **Check Component via response header**
@@ -94,7 +94,7 @@ Test variable from LabInfo API: <GetVariable name="LabID" />
     path="/this-is-a-test"
     headerName="Server"
     headerValue="nginx/1.25.5"
-    targetStatusCode="404"
+    targetStatusCode={404}
 />
 
 **Check Component for searchString in response**

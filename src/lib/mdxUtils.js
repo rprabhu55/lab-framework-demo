@@ -62,7 +62,7 @@ async function getRemoteDocument(url) {
 }
 
 export async function getIndexDocs() {
-  const remoteDocsRepoServer = await getVariable("REMOTE_DOCS_REPO_SERVER")
+  const remoteDocsRepoServer = await getEnvVariable("REMOTE_DOCS_REPO_SERVER")
   return remoteDocsRepoServer ? await getGitHubDocs() : await getLocalDocs(LOCAL_DOCS_PATH)
 }
 

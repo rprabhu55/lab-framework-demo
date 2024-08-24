@@ -15,6 +15,16 @@ import { APIBase } from '@/lib/api-base'
  * @param {string} [props.url=null] - The URL to check.
  * 
  * @returns {JSX.Element} The rendered component.
+ * 
+ * @example
+ * <APIHeaderCheck 
+ *   componentName="ExampleComponent" 
+ *   headerName="Server" 
+ *   headerValue="nginx/1.25.5" 
+ *   path="/example-path" 
+ *   targetStatusCode={200} 
+ *   url="https://api.example.com" 
+ * />
  */
 export function APIHeaderCheck({ 
   componentName = null, 
@@ -25,17 +35,39 @@ export function APIHeaderCheck({
   url = null 
 }) {
   return (
-    <div className="flex flex-col">
-      <p className="font-bold">Header Name: <span className="font-normal">{headerName}</span></p>
-      <p className="font-bold">Header Value: <span className="font-normal">{headerValue}</span></p>
-      <APIBase 
-        componentName={componentName} 
-        headerName={headerName} 
-        headerValue={headerValue} 
-        path={path} 
-        targetStatusCode={targetStatusCode} 
-        url={url} 
-      />
+    <div className="flex flex-col border border-gray-300 p-4 rounded max-w-md">
+      <span className="font-bold text-xl">API Header Check</span>
+      <div className="mt-2 ml-4">
+      {url && (
+          <div className="mb-1">
+            <span className="font-bold">URL:</span> <span className="font-normal">{url}</span>
+          </div>
+        )}
+        {componentName && (
+          <div className="mb-1">
+            <span className="font-bold">Component Name:</span> <span className="font-normal">{componentName}</span>
+          </div>
+        )}
+        <div className="mb-1">
+          <span className="font-bold">Header Name:</span> <span className="font-normal">{headerName}</span>
+        </div>
+        <div className="mb-1">
+          <span className="font-bold">Header Value:</span> <span className="font-normal">{headerValue}</span>
+        </div>
+        <div className="mb-1">
+          <span className="font-bold">Target Response Status Code:</span> <span className="font-normal">{targetStatusCode}</span>
+        </div>
+      </div>
+      <div className="block m-4">
+        <APIBase 
+          componentName={componentName} 
+          headerName={headerName} 
+          headerValue={headerValue} 
+          path={path} 
+          targetStatusCode={targetStatusCode} 
+          url={url} 
+        />
+      </div>
     </div>
   );
 }
