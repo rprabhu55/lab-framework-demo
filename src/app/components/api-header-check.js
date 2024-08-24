@@ -1,9 +1,9 @@
 "use client"
-import { checkAPI } from '@/lib/check-api';
+import { checkAPIHeader } from '@/lib/check-api';
 import { useState } from 'react';
 
 /**
- * APICheck component
+ * APIHeaderCheck component
  * 
  * This component allows users to check the status of an API by providing either a URL or a component name.
  * It displays the status of the API check and any error messages if the check fails.
@@ -13,7 +13,7 @@ import { useState } from 'react';
  * @param {string} [props.componentName=null] - The component name to check (optional if URL is provided).
  * @returns {JSX.Element} - The rendered component.
  */
-export function APICheck({ url = '', componentName = null }) {
+export function APIHeaderCheck({ url = '', componentName = null, name = null, value = null, statusCode = 200 }) {
   const [state, setState] = useState({ status: null, error: null });
   const inputValue = componentName || url;
 
@@ -25,28 +25,20 @@ export function APICheck({ url = '', componentName = null }) {
    */
   const handleCheck = async () => {
     try {
-      await checkAPI(inputValue);
+      await checkAPIHeader(inputValue, name, value, statusCode);
       setState({ status: true, error: null });
     } catch (error) {
-      const errorMessage = "The API check failed"
+      const errorMessage = "The API header check failed"
       setState({ status: false, error: errorMessage });
     }
   };
 
   return (
     <div className="flex flex-col">
-      <p>
-        {url && (
-          <>
-            <b>URL:</b> {url}
-          </>
-        )}
-        {componentName && (
-          <>
-            <b>Component Name:</b> {componentName}
-          </>
-        )}
-      </p>
+      <div>
+        <p><b>Header Name:</b> {name}</p>
+        <p><b>Header Value:</b> {value}</p>
+      </div>
       <button 
         onClick={handleCheck}
         className="py-2 px-4 size-min bg-blue-500 hover:bg-blue-600 text-white rounded focus:ring-indigo-500 focus:border-indigo-600 active:bg-blue-700"
