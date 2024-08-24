@@ -1,5 +1,6 @@
 "use server"
-import { getComponentName, getRedisVariable } from "./variables";
+import { getComponentName } from "./variables";
+import { fetchRedisVariable } from "./redis";
 
 /**
  * Retrieves the URL for a given component name.
@@ -12,7 +13,7 @@ import { getComponentName, getRedisVariable } from "./variables";
  * @throws {Error} - Throws an error if petname or component data is missing or invalid.
  */
 async function getComponentUrl(componentName) {
-  const componentData = await getRedisVariable(`components:${componentName}`);
+  const componentData = await fetchRedisVariable(`components:${componentName}`);
   if (!componentData) throw new Error('Component data is missing or invalid');
 
   const port = componentData?.ports?.host;

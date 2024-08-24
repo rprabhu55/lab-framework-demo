@@ -1,6 +1,7 @@
 "use server"
 import { spawn } from "child_process";
-import { getComponentName, setRedisVariable, removeRedisVariable } from "./variables";
+import { getComponentName } from "./variables";
+import { setRedisVariable, removeRedisVariable } from "./redis";
 
 /**
  * Helper function to build Docker command arguments.
