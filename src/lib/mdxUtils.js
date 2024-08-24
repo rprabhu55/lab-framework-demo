@@ -20,7 +20,7 @@ export const LOCAL_DOCS_PATH = path.join(process.cwd(), "src/app/docs");
  */
 export async function getMdxContent(documentName) {
 
-    // these values need to be pulled from ENV, to avoid remote code execution
+  // these values need to be pulled from ENV, to avoid remote code execution
   const remoteDocsRepoServer = await getEnvVariable("REMOTE_DOCS_REPO_SERVER")
   const remoteDocsRepoOwner = await getEnvVariable("REMOTE_DOCS_REPO_OWNER")
   const remoteDocsRepoName = await getEnvVariable("REMOTE_DOCS_REPO_NAME")
