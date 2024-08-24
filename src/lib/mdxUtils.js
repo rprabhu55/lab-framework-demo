@@ -4,7 +4,7 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import imgLinks from "@pondorasti/remark-img-links";
 import emoji from "remark-emoji";
-import { getVariable } from "./variables"
+import { getVariable, getEnvVariable } from "./variables"
 import MDXComponents from "./mdxComponents"
 import { mapAsync, filterAsync } from "lodasync"
 import matter from "gray-matter";
@@ -13,12 +13,13 @@ export const LOCAL_DOCS_PATH = path.join(process.cwd(), "src/app/docs");
 
 export async function getMdxContent(params) {
 
-  const remoteDocsRepoServer = await getVariable("REMOTE_DOCS_REPO_SERVER")
-  const remoteDocsRepoOwner = await getVariable("REMOTE_DOCS_REPO_OWNER")
-  const remoteDocsRepoName = await getVariable("REMOTE_DOCS_REPO_NAME")
-  const remoteDocsRepoBranch = await getVariable("REMOTE_DOCS_REPO_BRANCH")
-  const remoteDocsRepoPath = await getVariable("REMOTE_DOCS_REPO_PATH")
-  const remoteDocsRepoMediaPath = await getVariable("REMOTE_DOCS_REPO_MEDIA_PATH") || "media"
+  // these values need to be pulled from ENV, to avoid remote code execution
+  const remoteDocsRepoServer = await getEnvVariable("REMOTE_DOCS_REPO_SERVER")
+  const remoteDocsRepoOwner = await getEnvVariable("REMOTE_DOCS_REPO_OWNER")
+  const remoteDocsRepoName = await getEnvVariable("REMOTE_DOCS_REPO_NAME")
+  const remoteDocsRepoBranch = await getEnvVariable("REMOTE_DOCS_REPO_BRANCH")
+  const remoteDocsRepoPath = await getEnvVariable("REMOTE_DOCS_REPO_PATH")
+  const remoteDocsRepoMediaPath = await getEnvVariable("REMOTE_DOCS_REPO_MEDIA_PATH") || "media"
 
   let remarkPlugins = [
     remarkGfm,
