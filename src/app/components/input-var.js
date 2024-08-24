@@ -32,6 +32,7 @@ export function InputVariable({ variableKey = '', value = '' }) {
       setState({ status: false, error: error.message });
     } finally {
       setIsDisabled(false);
+      setInputValue('');
     }
   };
 
