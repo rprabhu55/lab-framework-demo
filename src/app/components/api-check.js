@@ -13,6 +13,14 @@ import { APIBase } from '@/lib/api-base'
  * @param {string} [props.url=null] - The URL to check.
  * 
  * @returns {JSX.Element} The rendered component.
+ * 
+ * * @example
+ *  <APICheck 
+ *    componentName="ExampleComponent" 
+ *    path="/example-path" 
+ *    targetStatusCode={200} 
+ *    url="https://api.example.com" 
+ *  />
  */
 export function APICheck({ 
   componentName = null, 
@@ -21,20 +29,29 @@ export function APICheck({
   url = null 
 }) {
   return (
-    <div className="flex flex-col">
-      <p className="space-y-2">
+    <div className="flex flex-col border border-gray-300 p-4 rounded max-w-md">
+      <span className="font-bold text-xl">API Check</span>
+      <div className="mt-2 ml-4">
         {url && (
-          <span className="block">
-            <b className="font-bold">URL:</b> <span className="font-normal">{url}</span>
-          </span>
+          <div className="mb-1">
+            <span className="font-bold">URL:</span> <span className="font-normal">{url}</span>
+          </div>
         )}
         {componentName && (
-          <span className="block">
-            <b className="font-bold">Component Name:</b> <span className="font-normal">{componentName}</span>
-          </span>
+          <div className="mb-1">
+            <span className="font-bold">Component Name:</span> <span className="font-normal">{componentName}</span>
+          </div>
         )}
-      </p>
-      <APIBase componentName={componentName} path={path} targetStatusCode={targetStatusCode} url={url} />
+        <div className="mb-1">
+          <span className="font-bold">Path:</span> <span className="font-normal">{path}</span>
+        </div>
+        <div className="mb-1">
+          <span className="font-bold">Target Response Status Code:</span> <span className="font-normal">{targetStatusCode}</span>
+        </div>
+      </div>
+      <div className="block m-4">
+        <APIBase componentName={componentName} path={path} targetStatusCode={targetStatusCode} url={url} />
+      </div>
     </div>
   );
 }

@@ -5,11 +5,28 @@ import { getVariable } from "@/lib/variables";
 /**
  * Docker component
  * 
- * @param {Object} props
- * @param {String} props.name
- * @param {String} props.desc
- * @param {String} props.image
- * @returns {JSX.Element}
+ * This component renders a DockerCard with the provided properties and fetches the container status.
+ * It also processes environment variables if they are marked as variables.
+ * 
+ * @param {Object} props - The properties object.
+ * @param {String} props.name - The name of the Docker container.
+ * @param {String} props.desc - The description of the Docker container.
+ * @param {String} props.image - The image of the Docker container.
+ * @param {Array} props.env - The environment variables for the Docker container.
+ * @param {Number|null} props.port - The port number for the Docker container.
+ * @param {Array} props.attrs - Additional attributes for the Docker container.
+ * @returns {JSX.Element} - The rendered Docker component.
+ * 
+ * @example
+ * // Example usage of the Docker component
+ * <Docker 
+ *   name="example-container" 
+ *   desc="This is an example Docker container." 
+ *   image="example-image" 
+ *   env={[{ name: "ENV_VAR", value: "value", isVariable: false }]} 
+ *   port={{host: 55055, container: 80}} 
+ *   attrs={["attr1", "attr2"]} 
+ * />
  */
 export async function Docker ({ name = "", desc = "", image = "", env = [], port = null, attrs = [] }) {
 
