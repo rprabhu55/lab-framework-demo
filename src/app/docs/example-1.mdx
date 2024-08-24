@@ -68,9 +68,25 @@ Go back [home](/).
     componentName='NGINX Plus Container 2'
 />
 
+**Check Component + path via status code**
+<APICheck
+    componentName='NGINX Plus Container 2'
+    path="/this-is-a-test"
+    targetStatusCode="404"
+/>
+
 **Check Component via response header**
 <APIHeaderCheck
     componentName='NGINX Plus Container 2'
     name="Server"
     value="nginx/1.25.5"
+/>
+
+**Check Component via response header, path, and status code**
+<APIHeaderCheck
+    componentName='NGINX Plus Container 2'
+    path="/this-is-a-test"
+    name="Server"
+    value="nginx/1.25.5"
+    targetStatusCode="404"
 />

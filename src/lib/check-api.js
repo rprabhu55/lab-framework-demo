@@ -22,16 +22,13 @@ async function getComponentUrl(componentName) {
 }
 
 /**
- * Determines the URL to check based on the input.
+ * Determines the component URL to check based on the input.
  * 
- * @param {string} urlOrComponentName - The URL or component name to check.
+ * @param {string} name - The URL or component name to check.
  * @returns {Promise<string>} - The URL to check.
  */
-async function determineUrl(urlOrComponentName) {
-  if (urlOrComponentName.startsWith('http://') || urlOrComponentName.startsWith('https://')) {
-    return urlOrComponentName;
-  }
-  const componentName = await getComponentName(urlOrComponentName);
+async function determineUrl(name) {
+  const componentName = await getComponentName(name);
   return getComponentUrl(componentName);
 }
 
@@ -47,19 +44,23 @@ async function determineUrl(urlOrComponentName) {
  * @returns {Promise<boolean>} - Returns true if the API returns the expected status code.
  * @throws {Error} - Throws an error if the API request fails or returns an unexpected status code.
  */
-export async function checkAPI(urlOrComponentName, targetStatusCode = 200) {
-  const url = await determineUrl(urlOrComponentName);
-
+export async function checkAPI({componentName = null, path = "/", url = null, targetStatusCode = 200}) {
+  if(componentName)
+    url = await determineUrl(componentName);
   try {
-    const response = await fetch(url, { mode: 'cors', cache: "no-store" });
-    if (response.status !== targetStatusCode) {
-      throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
+    const response = await fetch(url + path, { mode: 'cors', cache: "no-store" });
+    // if (response.status !== targetStatusCode) {
+    //   throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
+    // }
+    if (response.status === targetStatusCode) {
+      return true;
     }
-    return true;
+    console.error(`HTTP error ${response.status}: ${response.statusText}`);
+    return false;
   } catch (error) {
     console.error('API request failed:', error);
     throw new Error(`Failed API request: ${error.message} (HTTP status code: ${error.status})`);
-  }
+  }  
 }
 
 /**
@@ -76,8 +77,9 @@ export async function checkAPI(urlOrComponentName, targetStatusCode = 200) {
  * @returns {Promise<boolean>} - Returns true if the API returns the expected status code and header.
  * @throws {Error} - Throws an error if the API request fails or returns an unexpected status code or header.
  */
-export async function checkAPIHeader(urlOrComponentName, headerName, headerValue, targetStatusCode = 200) {
-  const url = await determineUrl(urlOrComponentName);
+export async function checkAPIHeader({componentName = null, url = null, name = '', value = '', targetStatusCode = 200}) {
+  if(componentName) 
+      url = await determineUrl(componentName);
 
   try {
     const response = await fetch(url, { mode: 'cors', cache: "no-store" });
@@ -85,9 +87,9 @@ export async function checkAPIHeader(urlOrComponentName, headerName, headerValue
       throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
     }
 
-    const header = response.headers.get(headerName);
-    if (header !== headerValue) {
-      throw new Error(`Header mismatch: expected ${headerName} to be ${headerValue}, but got ${header}`);
+    const header = response.headers.get(name);
+    if (header !== value) {
+      throw new Error(`Header mismatch: expected ${name} to be ${value}, but got ${header}`);
     }
 
     return true;

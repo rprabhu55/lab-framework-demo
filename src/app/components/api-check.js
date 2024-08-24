@@ -13,9 +13,8 @@ import { useState } from 'react';
  * @param {string} [props.componentName=null] - The component name to check (optional if URL is provided).
  * @returns {JSX.Element} - The rendered component.
  */
-export function APICheck({ url = '', componentName = null }) {
+export function APICheck({ url = null, componentName = null, path = '/', targetStatusCode=200 }) {
   const [state, setState] = useState({ status: null, error: null });
-  const inputValue = componentName || url;
 
   /**
    * Handles the API check and updates the state accordingly.
@@ -25,7 +24,7 @@ export function APICheck({ url = '', componentName = null }) {
    */
   const handleCheck = async () => {
     try {
-      await checkAPI(inputValue);
+      await checkAPI({url, componentName, path, targetStatusCode});
       setState({ status: true, error: null });
     } catch (error) {
       const errorMessage = "The API check failed"

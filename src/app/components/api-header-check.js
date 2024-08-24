@@ -13,9 +13,8 @@ import { useState } from 'react';
  * @param {string} [props.componentName=null] - The component name to check (optional if URL is provided).
  * @returns {JSX.Element} - The rendered component.
  */
-export function APIHeaderCheck({ url = '', componentName = null, name = null, value = null, statusCode = 200 }) {
+export function APIHeaderCheck({ componentName = null, name = null, value = null, path = "/", url = '', statusCode = 200 }) {
   const [state, setState] = useState({ status: null, error: null });
-  const inputValue = componentName || url;
 
   /**
    * Handles the API check and updates the state accordingly.
@@ -25,7 +24,7 @@ export function APIHeaderCheck({ url = '', componentName = null, name = null, va
    */
   const handleCheck = async () => {
     try {
-      await checkAPIHeader(inputValue, name, value, statusCode);
+      await checkAPIHeader({componentName, name, value, path, url, statusCode});
       setState({ status: true, error: null });
     } catch (error) {
       const errorMessage = "The API header check failed"
