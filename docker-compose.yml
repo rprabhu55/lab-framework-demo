@@ -1,7 +1,8 @@
 services:
   lab-framework:
-    build:
-      dockerfile: ./Dockerfile
+    image: ghcr.io/codygreen/lab-framework-demo-lab-framework:sha-9916438
+    # build:
+    #   dockerfile: ./Dockerfile
     restart: always
     ports:
       - "3000:3000"
@@ -11,10 +12,12 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./.env:/app/.env"
 
   redis:
-    build:
-      dockerfile: ./Dockerfile.redis
+    image: ghcr.io/codygreen/lab-framework-demo-redis:sha-9916438
+    # build:
+    #   dockerfile: ./Dockerfile.redis
     restart: always
     ports:
       - "6379:6379"

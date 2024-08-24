@@ -1,20 +1,25 @@
+"use server"
 /**
  * Utility functions for interacting with environment variables and Redis.
  */
 
-import { createClient } from "redis";
-import { REDIS_URL, PETNAME_URL } from "./constants";
+import { PETNAME_API_URL } from "./constants";
+import { fetchRedisVariable, setRedisVariable } from "./redis";
+import { fetchLabInfo, fetchUDFInfo } from "./udf";
 
 /**
- * Creates and connects a Redis client.
- *
- * @returns {Object} The connected Redis client
+ * Returns a normalized component name prefixed with petname
+ * 
+ * @param {string} - a name
+ * @return {string} - a unique and normalized component name
  */
-async function connectRedis() {
-    const redis = createClient({ url: REDIS_URL });
-    redis.on("error", err => console.error("Redis Client Error", err));
-    await redis.connect();
-    return redis;
+export async function getComponentName(name){
+    try {
+        const petname = await getPetname();
+        return petname + "-" + name.replace(/ /g, "-").toLowerCase();
+    } catch(error) {
+        throw new Error("Error getting component name: ", error.message)
+    }
 }
 
 /**
@@ -28,30 +33,21 @@ export async function getEnvVariable(name) {
 }
 
 /**
- * Retrieves the username from the environment variables.
- *
- * @returns {string|null} The username, or null if it does not exist
- */
-export async function getUsername() {
-    return process.env.USERNAME || null;
-}
-
-/**
  * Retrieves a random pet name from the UDF pet name service.
  * 
  * @returns {string} A random pet name
  */
 export async function getPetname() {
     const petnameKey = "petname";
-    let petname = await getRedisVariable(petnameKey);
+    let petname = await fetchRedisVariable(petnameKey);
     if (petname) {
         return petname;
     }
     try {
         // Fetch pet name from external service
-        const response = await fetch(PETNAME_URL, { cache: 'no-store' });
+        const response = await fetch(PETNAME_API_URL, { cache: 'no-store' });
         if (!response.ok) {
-            throw new Error(`Failed to retrieve petname from ${PETNAME_URL}`);
+            throw new Error(`Failed to retrieve petname from ${PETNAME_API_URL}`);
         }
         const petData = await response.json();
         petname = petData[petnameKey];
@@ -64,72 +60,36 @@ export async function getPetname() {
 }
 
 /**
- * Retrieves a variable by first checking the environment variables and then Redis.
+ * Retrieves a variable by first checking the following sources:
+ *  - environment variables 
+ *  - Redis
+ *  - LabInfo API
+ *  - UDF API
  *
  * @param {string} name - The name of the variable to retrieve
  * @returns {string|null} The value of the variable, or null if it does not exist
  */
 export async function getVariable(name) {
-    let value = await getEnvVariable(name);
-    if (value) {
-        return value;
-    }
-    value = await getRedisVariable(name);
-    return value;
-}
-
-/**
- * Fetches data from the Redis store.
- *
- * @param {string} path - The Redis key to fetch data for
- * @returns {Object|string|null} The fetched data, or null if the key does not exist
- */
-export async function getRedisVariable(path) {
-    const redis = await connectRedis();
-    try {
-        const pathType = await redis.type(path);
-        if (pathType === "string") {
-            return await redis.get(path) || null;
-        } else {
-            return await redis.json.get(path) || null;
+    const sources = [getEnvVariable, fetchRedisVariable, fetchLabInfo, fetchUDFInfo];
+    if (name === null) return null;
+    for (const source of sources) {
+        const value = await source(name);
+        if (value) {
+            return value;
         }
-    } catch (error) {
-        console.error(`Error fetching Redis variable ${path}:`, error);
-        return null;
-    } finally {
-        await redis.disconnect();
     }
+
+    return null;
 }
 
 /**
- * Sets a value in the Redis store.
+ * Sets a variable in the storage.
  *
- * @param {string} path - The Redis key to set data for
- * @param {*} value - The value to store in Redis
+ * @param {string} key - The key of the variable to set
+ * @param {string} value - The value of the variable to set
+ 
  */
-export async function setRedisVariable(path, value) {
-    const redis = await connectRedis();
-    try {
-        if (typeof value === 'object') {
-            await redis.json.set(path, "$", value);
-        } else {
-            await redis.set(path, value);
-        }
-    } finally {
-        await redis.disconnect();
-    }
+export async function setVariable(key, value) {
+    await setRedisVariable(key, value);
 }
 
-/**
- * Removes a key from the Redis store.
- *
- * @param {string} path - The Redis key to remove
- */
-export async function removeRedisVariable(path) {
-    const redis = await connectRedis();
-    try {
-        await redis.del(path);
-    } finally {
-        await redis.disconnect();
-    }
-}
