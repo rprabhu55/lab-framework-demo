@@ -6,7 +6,7 @@ import { Docker } from "@/app/components/docker";
 import { DockerStatus } from "@/app/components/docker-status";
 import { GetVariable } from "@/app/components/get-variable";
 import { InputVariable } from "@/app/components/input-var";
-import { UdfMetadata } from "@/app/components/udf-metadata";
+import { UdfDeploymentMetadata } from "@/app/components/udf-deployment-metadata";
 import DockerContainer from "@/app/components/docker-container";
 
 const MDXComponents = {
@@ -19,7 +19,7 @@ const MDXComponents = {
     DockerContainer,
     GetVariable,
     InputVariable,
-    UdfMetadata,
+    UdfDeploymentMetadata,
     h1: (props) => <h1 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
     h2: (props) => <h2 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
     h3: (props) => <h3 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,

@@ -1,5 +1,5 @@
 /**
- * Helper methods to ineract with the Redis database
+ * Helper methods to interact with the Redis database
  */
 
 import { createClient } from "redis";
