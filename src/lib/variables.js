@@ -16,7 +16,7 @@ import { fetchLabInfo, fetchUDFInfo } from "./udf";
 export async function getComponentName(name){
     try {
         const petname = await getPetname();
-        return petname + "-" + name.replace(/ /g, "-").toLowerCase();
+        return petname + "-" + name.replace(/[^a-zA-Z0-9 ]/g, "").replace(/ /g, "-").toLowerCase();
     } catch(error) {
         throw new Error("Error getting component name: ", error.message)
     }
