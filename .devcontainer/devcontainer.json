@@ -48,7 +48,8 @@
 				"bradlc.vscode-tailwindcss",
 				"dbaeumer.vscode-eslint",
 				"GitHub.vscode-pull-request-github",
-				"eamodio.gitlens"
+				"eamodio.gitlens",
+				"lllllllqw.jsdoc"
 			]
 		}
 	},

@@ -12,6 +12,23 @@ import matter from "gray-matter";
 export const LOCAL_DOCS_PATH = path.join(process.cwd(), "src/app/docs");
 
 /**
+ * Returns all document-loading related settings.
+ * @returns {any} object containing named constants.
+ */
+async function getDocsSettings() {
+  // these values need to be pulled from ENV, to avoid remote code execution
+  const remoteDocsRepoServer = await getEnvVariable("REMOTE_DOCS_REPO_SERVER");
+  const remoteDocsRepoApiServer = await getVariable("REMOTE_DOCS_REPO_API_SERVER")
+  const remoteDocsRepoOwner = await getEnvVariable("REMOTE_DOCS_REPO_OWNER");
+  const remoteDocsRepoName = await getEnvVariable("REMOTE_DOCS_REPO_NAME");
+  const remoteDocsRepoBranch = await getEnvVariable("REMOTE_DOCS_REPO_BRANCH");
+  const remoteDocsRepoPath = await getEnvVariable("REMOTE_DOCS_REPO_PATH");
+  const remoteDocsRepoMediaPath = await getEnvVariable("REMOTE_DOCS_REPO_MEDIA_PATH") || "media";
+  const remoteDocsRepoCacheSeconds = parseInt(await getEnvVariable("REMOTE_DOCS_REPO_CACHE_SECONDS") || 300);
+  return { remoteDocsRepoServer, remoteDocsRepoApiServer, remoteDocsRepoOwner, remoteDocsRepoName, remoteDocsRepoBranch, remoteDocsRepoMediaPath, remoteDocsRepoPath, remoteDocsRepoCacheSeconds };
+}
+
+/**
  * Compiles MD(X) document content.
  * @param {string} documentName - The file name of the document to compile.
  * 
@@ -20,24 +37,17 @@ export const LOCAL_DOCS_PATH = path.join(process.cwd(), "src/app/docs");
  */
 export async function getMdxContent(documentName) {
 
-  // these values need to be pulled from ENV, to avoid remote code execution
-  const remoteDocsRepoServer = await getEnvVariable("REMOTE_DOCS_REPO_SERVER")
-  const remoteDocsRepoOwner = await getEnvVariable("REMOTE_DOCS_REPO_OWNER")
-  const remoteDocsRepoName = await getEnvVariable("REMOTE_DOCS_REPO_NAME")
-  const remoteDocsRepoBranch = await getEnvVariable("REMOTE_DOCS_REPO_BRANCH")
-  const remoteDocsRepoPath = await getEnvVariable("REMOTE_DOCS_REPO_PATH")
-  const remoteDocsRepoMediaPath = await getEnvVariable("REMOTE_DOCS_REPO_MEDIA_PATH") || "media"
-  const remoteDocsRepoCacheSeconds = parseInt(await getEnvVariable("REMOTE_DOCS_REPO_CACHE_SECONDS") || 300)
+  const docsSettings = await getDocsSettings();
 
   let remarkPlugins = [
     remarkGfm,
     emoji,
   ]
-  if (remoteDocsRepoServer) remarkPlugins.push([imgLinks, { absolutePath: `${remoteDocsRepoServer}/${remoteDocsRepoOwner}/${remoteDocsRepoName}/${remoteDocsRepoBranch}/${remoteDocsRepoMediaPath}` }])
+  if (docsSettings.remoteDocsRepoServer) remarkPlugins.push([imgLinks, { absolutePath: `${docsSettings.remoteDocsRepoServer}/${docsSettings.remoteDocsRepoOwner}/${docsSettings.remoteDocsRepoName}/${docsSettings.remoteDocsRepoBranch}/${docsSettings.remoteDocsRepoMediaPath}` }])
 
-  const documentUrl = `${remoteDocsRepoServer}/${remoteDocsRepoOwner}/${remoteDocsRepoName}/${remoteDocsRepoBranch}/${remoteDocsRepoPath}/${documentName}`
-  if (remoteDocsRepoServer) console.log(`Fetching remote document: ${documentUrl}, caching for ${remoteDocsRepoCacheSeconds} seconds.`)
-  const sourceDocument = remoteDocsRepoServer ? await getRemoteDocument(documentUrl, remoteDocsRepoCacheSeconds) : await getLocalDocument(documentName)
+  const documentUrl = `${docsSettings.remoteDocsRepoServer}/${docsSettings.remoteDocsRepoOwner}/${docsSettings.remoteDocsRepoName}/${docsSettings.remoteDocsRepoBranch}/${docsSettings.remoteDocsRepoPath}/${documentName}`
+  if (docsSettings.remoteDocsRepoServer) console.log(`Fetching remote document: ${documentUrl}, caching for ${docsSettings.remoteDocsRepoCacheSeconds} seconds.`)
+  const sourceDocument = docsSettings.remoteDocsRepoServer ? await getRemoteDocument(documentUrl, docsSettings.remoteDocsRepoCacheSeconds) : await getLocalDocument(documentName)
   return await compileMDX({
     source: sourceDocument,
     components: MDXComponents,
@@ -52,6 +62,7 @@ export async function getMdxContent(documentName) {
     },
   })
 }
+
 
 /**
  * Fetches MD(X) content from the local file system.
@@ -103,22 +114,20 @@ async function getRemoteDocument(url, cacheSeconds) {
  * @returns {any} array of document data sorted by order metadata in frontmatter
  */
 export async function getIndexDocs() {
-  const remoteDocsRepoServer = await getEnvVariable("REMOTE_DOCS_REPO_SERVER")
-  return remoteDocsRepoServer ? await getGitHubDocs() : await getLocalDocs(LOCAL_DOCS_PATH)
+  const docsSettings = await getDocsSettings();
+  return docsSettings.remoteDocsRepoServer ? await getGitHubDocs(docsSettings.remoteDocsRepoCacheSeconds) : await getLocalDocs(LOCAL_DOCS_PATH)
 }
 
 /**
  * Gets a list of MD(X) documents from a remote source, GitHub.
+ * @param {string} cacheSeconds - The number of seconds to cache the fetched content in nextjs.
  * @returns {any} array of document data sorted by order metadata in frontmatter
  */
-async function getGitHubDocs() {
+async function getGitHubDocs(cacheSeconds) {
 
-  const remoteDocsRepoApiServer = await getVariable("REMOTE_DOCS_REPO_API_SERVER")
-  const remoteDocsRepoOwner = await getVariable("REMOTE_DOCS_REPO_OWNER")
-  const remoteDocsRepoName = await getVariable("REMOTE_DOCS_REPO_NAME")
-  const remoteDocsRepoPath = await getVariable("REMOTE_DOCS_REPO_PATH")
+  const docsSettings = await getDocsSettings();
 
-  const url = `${remoteDocsRepoApiServer}/repos/${remoteDocsRepoOwner}/${remoteDocsRepoName}/contents/${remoteDocsRepoPath}`
+  const url = `${docsSettings.remoteDocsRepoApiServer}/repos/${docsSettings.remoteDocsRepoOwner}/${docsSettings.remoteDocsRepoName}/contents/${docsSettings.remoteDocsRepoPath}?ref=${docsSettings.remoteDocsRepoBranch}`
 
   const fetchOptions = {
     method: "GET",
@@ -126,8 +135,12 @@ async function getGitHubDocs() {
     headers: {
       "Accept": "application/json",
       "X-GitHub-Api-Version": "2022-11-28"
+    },
+    next: {
+      revalidate: cacheSeconds
     }
   }
+  console.log(`Fetching remote index: ${url}, caching for ${docsSettings.remoteDocsRepoCacheSeconds} seconds.`)
   const res = await fetch(url, fetchOptions)
 
   if (!res.ok) {
