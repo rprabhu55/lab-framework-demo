@@ -4,19 +4,19 @@
 
 /* Custom styles */
 h1 {
-  @apply text-4xl font-bold m-4;
-}
-h2 {
   @apply text-3xl font-bold m-4;
 }
-h3 {
+h2 {
   @apply text-2xl font-bold m-4;
 }
-h4 {
+h3 {
   @apply text-xl font-bold m-4;
 }
+h4 {
+  @apply text-lg font-bold m-4;
+}
 p {
-  @apply text-lg m-4 font-sans;
+  @apply text-base m-4 font-sans;
 }
 ul {
   @apply list-disc list-inside m-4;
