@@ -48,3 +48,13 @@ p img {
 ol {
   @apply list-decimal list-inside pl-5;
 }
+.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .toc-container {
+    display: none;
+  }
+}
+
