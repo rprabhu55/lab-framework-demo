@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.flex-grow {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+  overflow-x: hidden; /* Ensure no horizontal overflow */
+}
+
 /* Custom styles */
 h1 {
   @apply text-3xl font-bold m-4;
@@ -47,4 +55,12 @@ p img {
 }
 ol {
   @apply list-decimal list-inside pl-5;
+}
+.hidden {
+  display: none;
+}
+@media (max-width: 768px) {
+  .toc-container {
+    display: none;
+  }
 }

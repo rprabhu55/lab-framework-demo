@@ -16,14 +16,16 @@ export function ToC() {
   }, [])
 
   return (
-    <div className="p-1 w-80 sticky top-0 border-r-2">
+    <div className="toc-container p-1 w-80 sticky top-0 border-r-2">
       <ul className="list-none">
         {headings.map((heading) => (
           <li key={heading.id} className="">
-            <a className="no-underline text-gray-500 text-base" href={`#${heading.id}`}>{heading.title.substring(0,)}</a>
+            <a className="no-underline text-gray-500 text-base" href={`#${heading.id}`}>
+              {heading.title.substring(0,)}
+            </a>
           </li>
         ))}
       </ul>
     </div>
-  )
+  );
 }
