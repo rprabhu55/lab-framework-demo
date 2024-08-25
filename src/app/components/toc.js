@@ -20,7 +20,7 @@ export function ToC() {
       <ul className="list-none">
         {headings.map((heading) => (
           <li key={heading.id} className="">
-            <a className="no-underline text-black text-xs" href={`#${heading.id}`}>{heading.title.substring(0,)}</a>
+            <a className="no-underline text-black text-base" href={`#${heading.id}`}>{heading.title.substring(0,)}</a>
           </li>
         ))}
       </ul>
