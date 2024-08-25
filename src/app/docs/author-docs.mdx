@@ -206,8 +206,11 @@ The **Docker** component is responsible for managing and displaying information 
     env={[
       { name: "NGINX_AGENT_SERVER_HOST", value: "value", isVariable: false },
       { name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true }
-      ]} 
-    port={{host: 55055, container: 80}} 
+    ]} 
+    port={{host: 55055, container: 80}}
+    attrs={[
+      { name: "volume", value: "<path to folder on Docker host>/ssl:/etc/nginx/ssl" }
+    ]}
   />
   <Docker
     name="nginx-plus-2"
