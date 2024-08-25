@@ -1,4 +1,4 @@
-import { APIBase } from '@/lib/api-base'
+import { APIBase } from "@/lib/api-base"
 
 /**
  * APIResponseCheck component
@@ -8,7 +8,7 @@ import { APIBase } from '@/lib/api-base'
  * 
  * @param {Object} props - The properties object.
  * @param {string} [props.componentName=null] - The name of the component to check.
- * @param {string} [props.path='/'] - The path to append to the URL for the API check.
+ * @param {string} [props.path="/"] - The path to append to the URL for the API check.
  * @param {string} [props.searchString=null] - The string to search for in the API response.
  * @param {number} [props.targetStatusCode=200] - The expected HTTP status code from the API check.
  * @param {string} [props.url=null] - The URL to check.
@@ -27,7 +27,7 @@ import { APIBase } from '@/lib/api-base'
  */
 export function APIResponseCheck({ 
   componentName = null, 
-  path = '/', 
+  path = "/", 
   searchString = null,
   targetStatusCode = 200, 
   url = null 

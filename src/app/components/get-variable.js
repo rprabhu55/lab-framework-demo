@@ -1,5 +1,5 @@
-import { Suspense } from 'react'
-import { getVariable } from '@/lib/variables';
+import { Suspense } from "react"
+import { getVariable } from "@/lib/variables";
 
 /**
  * Asynchronously retrieves a variable by its name and displays it within a React component.
@@ -11,18 +11,17 @@ import { getVariable } from '@/lib/variables';
  * @example
  * <GetVariable name="exampleVariable" />
  */
-export async function GetVariable({name}) {
-  if (!name) return "eat shit - empty";
+export async function GetVariable({ name }) {
+  if (!name) return "Variable name empty";
 
   let value = null;
 
   try {
     value = await getVariable(name);
   } catch (error) {
-    console.error('unable to retrieve variable: ', name);
-    return "eat shit - error";
+    console.error("unable to retrieve variable: ", name);
+    return "Error retrieving variable";
   }
-  
 
   return (
     <span>

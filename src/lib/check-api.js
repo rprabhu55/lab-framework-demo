@@ -14,7 +14,7 @@ import { fetchRedisVariable } from "./redis";
  */
 async function getComponentUrl(componentName) {
   const componentData = await fetchRedisVariable(`components:${componentName}`);
-  if (!componentData) throw new Error('Component data is missing or invalid');
+  if (!componentData) throw new Error("Component data is missing or invalid");
 
   const port = componentData?.ports?.host;
   if (port) return `http://host.docker.internal:${port}`;
@@ -70,7 +70,7 @@ export async function checkAPI({
   }
 
   try {
-    const response = await fetch(url, { mode: 'cors', cache: "no-store" });
+    const response = await fetch(url, { mode: "cors", cache: "no-store" });
     if (response.status != targetStatusCode) {
       throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
     }
@@ -91,7 +91,7 @@ export async function checkAPI({
 
     return true;
   } catch (error) {
-    console.error('API request failed:', error);
+    console.error("API request failed:", error);
     throw new Error(`Failed API request: ${error.message}`);
   }
 }

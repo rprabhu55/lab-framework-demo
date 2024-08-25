@@ -24,10 +24,10 @@ import { setRedisVariable } from "./redis";
  *     }
  *   }
  * };
- * const value = findValueByKey(data, 'e'); // returns 3
+ * const value = findValueByKey(data, "e"); // returns 3
  */
 function findValueByKey(obj, key) {
-  if (obj == null || typeof obj !== 'object') {
+  if (obj == null || typeof obj !== "object") {
     return null;
   }
 
@@ -55,7 +55,7 @@ function findValueByKey(obj, key) {
  */
 async function fetchInfo(url, variableName) {
   try {
-    const response = await fetch(url, { mode: 'cors', cache: "no-store" });
+    const response = await fetch(url, { mode: "cors", cache: "no-store" });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -65,7 +65,7 @@ async function fetchInfo(url, variableName) {
     const variableValue = findValueByKey(data, variableName);
     return variableValue;
   } catch (error) {
-    console.error('Error fetching lab info:', error);
+    console.error("Error fetching lab info:", error);
     return null;
   }
 }
@@ -86,7 +86,7 @@ export async function fetchLabInfo(variableName) {
   }
   
   await setRedisVariable(variableName, variableValue).catch(error => {
-  console.error('Unable to store the lab info in redis: ', error.message);
+  console.error("Unable to store the lab info in redis: ", error.message);
   });
   return variableValue;
 }
@@ -104,7 +104,7 @@ export async function fetchUDFInfo(variableName) {
    */ 
   const variableValue = await fetchInfo(UDF_DEPLOYMENT_API_URL, variableName);
   await setRedisVariable(variableName, variableValue).catch(error => {
-  console.error('Unable to store the lab info in redis: ', error.message);
+  console.error("Unable to store the lab info in redis: ", error.message);
   });
   return variableValue;
 }
