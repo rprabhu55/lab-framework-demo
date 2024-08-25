@@ -16,7 +16,7 @@ export function ToC() {
   }, [])
 
   return (
-    <div className="toc-container p-1 w-80 sticky top-0 border-r-2">
+    <div className="toc-container p-1 w-80 sticky top-0 border-r-2 h-screen">
       <ul className="list-none">
         {headings.map((heading) => (
           <li key={heading.id} className="">
