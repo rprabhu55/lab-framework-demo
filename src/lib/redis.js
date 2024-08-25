@@ -57,7 +57,7 @@ export async function setRedisVariable(path, value) {
   const normalizedPath = normalizePathName(path);
   const redis = await connectRedis();
   try {
-      if (typeof value === 'object') {
+      if (typeof value === "object") {
           await redis.json.set(normalizedPath, "$", value);
       } else {
           await redis.set(normalizedPath, value);

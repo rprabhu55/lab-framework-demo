@@ -22,120 +22,120 @@ import { getComponentName } from "@/lib/variables";
  */
 export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunning }) {
 
-    const [isRunning, setIsRunning] = useState(initialIsRunning);
-    const [isMinimized, setIsMinimized] = useState(true)
-    const [showBox, setShowBox] = useState(false);
-    const [error, setError] = useState(null);
-    const [msg, setMsg] = useState(null);
-    const [componentName, setComponentName] = useState('loading...');
+  const [isRunning, setIsRunning] = useState(initialIsRunning);
+  const [isMinimized, setIsMinimized] = useState(true)
+  const [showBox, setShowBox] = useState(false);
+  const [error, setError] = useState(null);
+  const [msg, setMsg] = useState(null);
+  const [componentName, setComponentName] = useState("loading...");
 
-    // Update componentName on initial load
-    useEffect(() => {
-        const fetchComponentName = async () => {
-            try {
-                setComponentName(getComponentName(name));
-            } catch (error) {
-                setError(error.message);
-            }
-        };
-
-        fetchComponentName();
-    }, [name, isRunning]);
-
-    /**
-     * Handles the click event.
-     * 
-     * @returns {Promise<void>} The promise object representing the result of the operation.
-     */
-    const handleClick = async () => {
-
-        setError(null);
-        setMsg(null);
-
-        try {
-            if (isRunning === true) {
-                await stopContainer(name);
-                setIsRunning(!isRunning);
-                setComponentName(null);
-            } else {
-                await createContainer(name, image, env, port, attrs);
-                setIsRunning(!isRunning);
-                setComponentName(await getComponentName(name));
-            }
-        } catch (error) {
-            console.error("ERROR RETURNED", error.message);
-            setError(error.message);
-        }
+  // Update componentName on initial load
+  useEffect(() => {
+    const fetchComponentName = async () => {
+      try {
+        setComponentName(getComponentName(name));
+      } catch (error) {
+        setError(error.message);
+      }
     };
 
-    const handleTestClick = async () => {
+    fetchComponentName();
+  }, [name, isRunning]);
 
-        setError(null);
-        setMsg(null);
+  /**
+   * Handles the click event.
+   * 
+   * @returns {Promise<void>} The promise object representing the result of the operation.
+   */
+  const handleClick = async () => {
 
-        try {
-            if(isRunning !== true) {
-                return null;
-            }
-            await checkAPI(name);
-            setMsg('works');
-        } catch (error) {
-            const errorMessage = error.message.includes('HTTP error')
-                ? `API request failed with status code ${error.status}: ${error.message}`
-                : error.message;
-            console.error('Error occurred while running API check:', error);
-            setError(errorMessage);
-        }
-    };
+    setError(null);
+    setMsg(null);
 
-    const handleMinimizeClick = () => {
-        setIsMinimized(!isMinimized);
-        setError(null);
-        setMsg(null);
-    };
+    try {
+      if (isRunning === true) {
+        await stopContainer(name);
+        setIsRunning(!isRunning);
+        setComponentName(null);
+      } else {
+        await createContainer(name, image, env, port, attrs);
+        setIsRunning(!isRunning);
+        setComponentName(await getComponentName(name));
+      }
+    } catch (error) {
+      console.error("ERROR RETURNED", error.message);
+      setError(error.message);
+    }
+  };
 
-    return (
-        <div className={`max-w-md rounded overflow-hidden shadow-lg ${isMinimized ? 'h-55' : 'h-auto'}`}>
-            <DockerLogs containerName={name} showBox={showBox} setShowBox={setShowBox}/>
-            <div className="px-6 py-4">
-                <div className="font-bold text-xl mb-2">{name}</div>
-                {!isMinimized && (
-                    <>
-                        {isRunning && <p className="text-gray-700 text-xs">
-                            <b>container name:</b> {componentName}
-                        </p>}
-                        <p className="text-gray-700 text-base">{desc}</p>
-                        <p className="text-gray-700 text-xs">
-                            <b>image:</b> {image}
-                        </p>
-                        <p className="text-gray-700 text-xs">
-                            {port && <><b>ports: host:</b>{port.host}, <b>container:</b>{port.container}</>}
-                        </p>
-                        <p className="text-gray-700 text-xs">
-                            {attrs && attrs.map((a, i) => (
-                                <span key={i}><b>{a.name}:</b> {a.value} </span>
-                            ))}
-                        </p>
-                        <p className="text-gray-700 text-xs">
-                            {env && env.map((e, i) => (
-                                <span key={i}><b>{e.name}:</b> {e.isSecret ? "********" : e.value} </span>
-                            ))}
-                        </p>
-                    </>
-                )}
-            </div>
-            <div className="px-6 pt-4 pb-2 p-8">                
-                <DockerStateButton isRunning={isRunning} onClick={handleClick} />
-                <DockerLogsButton isRunning={isRunning} onClick={() => setShowBox(!showBox)} />
-                <DockerTestButton isRunning={isRunning} onClick={handleTestClick} />
-                <button 
-                    className="inline-block bg-gray-500 text-white font-bold py-2 px-4 rounded m-2"
-                    onClick={handleMinimizeClick}>
-                    {isMinimized ? 'Details' : 'Hide Details'}
-                </button>
-                {error && <ErrorMessage message={error} />}
-                {msg && <Message message={msg} />}
-            </div>
-        </div>
-    );
+  const handleTestClick = async () => {
+
+    setError(null);
+    setMsg(null);
+
+    try {
+      if (isRunning !== true) {
+        return null;
+      }
+      await checkAPI(name);
+      setMsg("works");
+    } catch (error) {
+      const errorMessage = error.message.includes("HTTP error")
+        ? `API request failed with status code ${error.status}: ${error.message}`
+        : error.message;
+      console.error("Error occurred while running API check:", error);
+      setError(errorMessage);
+    }
+  };
+
+  const handleMinimizeClick = () => {
+    setIsMinimized(!isMinimized);
+    setError(null);
+    setMsg(null);
+  };
+
+  return (
+    <div className={`max-w-md rounded overflow-hidden shadow-lg ${isMinimized ? "h-55" : "h-auto"}`}>
+      <DockerLogs containerName={name} showBox={showBox} setShowBox={setShowBox} />
+      <div className="px-6 py-4">
+        <div className="font-bold text-xl mb-2">{name}</div>
+        {!isMinimized && (
+          <>
+            {isRunning && <p className="text-gray-700 text-xs">
+              <b>container name:</b> {componentName}
+            </p>}
+            <p className="text-gray-700 text-base">{desc}</p>
+            <p className="text-gray-700 text-xs">
+              <b>image:</b> {image}
+            </p>
+            <p className="text-gray-700 text-xs">
+              {port && <><b>ports: host:</b>{port.host}, <b>container:</b>{port.container}</>}
+            </p>
+            <p className="text-gray-700 text-xs">
+              {attrs && attrs.map((a, i) => (
+                <span key={i}><b>{a.name}:</b> {a.value} </span>
+              ))}
+            </p>
+            <p className="text-gray-700 text-xs">
+              {env && env.map((e, i) => (
+                <span key={i}><b>{e.name}:</b> {e.isSecret ? "********" : e.value} </span>
+              ))}
+            </p>
+          </>
+        )}
+      </div>
+      <div className="px-6 pt-4 pb-2 p-8">
+        <DockerStateButton isRunning={isRunning} onClick={handleClick} />
+        <DockerLogsButton isRunning={isRunning} onClick={() => setShowBox(!showBox)} />
+        <DockerTestButton isRunning={isRunning} onClick={handleTestClick} />
+        <button
+          className="inline-block bg-gray-500 text-white font-bold py-2 px-4 rounded m-2"
+          onClick={handleMinimizeClick}>
+          {isMinimized ? "Details" : "Hide Details"}
+        </button>
+        {error && <ErrorMessage message={error} />}
+        {msg && <Message message={msg} />}
+      </div>
+    </div>
+  );
 }

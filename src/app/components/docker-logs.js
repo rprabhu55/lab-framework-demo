@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { getContainerLogs } from '@/lib/containers';
+import React, { useState, useEffect } from "react";
+import { getContainerLogs } from "@/lib/containers";
 
 /**
  * DockerLogs component
@@ -14,42 +14,42 @@ import { getContainerLogs } from '@/lib/containers';
  * @returns {JSX.Element} - The rendered component.
  */
 export function DockerLogs({ containerName, showBox, setShowBox }) {
-    const [containerLogs, setContainerLogs] = useState(false);
+	const [containerLogs, setContainerLogs] = useState(false);
 
-    useEffect(() => {
-        const fetchLogs = async () => {
-            if (showBox && containerName) {
-                const logs = await getContainerLogs(containerName);
-                setContainerLogs(logs);
-            }
-        };
+	useEffect(() => {
+		const fetchLogs = async () => {
+			if (showBox && containerName) {
+				const logs = await getContainerLogs(containerName);
+				setContainerLogs(logs);
+			}
+		};
 
-        fetchLogs();
-    }, [showBox, containerName]);
+		fetchLogs();
+	}, [showBox, containerName]);
 
-    const closeBox = () => {
-        setShowBox(false);
-    };
+	const closeBox = () => {
+		setShowBox(false);
+	};
 
-    return (
-        <div className="relative">
-            {showBox && (
-                <div className="fixed inset-0 bg-white border border-gray-300 p-4 shadow-lg flex flex-col max-h-screen overflow-auto z-50">
-                    <button 
-                        onClick={closeBox} 
-                        className="self-end bg-red-500 text-white px-2 py-1 rounded"
-                    >
-                        X
-                    </button>
-                    <div className="flex-grow">
-                        <pre className="whitespace-pre-wrap bg-black text-white p-2 rounded">
-                            <code>
-                                {containerLogs}
-                            </code>
-                        </pre>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
+	return (
+		<div className="relative">
+			{showBox && (
+				<div className="fixed inset-0 bg-white border border-gray-300 p-4 shadow-lg flex flex-col max-h-screen overflow-auto z-50">
+					<button
+						onClick={closeBox}
+						className="self-end bg-red-500 text-white px-2 py-1 rounded"
+					>
+						X
+					</button>
+					<div className="flex-grow">
+						<pre className="whitespace-pre-wrap bg-black text-white p-2 rounded">
+							<code>
+								{containerLogs}
+							</code>
+						</pre>
+					</div>
+				</div>
+			)}
+		</div>
+	);
 }

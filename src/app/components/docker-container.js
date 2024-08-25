@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Docker } from "@/app/components/docker";
 
 /**
@@ -22,15 +22,6 @@ import { Docker } from "@/app/components/docker";
 const DockerContainer = ({ children }) => {
   const dockerComponents = React.Children.toArray(children).filter(child => child.type === Docker);
 
-  // return (
-  //   <div id="docker-container" className="flex flex-wrap gap-4">
-  //     {dockerComponents.map((component, index) => (
-  //       <div key={index} className="docker-item">
-  //         {component}
-  //       </div>
-  //     ))}
-  //   </div>
-  // );
   return (
     <div id="docker-container" className="flex flex-col border border-gray-300 p-4 rounded">
       <span className="font-bold text-xl">Docker Containers</span>

@@ -1,6 +1,6 @@
 "use client"
 import { setVariable } from "@/lib/variables";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * InputVariable
@@ -19,7 +19,7 @@ import { useState, useEffect } from 'react';
  *   value="exampleValue" 
  * />
  */
-export function InputVariable({ name = '', value = '' }) {
+export function InputVariable({ name = "", value = "" }) {
   const [state, setState] = useState({ status: null, error: null });
   const [isDisabled, setIsDisabled] = useState(false);
   const [inputValue, setInputValue] = useState(value);
@@ -28,18 +28,18 @@ export function InputVariable({ name = '', value = '' }) {
 
   const handleButtonClick = async () => {
     setIsDisabled(true);
-    console.log('name', name);
-    console.log('value', inputValue);
+    console.log("name", name);
+    console.log("value", inputValue);
     
     try {
       await setVariable(name, inputValue);
       setState({ status: true, error: null });
     } catch (error) {
-      console.error('Error setting variable:', error);
+      console.error("Error setting variable:", error);
       setState({ status: false, error: error.message });
     } finally {
       setIsDisabled(false);
-      setInputValue('');
+      setInputValue("");
     }
   };
 

@@ -45,7 +45,7 @@ export async function getPetname() {
     }
     try {
         // Fetch pet name from external service
-        const response = await fetch(PETNAME_API_URL, { cache: 'no-store' });
+        const response = await fetch(PETNAME_API_URL, { cache: "no-store" });
         if (!response.ok) {
             throw new Error(`Failed to retrieve petname from ${PETNAME_API_URL}`);
         }

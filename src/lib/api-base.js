@@ -1,6 +1,6 @@
 "use client"
-import { checkAPI } from '@/lib/check-api';
-import { useState } from 'react';
+import { checkAPI } from "@/lib/check-api";
+import { useState } from "react";
 
 /**
  * APIBase component
@@ -13,7 +13,7 @@ import { useState } from 'react';
  * @param {string} [props.headerName=null] - The name of the header to check.
  * @param {string} [props.headerValue=null] - The value of the header to check.
  * @param {string} [props.searchString=null] - The search string to use in the API check.
- * @param {string} [props.path='/'] - The path to append to the URL for the API check.
+ * @param {string} [props.path="/"] - The path to append to the URL for the API check.
  * @param {number} [props.targetStatusCode=200] - The expected HTTP status code from the API check.
  * @param {string} [props.url=null] - The URL to check.
  * 

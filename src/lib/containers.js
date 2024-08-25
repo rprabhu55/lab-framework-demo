@@ -75,7 +75,7 @@ async function handleDockerClose(command, code, containerName, stdoutData, port)
             return stdoutData;
         case "run":
             await setRedisVariable(`components:${containerName}`, 
-                { status: 'running', url: `http://${containerName}`, ...(port && { ports: port }) });
+                { status: "running", url: `http://${containerName}`, ...(port && { ports: port }) });
             break;
         case "rm":
             await removeRedisVariable(`components:${containerName}`);
