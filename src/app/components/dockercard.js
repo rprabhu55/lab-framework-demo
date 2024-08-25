@@ -90,6 +90,8 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
 
     const handleMinimizeClick = () => {
         setIsMinimized(!isMinimized);
+        setError(null);
+        setMsg(null);
     };
 
     return (
