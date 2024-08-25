@@ -22,7 +22,10 @@ ul {
   @apply list-disc list-inside m-4;
 }
 li {
-  @apply m-4;
+  @apply mb-2;
+}
+li p {
+  @apply inline;
 }
 table {
   @apply m-4 table-auto;
@@ -43,5 +46,5 @@ p img {
   @apply scale-75;
 }
 ol {
-  @apply list-decimal;
+  @apply list-decimal list-inside pl-5;
 }
