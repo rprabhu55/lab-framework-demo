@@ -500,7 +500,7 @@ We will be making an update to the configuration defined in the config sync grou
 1. Add the following section to the **server** block then click *Next*
 
     ```bash
-    location /configsync/ {
+    location /configsync {
         default_type text/html;
         return 200 '<html><body><h1>Published change made from NGINX One Config Sync Group</h1></body></html>';
     }
@@ -577,7 +577,7 @@ We will be making an update to the configuration defined in the config sync grou
             access_log off;
         }
 
-        location /configsync/ {
+        location /configsync {
         default_type text/html;
         return 200 '<html><body><h1>Published change made from NGINX One Config Sync Group</h1></body></html>';
         }    
