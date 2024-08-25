@@ -1,6 +1,7 @@
 services:
   lab-framework:
-    image: ghcr.io/codygreen/lab-framework-demo-lab-framework:sha-9916438
+    image: ghcr.io/codygreen/lab-framework-demo-lab-framework:latest
+    pull_policy: always
     # build:
     #   dockerfile: ./Dockerfile
     restart: always
@@ -15,7 +16,8 @@ services:
       - "./.env:/app/.env"
 
   redis:
-    image: ghcr.io/codygreen/lab-framework-demo-redis:sha-9916438
+    image: ghcr.io/codygreen/lab-framework-demo-redis:latest
+    pull_policy: always
     # build:
     #   dockerfile: ./Dockerfile.redis
     restart: always
