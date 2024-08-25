@@ -53,7 +53,7 @@ export async function fetchRedisVariable(path) {
 */
 export async function setRedisVariable(path, value) {
 
-  if(path === null) return(new Error("Redis path is empty"));
+  if(path === null || value === null) return(new Error("Redis path or value is empty"));
   const normalizedPath = normalizePathName(path);
   const redis = await connectRedis();
   try {
