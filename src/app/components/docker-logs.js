@@ -34,7 +34,7 @@ export function DockerLogs({ containerName, showBox, setShowBox }) {
     return (
         <div className="relative">
             {showBox && (
-                <div className="fixed inset-0 bg-white border border-gray-300 p-4 shadow-lg flex flex-col max-h-screen overflow-auto">
+                <div className="fixed inset-0 bg-white border border-gray-300 p-4 shadow-lg flex flex-col max-h-screen overflow-auto z-50">
                     <button 
                         onClick={closeBox} 
                         className="self-end bg-red-500 text-white px-2 py-1 rounded"
