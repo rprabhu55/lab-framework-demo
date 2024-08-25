@@ -39,7 +39,9 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
       }
     };
 
-    fetchComponentName();
+    if(isRunning) {
+      fetchComponentName();
+    }
   }, [name, isRunning]);
 
   /**
@@ -47,21 +49,20 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
    * 
    * @returns {Promise<void>} The promise object representing the result of the operation.
    */
-  const handleClick = async () => {
-
+  const handleActionClick = async () => {
     setError(null);
     setMsg(null);
 
     try {
-      if (isRunning === true) {
+      if (isRunning) {
         await stopContainer(name);
-        setIsRunning(!isRunning);
         setComponentName(null);
       } else {
         await createContainer(name, image, env, port, attrs);
-        setIsRunning(!isRunning);
-        setComponentName(await getComponentName(name));
+        const componentName = await getComponentName(name);
+        setComponentName(componentName);
       }
+      setIsRunning(!isRunning);
     } catch (error) {
       console.error("ERROR RETURNED", error.message);
       setError(error.message);
@@ -69,14 +70,14 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
   };
 
   const handleTestClick = async () => {
-
     setError(null);
     setMsg(null);
 
+    if (!isRunning) {
+      return;
+    }
+
     try {
-      if (isRunning !== true) {
-        return null;
-      }
       await checkAPI(name);
       setMsg("works");
     } catch (error) {
@@ -125,7 +126,7 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
         )}
       </div>
       <div className="px-6 pt-4 pb-2 p-8">
-        <DockerStateButton isRunning={isRunning} onClick={handleClick} />
+        <DockerStateButton isRunning={isRunning} onClick={handleActionClick} />
         <DockerLogsButton isRunning={isRunning} onClick={() => setShowBox(!showBox)} />
         <DockerTestButton isRunning={isRunning} onClick={handleTestClick} />
         <button
