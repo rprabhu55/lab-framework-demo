@@ -1,6 +1,6 @@
 "use server"
 import { spawn } from "child_process";
-import { getComponentName } from "./variables";
+import { getComponentName, setVariable } from "./variables";
 import { setRedisVariable, removeRedisVariable } from "./redis";
 
 /**
@@ -169,7 +169,10 @@ export async function getContainerStatus(name) {
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function createContainer(name, image, env, port, attrs) {
-    return await runDockerCommand("run", name, image, env, port, attrs);
+    const response =  await runDockerCommand("run", name, image, env, port, attrs);
+    const containerName = await getComponentName(name);
+    await setVariable(name, containerName);
+    return response;
 }
 
 /**
@@ -180,7 +183,9 @@ export async function createContainer(name, image, env, port, attrs) {
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function stopContainer(name) {
-    return runDockerCommand("rm", name);
+    const response = await runDockerCommand("rm", name);
+    await removeRedisVariable(name);
+    return response;
 }
 
 /**
