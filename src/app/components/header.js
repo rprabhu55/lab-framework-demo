@@ -12,7 +12,7 @@ export function Header() {
         </div>
         <div className="flex lg:flex-1 justify-end">
           <a href="/" className="text-gray-900 hover:text-gray-900">Home</a>
-          <a href="#" className="ml-6 text-gray-900 hover:text-gray-900">Score</a>
+          {/* <a href="#" className="ml-6 text-gray-900 hover:text-gray-900">Score</a> */}
         </div>
       </nav>
     </header>
