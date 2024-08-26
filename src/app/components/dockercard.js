@@ -29,18 +29,20 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
   const [msg, setMsg] = useState(null);
   const [componentName, setComponentName] = useState("loading...");
 
+  // Reusable function to fetch component name
+  const fetchComponentName = async (containerName) => {
+    try {
+      const name = await getComponentName(containerName);
+      setComponentName(name);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   // Update componentName on initial load
   useEffect(() => {
-    const fetchComponentName = async () => {
-      try {
-        setComponentName(getComponentName(name));
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-
-    if(isRunning) {
-      fetchComponentName();
+    if (isRunning) {
+      fetchComponentName(name);
     }
   }, [name, isRunning]);
 
@@ -59,8 +61,7 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
         setComponentName(null);
       } else {
         await createContainer(name, image, env, port, attrs);
-        const componentName = await getComponentName(name);
-        setComponentName(componentName);
+        await fetchComponentName(name);
       }
       setIsRunning(!isRunning);
     } catch (error) {

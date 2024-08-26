@@ -1,6 +1,5 @@
 import { DockerCard } from "@/app/components/dockercard";
 import { getContainerStatus } from "@/lib/containers";
-import { getVariable } from "@/lib/variables";
 
 /**
  * Docker component
@@ -29,13 +28,6 @@ import { getVariable } from "@/lib/variables";
  * />
  */
 export async function Docker({ name = "", desc = "", image = "", env = [], port = null, attrs = [] }) {
-
-  // process variables in the env object
-  for (let i = 0; i < env.length; i++) {
-    if (env[i].isVariable) {
-      env[i].value = await getVariable(env[i].name);
-    }
-  }
 
   const isRunning = await getContainerStatus(name)
 

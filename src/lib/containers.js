@@ -1,6 +1,6 @@
 "use server"
 import { spawn } from "child_process";
-import { getComponentName, setVariable } from "./variables";
+import { getComponentName, getVariable, setVariable } from "./variables";
 import { setRedisVariable, removeRedisVariable } from "./redis";
 
 /**
@@ -165,11 +165,15 @@ export async function getContainerStatus(name) {
  * @param {String} image - The image to use.
  * @param {Array} env - The environment variables to set.
  * @param {Object} port - The port mapping to use.
+ * @param {Object} attrs - Additional attributes for the container.
  * @returns {Promise} The promise object representing the result of the command.
  * @throws {Error} If the command is invalid or the container is not running.
  */
-export async function createContainer(name, image, env, port, attrs) {
-    const response =  await runDockerCommand("run", name, image, env, port, attrs);
+export async function createContainer(name = null, image = null, env = [], port = null, attrs = []) {
+    if(name === null || image === null)
+        throw new Error('createContainer expects a name and image');
+    await validateAndFetchEnv(env);
+    const response = await runDockerCommand("run", name, image, env, port, attrs);
     const containerName = await getComponentName(name);
     await setVariable(name, containerName);
     return response;
@@ -205,5 +209,30 @@ export async function getContainerLogs(name) {
     } catch (error) {
         console.error(`Error retrieving logs for container ${name}:`, error.message);
         return null;
+    }
+}
+
+/**
+ * Validates and fetches environment variables.
+ * 
+ * @param {Array} env - The environment variables to validate and fetch.
+ * @throws {Error} If any environment variable is null or undefined and cannot be fetched.
+ */
+async function validateAndFetchEnv(env) {
+    if(!env) {
+        throw new Error('validateAndFetchEnv requires an array of environment variables');
+    }
+
+    for (let i = 0; i < env.length; i++) {
+        const { name, value, isVariable } = env[i];
+        if (isVariable) {
+            if (value === null || value === undefined) {
+                const fetchedValue = await getVariable(name);
+                if (fetchedValue === null || fetchedValue === undefined) {
+                    throw new Error(`Environment variable ${name} could not be resolved`);
+                }
+                env[i].value = fetchedValue;
+            }
+        }
     }
 }

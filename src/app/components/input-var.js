@@ -28,8 +28,6 @@ export function InputVariable({ name = "", value = "" }) {
 
   const handleButtonClick = async () => {
     setIsDisabled(true);
-    console.log("name", name);
-    console.log("value", inputValue);
     
     try {
       await setVariable(name, inputValue);
