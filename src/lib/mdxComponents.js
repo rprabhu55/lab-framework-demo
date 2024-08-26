@@ -9,6 +9,10 @@ import { InputVariable } from "@/app/components/input-var";
 import { UdfDeploymentMetadata } from "@/app/components/udf-deployment-metadata";
 import DockerContainer from "@/app/components/docker-container";
 import APICheckContainer from "@/app/components/api-check-container";
+import dynamic from 'next/dynamic';
+
+const ImageModalClient = dynamic(() => import('@/app/components/image-modal-client'), { ssr: false });
+
 
 const MDXComponents = {
   APICheck,
@@ -26,7 +30,8 @@ const MDXComponents = {
   h2: (props) => <h2 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
   h3: (props) => <h3 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
   h4: (props) => <h4 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
-  code: (props) => <CodeBlock {...props} />
+  code: (props) => <CodeBlock {...props} />,
+  img: (props) => <ImageModalClient {...props} />
 }
 
 export default MDXComponents
