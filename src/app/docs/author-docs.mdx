@@ -9,8 +9,6 @@ order: 1
 The **APICheck** allows the lab author to check an API endpoint with an optional path and HTTP response code.
 The component will also look up the target Docker component's ephemeral networking information if it's the target of the API check.
 
-The framework uses the **APICheckContainer** wrapper component to help correctly display all individual **ApiCheck** components in the lab guide.
-
 **Note**: you must supply either a **componentName** or a **url**.
 
 | Variable             | Description                                                      | Required |
@@ -25,58 +23,46 @@ The framework uses the **APICheckContainer** wrapper component to help correctly
 Calling APICheck with a component name:
 
 ```jsx
-<APICheckContainer>
-  <APICheck 
+<APICheck 
+componentName="nginx-plus-2" 
+targetStatusCode={200}  
+/>
+```
+
+<APICheck 
   componentName="nginx-plus-2" 
   targetStatusCode={200}  
-  />
-</APICheckContainer>
-  ```
-
-<APICheckContainer>
-  <APICheck 
-    componentName="nginx-plus-2" 
-    targetStatusCode={200}  
-  />
-</APICheckContainer>
+/>
 
 Calling APICheck with a component name and a path:
 
 ```jsx
-<APICheckContainer>
-  <APICheck 
+<APICheck 
+componentName="nginx-plus-2" 
+path="/example-path" 
+targetStatusCode={200}  
+/>
+```
+
+<APICheck 
   componentName="nginx-plus-2" 
   path="/example-path" 
   targetStatusCode={200}  
-  />
-</APICheckContainer>
-  ```
-
-<APICheckContainer>
-  <APICheck 
-    componentName="nginx-plus-2" 
-    path="/example-path" 
-    targetStatusCode={200}  
-  />
-</APICheckContainer>
+/>
 
 Calling APICheck with a url:
 
  ```jsx
-<APICheckContainer>
-  <APICheck  
+<APICheck  
+targetStatusCode={200} 
+url="http://f5.com" 
+/>
+```
+
+<APICheck  
   targetStatusCode={200} 
   url="http://f5.com" 
-  />
-</APICheckContainer>
-  ```
-
-<APICheckContainer>
-  <APICheck  
-    targetStatusCode={200} 
-    url="http://f5.com" 
-  />
-</APICheckContainer>
+/>
 
 <br />
 ---
@@ -188,6 +174,57 @@ Calling APICheck with a url:
   targetStatusCode={200} 
   url="https://api.example.com" 
 />
+
+<br />
+---
+
+## Container for API Checks
+
+The framework uses the **APICheckContainer** wrapper component to help correctly display all individual **ApiCheck**, **APIHeaderCheck**, and **APIResponseCheck** components in the lab guide. This is useful if you need to group together more than one of the preceding components.
+
+### Examples
+
+Grouping more than one check component:
+
+```jsx
+<APICheckContainer>
+  <APICheck 
+  componentName="nginx-plus-2" 
+  targetStatusCode={200}  
+  />
+  <APIHeaderCheck
+    headerName="Server"
+    headerValue="nginx/1.25.5"  
+    targetStatusCode={200} 
+    url="https://api.example.com" 
+  />
+  <APIResponseCheck 
+    componentName="nginx-plus-2" 
+    path="/example-path" 
+    searchString="nginx"
+    targetStatusCode={200}  
+  />
+</APICheckContainer>
+  ```
+
+<APICheckContainer>
+  <APICheck 
+  componentName="nginx-plus-2" 
+  targetStatusCode={200}  
+  />
+  <APIHeaderCheck
+    headerName="Server"
+    headerValue="nginx/1.25.5"  
+    targetStatusCode={200} 
+    url="https://api.example.com" 
+  />
+  <APIResponseCheck 
+    componentName="nginx-plus-2" 
+    path="/example-path" 
+    searchString="nginx"
+    targetStatusCode={200}  
+  />
+</APICheckContainer>
 
 <br />
 ---
