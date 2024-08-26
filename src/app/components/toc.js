@@ -19,8 +19,8 @@ export function ToC() {
   return (
     <div className="toc-container p-1 w-80 sticky top-0 border-r-2 border-t-2 h-screen">
       <ul className="list-none">
-        {headings.map((heading) => (
-          <li key={heading.id} className="" style={{ 
+        {headings.map((heading, index) => (
+          <li key={`${heading.id}_${index}`} className="" style={{ 
             fontSize: `${1.5 - (heading.level * 0.2)}em`, // Example: h1 -> 1.3em, h2 -> 1.1em, etc.
             marginLeft: `${(heading.level - 1) * 20}px` // Example: h1 -> 0px, h2 -> 20px, etc.
           }}>

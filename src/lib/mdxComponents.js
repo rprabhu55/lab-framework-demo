@@ -13,7 +13,6 @@ import dynamic from 'next/dynamic';
 
 const ImageModalClient = dynamic(() => import('@/app/components/image-modal-client'), { ssr: false });
 
-
 const MDXComponents = {
   APICheck,
   APICheckContainer,
@@ -26,12 +25,21 @@ const MDXComponents = {
   GetVariable,
   InputVariable,
   UdfDeploymentMetadata,
-  h1: (props) => <h1 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
-  h2: (props) => <h2 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
-  h3: (props) => <h3 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
-  h4: (props) => <h4 id={props.children.toLowerCase().replace(/\s/g, "-")} {...props} />,
+  h1: (props) => <h1 id={formatId(props.children)} {...props} />,
+  h2: (props) => <h2 id={formatId(props.children)} {...props} />,
+  h3: (props) => <h3 id={formatId(props.children)} {...props} />,
+  h4: (props) => <h4 id={formatId(props.children)} {...props} />,
   code: (props) => <CodeBlock {...props} />,
   img: (props) => <ImageModalClient {...props} />
 }
 
 export default MDXComponents
+/**
+ * Returns an id without spaces, and is lower case.
+ * @param {string} the existing id.
+ * @returns {string} the formatted id.
+ */
+
+function formatId(existingId) {
+  return existingId.toLowerCase().replace(/\s/g, "-");
+}
