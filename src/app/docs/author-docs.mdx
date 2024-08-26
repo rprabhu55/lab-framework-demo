@@ -6,8 +6,10 @@ order: 1
 
 ## APICheck
 
-The **APICheck** allows the lab author to check an API endpoint with an optional path and HTTP response code. 
+The **APICheck** allows the lab author to check an API endpoint with an optional path and HTTP response code.
 The component will also look up the target Docker component's ephemeral networking information if it's the target of the API check.
+
+The framework uses the **APICheckContainer** wrapper component to help correctly display all individual **ApiCheck** components in the lab guide.
 
 **Note**: you must supply either a **componentName** or a **url**.
 
@@ -23,46 +25,58 @@ The component will also look up the target Docker component's ephemeral networki
 Calling APICheck with a component name:
 
 ```jsx
-<APICheck 
-componentName="nginx-plus-2" 
-targetStatusCode={200}  
-/>
- ```
-
-<APICheck 
+<APICheckContainer>
+  <APICheck 
   componentName="nginx-plus-2" 
   targetStatusCode={200}  
-/>
+  />
+</APICheckContainer>
+  ```
+
+<APICheckContainer>
+  <APICheck 
+    componentName="nginx-plus-2" 
+    targetStatusCode={200}  
+  />
+</APICheckContainer>
 
 Calling APICheck with a component name and a path:
 
 ```jsx
-<APICheck 
-componentName="nginx-plus-2" 
-path="/example-path" 
-targetStatusCode={200}  
-/>
- ```
-
-<APICheck 
+<APICheckContainer>
+  <APICheck 
   componentName="nginx-plus-2" 
   path="/example-path" 
   targetStatusCode={200}  
-/>
+  />
+</APICheckContainer>
+  ```
+
+<APICheckContainer>
+  <APICheck 
+    componentName="nginx-plus-2" 
+    path="/example-path" 
+    targetStatusCode={200}  
+  />
+</APICheckContainer>
 
 Calling APICheck with a url:
 
  ```jsx
-<APICheck  
-targetStatusCode={200} 
-url="http://f5.com" 
-/>
-```
-
-<APICheck  
+<APICheckContainer>
+  <APICheck  
   targetStatusCode={200} 
   url="http://f5.com" 
-/>
+  />
+</APICheckContainer>
+  ```
+
+<APICheckContainer>
+  <APICheck  
+    targetStatusCode={200} 
+    url="http://f5.com" 
+  />
+</APICheckContainer>
 
 <br />
 ---
@@ -182,7 +196,7 @@ Calling APICheck with a url:
 
 The lab framework allows you to deploy docker containers within the lab guide.
 
-The framework uses the **DockerContainer** wrapper component to help correctly display all individual **Docker** components in the lab guide. 
+The framework uses the **DockerContainer** wrapper component to help correctly display all individual **Docker** components in the lab guide.
 
 The **Docker** component is responsible for managing and displaying information about the container.  
 
