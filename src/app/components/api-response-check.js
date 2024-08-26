@@ -12,6 +12,7 @@ import { APIBase } from "@/lib/api-base"
  * @param {string} [props.searchString=null] - The string to search for in the API response.
  * @param {number} [props.targetStatusCode=200] - The expected HTTP status code from the API check.
  * @param {string} [props.url=null] - The URL to check.
+ * @param {boolean} [props.tlsComponent=false] - If a component name is specified, use TLS (https) to connect to the component. Default is no TLS (http).
  * 
  * @returns {JSX.Element} The rendered component.
  * 
@@ -30,7 +31,8 @@ export function APIResponseCheck({
   path = "/",
   searchString = null,
   targetStatusCode = 200,
-  url = null
+  url = null,
+  tlsComponent = false
 }) {
   return (
     <div className="flex flex-col border border-gray-300 p-4 rounded max-w-md">
@@ -63,6 +65,7 @@ export function APIResponseCheck({
           searchString={searchString}
           targetStatusCode={targetStatusCode}
           url={url}
+          tlsComponent={tlsComponent}
         />
       </div>
     </div>

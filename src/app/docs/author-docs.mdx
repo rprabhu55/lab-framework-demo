@@ -11,12 +11,13 @@ The component will also look up the target Docker component's ephemeral networki
 
 **Note**: you must supply either a **componentName** or a **url**.
 
-| Variable             | Description                                                      | Required |
-|----------------------|------------------------------------------------------------------|----------|
-| **componentName**    | The name of the component to check.                              | Yes      |
-| **path**             | The path to append to the component for the API check.           | No       |
-| **targetStatusCode** | The expected HTTP status code from the API check.                | No       |
-| **url**              | The URL to check.                                                | Yes      |
+| Variable             | Description                                                                                              | Required |
+|----------------------|----------------------------------------------------------------------------------------------------------|----------|
+| **componentName**    | The name of the component to check.                                                                      | Yes      |
+| **path**             | The path to append to the component for the API check.                                                   | No       |
+| **targetStatusCode** | The expected HTTP status code from the API check.                                                        | No       |
+| **url**              | The URL to check.                                                                                        | Yes      |
+| **tlsComponent**     | If a component name is specified, use TLS (https) to connect to the component. Default is no TLS (http). | No       |
 
 ### Examples
 
@@ -25,7 +26,7 @@ Calling APICheck with a component name:
 ```jsx
 <APICheck 
 componentName="nginx-plus-2" 
-targetStatusCode={200}  
+targetStatusCode={200} 
 />
 ```
 
@@ -48,6 +49,22 @@ targetStatusCode={200}
   componentName="nginx-plus-2" 
   path="/example-path" 
   targetStatusCode={200}  
+/>
+
+Calling APICheck with a component name via TLS:
+
+```jsx
+<APICheck 
+componentName="nginx-plus-2" 
+targetStatusCode={200} 
+tlsComponent={true}
+/>
+```
+
+<APICheck 
+  componentName="nginx-plus-2" 
+  targetStatusCode={200} 
+  tlsComponent={true}
 />
 
 Calling APICheck with a url:
@@ -74,14 +91,15 @@ The component will also look up the target Docker component's ephemeral networki
 
 **Note**: you must supply either a **componentName** or a **url**.
 
-| Variable             | Description                                                      | Required |
-|----------------------|------------------------------------------------------------------|----------|
-| **componentName**    | The name of the component to check.                              | Yes      |
-| **headerName**       | The header name                                                  | Yes      |
-| **headerValue**      | The header value                                                 | Yes      |
-| **path**             | The path to append to the component for the API check.           | No       |
-| **targetStatusCode** | The expected HTTP status code from the API check.                | No       |
-| **url**              | The URL to check.                                                | Yes      |
+| Variable             | Description                                                                                              | Required |
+|----------------------|----------------------------------------------------------------------------------------------------------|----------|
+| **componentName**    | The name of the component to check.                                                                      | Yes      |
+| **headerName**       | The header name                                                                                          | Yes      |
+| **headerValue**      | The header value                                                                                         | Yes      |
+| **path**             | The path to append to the component for the API check.                                                   | No       |
+| **targetStatusCode** | The expected HTTP status code from the API check.                                                        | No       |
+| **url**              | The URL to check.                                                                                        | Yes      |
+| **tlsComponent**     | If a component name is specified, use TLS (https) to connect to the component. Default is no TLS (http). | No       |
 
 ### Examples
 
@@ -102,6 +120,27 @@ Calling APICheck with a component name:
   headerValue="nginx/1.25.5"
   path="/example-path" 
   targetStatusCode={200}  
+/>
+
+Calling APIHeaderCheck with a component name via TLS:
+
+```jsx
+<APIHeaderCheck 
+  componentName="nginx-plus-2" 
+  headerName="Server"
+  headerValue="nginx/1.25.5"
+  path="/example-path" 
+  targetStatusCode={200} 
+  tlsComponent={true}
+/>
+ ```
+<APIHeaderCheck 
+  componentName="nginx-plus-2" 
+  headerName="Server"
+  headerValue="nginx/1.25.5"
+  path="/example-path" 
+  targetStatusCode={200} 
+  tlsComponent={true}
 />
 
 Calling APICheck with a url:
@@ -132,13 +171,15 @@ The component will also look up the target Docker component's ephemeral networki
 
 **Note**: you must supply either a **componentName** or a **url**.
 
-| Variable             | Description                                                      | Required |
-|----------------------|------------------------------------------------------------------|----------|
-| **componentName**    | The name of the component to check.                              | Yes      |
-| **path**             | The path to append to the component for the API check.           | No       |
-| **searchString**     | A string to look for in the response.                            | Yes      |
-| **targetStatusCode** | The expected HTTP status code from the API check.                | No       |
-| **url**              | The URL to check.                                                | Yes      |
+| Variable             | Description                                                                                              | Required |
+|----------------------|----------------------------------------------------------------------------------------------------------|----------|
+| **componentName**    | The name of the component to check.                                                                      | Yes      |
+| **path**             | The path to append to the component for the API check.                                                   | No       |
+| **searchString**     | A string to look for in the response.                                                                    | Yes      |
+| **targetStatusCode** | The expected HTTP status code from the API check.                                                        | No       |
+| **url**              | The URL to check.                                                                                        | Yes      |
+| **tlsComponent**     | If a component name is specified, use TLS (https) to connect to the component. Default is no TLS (http). | No       |
+
 
 ### Examples
 
@@ -157,6 +198,25 @@ Calling APICheck with a component name:
   path="/example-path" 
   searchString="nginx"
   targetStatusCode={200}  
+/>
+
+Calling APICheck with a component name via TLS:
+
+```jsx
+<APIResponseCheck 
+  componentName="nginx-plus-2" 
+  path="/example-path" 
+  searchString="nginx"
+  targetStatusCode={200} 
+  tlsComponent={true}
+/>
+ ```
+<APIResponseCheck 
+  componentName="nginx-plus-2" 
+  path="/example-path" 
+  searchString="nginx"
+  targetStatusCode={200} 
+  tlsComponent={true}
 />
 
 Calling APICheck with a url:

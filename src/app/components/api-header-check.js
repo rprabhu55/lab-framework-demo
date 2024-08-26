@@ -13,6 +13,7 @@ import { APIBase } from "@/lib/api-base"
  * @param {string} [props.path="/"] - The path to append to the URL for the API check.
  * @param {number} [props.targetStatusCode=200] - The expected HTTP status code from the API check.
  * @param {string} [props.url=null] - The URL to check.
+ * @param {boolean} [props.tlsComponent=false] - If a component name is specified, use TLS (https) to connect to the component. Default is no TLS (http).
  * 
  * @returns {JSX.Element} The rendered component.
  * 
@@ -32,7 +33,8 @@ export function APIHeaderCheck({
   headerValue = null, 
   path = "/", 
   targetStatusCode = 200, 
-  url = null 
+  url = null, 
+  tlsComponent = false
 }) {
   return (
     <div className="flex flex-col border border-gray-300 p-4 rounded max-w-md">
@@ -66,6 +68,7 @@ export function APIHeaderCheck({
           path={path} 
           targetStatusCode={targetStatusCode} 
           url={url} 
+          tlsComponent={tlsComponent}
         />
       </div>
     </div>

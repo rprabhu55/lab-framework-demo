@@ -8,29 +8,21 @@ import { fetchRedisVariable } from "./redis";
  * This function fetches the petname and component data from Redis,
  * constructs the base URL and port, and returns the full URL.
  * 
- * @param {string} componentName - The name of the component.
+ * @param {string} name - The URL or component name to check.
+ * @param {boolean} [tls] - A True value will use TLS (https) to connect to the component. A False value is no TLS (http).
  * @returns {Promise<string>} - The full URL of the component.
  * @throws {Error} - Throws an error if petname or component data is missing or invalid.
  */
-async function getComponentUrl(componentName) {
+async function getComponentUrl(name, tls) {
+  const protocol = tls ? "https" : "http";
+  const componentName = await getComponentName(name);
   const componentData = await fetchRedisVariable(`components:${componentName}`);
   if (!componentData) throw new Error("Component data is missing or invalid");
 
   const port = componentData?.ports?.host;
-  if (port) return `http://host.docker.internal:${port}`;
+  if (port) return `${protocol}://host.docker.internal:${port}`;
 
-  return componentData?.url || `http://${componentName}`;
-}
-
-/**
- * Determines the component URL to check based on the input.
- * 
- * @param {string} name - The URL or component name to check.
- * @returns {Promise<string>} - The URL to check.
- */
-async function determineUrl(name) {
-  const componentName = await getComponentName(name);
-  return getComponentUrl(componentName);
+  return componentData?.url || `${protocol}://${componentName}`;
 }
 
 /**
@@ -49,6 +41,7 @@ async function determineUrl(name) {
  * @param {string} [params.headerName=null] - The name of the header to check (optional).
  * @param {string} [params.headerValue=null] - The expected value of the header (optional).
  * @param {number} [params.targetStatusCode=200] - The expected HTTP status code (default is 200).
+ * @param {boolean} [params.tlsComponent=false] - If a component name is specified, use TLS (https) to connect to the component. Default is no TLS (http).
  * @returns {Promise<boolean>} - Returns true if the API returns the expected status code, contains the specified string, and header.
  * @throws {Error} - Throws an error if the API request fails or returns an unexpected status code, response body, or header.
  */
@@ -59,13 +52,14 @@ export async function checkAPI({
   searchString = null,
   headerName = null,
   headerValue = null,
-  targetStatusCode = 200
+  targetStatusCode = 200,
+  tlsComponent = false
 }) {
-  if(componentName == null && url == null) {
+  if (componentName == null && url == null) {
     return false;
   }
   if (componentName) {
-    const determinedUrl = await determineUrl(componentName);
+    const determinedUrl = await getComponentUrl(componentName, tlsComponent);
     url = `${determinedUrl}${path}`;
   }
 
