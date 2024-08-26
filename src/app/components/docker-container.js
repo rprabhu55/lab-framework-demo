@@ -23,9 +23,9 @@ const DockerContainer = ({ children }) => {
   const dockerComponents = React.Children.toArray(children).filter(child => child.type === Docker);
 
   return (
-    <div id="docker-container" className="flex flex-col border border-gray-300 p-4 rounded">
+    <div id="docker-outer-container" className="flex flex-col border border-gray-300 p-4 rounded">
       <span className="font-bold text-xl">Docker Containers</span>
-      <div id="docker-container" className="flex flex-wrap gap-4">
+      <div id="docker-inner-container" className="flex flex-wrap gap-4">
         {dockerComponents.map((component, index) => (
           <div key={index} className="docker-item">
             {component}
