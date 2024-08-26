@@ -2,6 +2,8 @@
 import { spawn } from "child_process";
 import { getComponentName, getVariable, setVariable, getEnvVariable } from "./variables";
 import { setRedisVariable, removeRedisVariable } from "./redis";
+import { exec } from "child_process";
+
 
 /**
  * Helper function to build Docker command arguments.
@@ -243,3 +245,21 @@ async function validateAndFetchEnv(env) {
         }
     }
 }
+
+/**
+ * Executes a shell command in the Docker container.
+ * @param {string} containerId - The ID of the container.
+ * @param {string} command - The command to execute.
+ * @returns {Promise<string>} A promise that resolves with the command output.
+ */
+export const execShellCommand = (containerId, command) => {
+    return new Promise((resolve, reject) => {
+      exec(`docker exec ${containerId} ${command}`, (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error(stderr));
+        } else {
+          resolve(stdout);
+        }
+      });
+    });
+  };
