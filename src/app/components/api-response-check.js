@@ -25,18 +25,18 @@ import { APIBase } from "@/lib/api-base"
  *   url="https://api.example.com" 
  * />
  */
-export function APIResponseCheck({ 
-  componentName = null, 
-  path = "/", 
+export function APIResponseCheck({
+  componentName = null,
+  path = "/",
   searchString = null,
-  targetStatusCode = 200, 
-  url = null 
+  targetStatusCode = 200,
+  url = null
 }) {
   return (
     <div className="flex flex-col border border-gray-300 p-4 rounded max-w-md">
       <span className="font-bold text-xl">API Response Check</span>
       <div className="mt-2 ml-4">
-      {url && (
+        {url && (
           <div className="mb-1">
             <span className="font-bold">URL:</span> <span className="font-normal">{url}</span>
           </div>
@@ -47,6 +47,9 @@ export function APIResponseCheck({
           </div>
         )}
         <div className="mb-1">
+          <span className="font-bold">Path:</span> <span className="font-normal">{path}</span>
+        </div>
+        <div className="mb-1">
           <span className="font-bold">Search String:</span> <span className="font-normal">{searchString}</span>
         </div>
         <div className="mb-1">
@@ -54,12 +57,12 @@ export function APIResponseCheck({
         </div>
       </div>
       <div className="block m-4">
-        <APIBase 
-          componentName={componentName} 
-          path={path} 
+        <APIBase
+          componentName={componentName}
+          path={path}
           searchString={searchString}
-          targetStatusCode={targetStatusCode} 
-          url={url} 
+          targetStatusCode={targetStatusCode}
+          url={url}
         />
       </div>
     </div>
