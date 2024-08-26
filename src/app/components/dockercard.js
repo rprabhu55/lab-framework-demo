@@ -9,6 +9,9 @@ import { createContainer, stopContainer } from "@/lib/containers";
 import { checkAPI } from "@/lib/check-api";
 import { Message } from "@/app/components/msg"
 import { getComponentName } from "@/lib/variables";
+import { DockerShellTerminal } from "@/app/components/docker-shell-terminal"; // Import the new component
+
+
 /**
  * Represents a Docker Card component.
  * @param {string} props.name - The name of the container.
@@ -123,6 +126,7 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
                 <span key={i}><b>{e.name}:</b> {e.isSecret ? "********" : e.value} </span>
               ))}
             </p>
+            <DockerShellTerminal containerId={componentName} /> {/* Add the new component */}
           </>
         )}
       </div>
