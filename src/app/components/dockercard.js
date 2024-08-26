@@ -102,30 +102,44 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
   return (
     <div className={`max-w-md rounded overflow-hidden shadow-lg ${isMinimized ? "h-55" : "h-auto"}`}>
       <DockerLogs containerName={name} showBox={showBox} setShowBox={setShowBox} />
-      <div className="px-6 py-4">
+      <div className="px-4 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
         {!isMinimized && (
           <>
-            {isRunning && <p className="text-gray-700 text-xs">
-              <b>container name:</b> {componentName}
-            </p>}
-            <p className="text-gray-700 text-base">{desc}</p>
-            <p className="text-gray-700 text-xs">
-              <b>image:</b> {image}
-            </p>
-            <p className="text-gray-700 text-xs">
-              {port && <><b>ports: host:</b>{port.host}, <b>container:</b>{port.container}</>}
-            </p>
-            <p className="text-gray-700 text-xs">
+            {isRunning && (
+              <div className="text-gray-700 text-xs mb-2">
+                <b>container name:</b> {componentName}
+              </div>
+            )}
+            <div className="text-gray-700 text-base mb-2">{desc}</div>
+            
+            <div className="grid grid-cols-2 gap-4 text-gray-700 text-xs mb-2">
+              <div className="col-span-4">
+                <b>image:</b> {image}
+              </div> 
+              {port && (
+                <div className="col-span-4">
+                  <b>ports: host:</b> {port.host}, <b>container:</b> {port.container}
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-gray-700 text-xs mb-2">
               {attrs && attrs.map((a, i) => (
-                <span key={i}><b>{a.name}:</b> {a.value} </span>
+                <div key={i}>
+                  <b>{a.name}:</b> {a.value}
+                </div>
               ))}
-            </p>
-            <p className="text-gray-700 text-xs">
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 text-gray-700 text-xs mb-2">
               {env && env.map((e, i) => (
-                <span key={i}><b>{e.name}:</b> {e.isSecret ? "********" : e.value} </span>
+                <div key={i}>
+                  <b>{e.name}:</b> {e.isSecret ? "********" : e.value}
+                </div>
               ))}
-            </p>
+            </div>
+
             <DockerShellTerminal containerId={componentName} /> {/* Add the new component */}
           </>
         )}

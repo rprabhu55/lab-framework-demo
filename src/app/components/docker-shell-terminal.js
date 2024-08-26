@@ -41,23 +41,41 @@ export function DockerShellTerminal({ containerId }) {
   }, [output]);
   
   return (
-    <div style={{ position: isFullScreen ? "fixed" : "relative", top: 0, left: 0, width: isFullScreen ? "100%" : "auto", height: isFullScreen ? "100%" : "auto", zIndex: isFullScreen ? 1000 : "auto", backgroundColor: isFullScreen ? "#000" : "transparent" }}>
+    <div
+      className={`${
+        isFullScreen ? "fixed top-0 left-0 w-full h-full z-50 bg-black" : "relative"
+      } flex flex-col`}
+    >
       <div className="font-bold text-xl mt-4 mb-2">Exec</div>
       <div
         ref={outputRef}
-        style={{ backgroundColor: "#000", color: "#fff", padding: "10px", height: isFullScreen ? "calc(100% - 50px)" : "300px", overflowY: "scroll" }}
+        className={`bg-black text-white p-2 overflow-y-scroll ${
+          isFullScreen ? "flex-1 h-full" : "h-72"
+        }`}
       >
         <pre>{output}</pre>
       </div>
-      <form onSubmit={handleCommandSubmit} style={{ display: "flex", alignItems: "center" }}>
+      <form
+        onSubmit={handleCommandSubmit}
+        className="flex items-center p-2"
+      >
         <input
           type="text"
           value={command}
           onChange={handleCommandChange}
-          className="flex-1 border border-gray-300"
+          className="flex-1 border border-gray-300 p-1"
         />
-        <button className="inline-block bg-gray-500 text-white font-bold py-1 px-2 rounded m-2 text-sm" type="submit">Run</button>
-        <button className="inline-block bg-gray-500 text-white font-bold py-1 px-2 rounded m-2 text-sm" type="button" onClick={toggleFullScreen}>
+        <button
+          className="inline-block bg-gray-500 text-white font-bold py-1 px-2 rounded m-2 text-sm"
+          type="submit"
+        >
+          Run
+        </button>
+        <button
+          className="inline-block bg-gray-500 text-white font-bold py-1 px-2 rounded m-2 text-sm whitespace-nowrap"
+          type="button"
+          onClick={toggleFullScreen}
+        >
           {isFullScreen ? "Exit Full Screen" : "Full Screen"}
         </button>
       </form>
