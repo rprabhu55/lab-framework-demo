@@ -1,6 +1,6 @@
 "use server"
 import { spawn } from "child_process";
-import { getComponentName, getVariable, setVariable } from "./variables";
+import { getComponentName, getVariable, setVariable, getEnvVariable } from "./variables";
 import { setRedisVariable, removeRedisVariable } from "./redis";
 
 /**
@@ -74,7 +74,7 @@ async function handleDockerClose(command, code, containerName, stdoutData, port)
         case "ps-all":
             return stdoutData;
         case "run":
-            await setRedisVariable(`components:${containerName}`, 
+            await setRedisVariable(`components:${containerName}`,
                 { status: "running", url: `http://${containerName}`, ...(port && { ports: port }) });
             break;
         case "rm":
@@ -98,9 +98,16 @@ async function handleDockerClose(command, code, containerName, stdoutData, port)
  * @returns {Promise} The promise object representing the result of the command.
  */
 async function runDockerCommand(command, name = "", image, env = [], port, attrs = [], network = "lab-framework") {
-    const containerName = await getComponentName(name);
-    const docker_cmd = buildDockerCommand(command, containerName, image, env, port, attrs, network);
 
+    const containerName = await getComponentName(name);
+    let docker_cmd = buildDockerCommand(command, containerName, image, env, port, attrs, network);
+
+    // Add support for calling the Docker API instead of using docker.sock
+    const dockerApiUrl = await getEnvVariable("DOCKER_API_URL");
+    if (dockerApiUrl) {
+        docker_cmd.unshift(dockerApiUrl)
+        docker_cmd.unshift("-H")
+    }
     const docker = spawn("docker", docker_cmd);
 
     let stdoutData = "";
@@ -145,8 +152,8 @@ export async function getAllContainerStatus() {
 /**
  * Handles the GET request to check if a container is running.
  * 
- * @param {String} name - The name of the container.
- * @returns {Boolean} If the container is running or not.
+ * @param {string} name - The name of the container.
+ * @returns {boolean} If the container is running or not.
  * @throws {Error} If the container is not running.
  */
 export async function getContainerStatus(name) {
@@ -170,7 +177,7 @@ export async function getContainerStatus(name) {
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function createContainer(name = null, image = null, env = [], port = null, attrs = []) {
-    if(name === null || image === null)
+    if (name === null || image === null)
         throw new Error('createContainer expects a name and image');
     await validateAndFetchEnv(env);
     const response = await runDockerCommand("run", name, image, env, port, attrs);
@@ -219,7 +226,7 @@ export async function getContainerLogs(name) {
  * @throws {Error} If any environment variable is null or undefined and cannot be fetched.
  */
 async function validateAndFetchEnv(env) {
-    if(!env) {
+    if (!env) {
         throw new Error('validateAndFetchEnv requires an array of environment variables');
     }
 
