@@ -735,29 +735,25 @@ We will not go through the exercise of resolving the configuration such that it 
 
 ## NGINX OSS (Optional)
 
-NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX Open Source instances. The UDF blueprint contains a second Ubuntu host with the package maintainer’s version of NGINX installed.
+The NGINX One Console supports both NGINX Plus and NGINX Open Source (NGINX OSS).  Both dataplanes leverage the NGINX Agent to communicate with the NGINX One Console API.  
+The UDF blueprint contains a Ubuntu host with the package maintainer’s version of NGINX OSS installed.  In this section we will install NGINX Agent and connect this instance to the NGINX One Console. 
 
 ### Installing NGINX Agent on NGINX OSS
 
-1. Connect to the "NGINX OSS" instance in UDF, either directly through SSH or through the jumphost. If connecting through the jumphost, the SSH command will be:
+1. Connect to the "NGINX OSS" instance in UDF through the Web Shell access method by clicking the *Open Web Shell* button below:
+
+    <UDFComponent
+        name="NGINX OSS"
+    />
+
+1. Because the hostname is used as the name of the instance in NGINX One, you should change the hostname to something that identifies it as yours, such as **<GetVariable name="petname" />-ubuntu-oss**. 
+Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.1.6), and run the following command below using only lowercase characters and hyphens. 
+
+    > **Note:** The bash prompt will continue to show the previous hostname unless you log out and log back in. This does not affect the lab.
 
     ```bash
-    ssh ubuntu@10.1.1.6
+    sudo hostnamectl set-hostname unique-labname-ubuntu-oss
     ```
-
-1. Because the hostname is used as the name of the instance in NGINX One, you should change the hostname to something that identifies it as yours. Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.1.6), and run the following command, substituting "yourname" with a string that identifies you as a user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue to show the previous hostname unless you log out and log back in. This does not affect the lab.
-
-    ```bash
-    sudo hostnamectl set-hostname yourname-nginx-oss
-    ```
-
-1. Observe the running NGINX instance on this machine.
-
-    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/**
-
-    - If you are connecting directly through UDF, locate the "NGINX OSS" component and select the "NGINX HTTP" access method.
-
-    ![NGINX OSS Demo page](media/lab4-1.png)
 
 1. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute data-plane-key with the key you saved in the first lab. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the directions in lab 1 to create a new Data Plane Key.
 
@@ -779,6 +775,11 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
     Note that this instance has a different set of configuration recommendations than the vanilla NGINX Plus instance did. Package maintainers may ship NGINX with their own sets of defaults, which may or may not align with best practices. NGINX One provides a centralized view of such recommendations across the organization.
 
+<APICheck 
+url="http://1.1.1.6" 
+targetStatusCode={200} 
+/>
+
 ## NGINX Docker (Optional)
 
 The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
@@ -799,17 +800,34 @@ curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR
 
     ![Add New NGINX Plus Container](media/lab5-7.png)
 
-1. Log in to the console of **Lab Framework** from UDF. This system already pulled the container image "Step 1" and "Step 2" can be skipped.
+1. Open a Web Shell to the **Lab Framework** UDF instance and start an NGINX Plus container with the commands to join it to your Config Sync Group. 
 
-1. Run the command from Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
+    > **Note:** This system already pulled the container image, so Steps 1 and 2 from above can be skipped.
+
+    <UDFComponent
+        name="Lab Framework"
+    />
+
+1. Run the *docker run* command outlined in Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
 
 1. Click "Done" to close out the window.
 
 You will now see the second NGINX Plus instance added.
 
+<APICheck 
+url="http://1.1.1.7" 
+targetStatusCode={200} 
+/>
+
 ## Lab Cleanup
 
 Time to clean up the resources you created in this lab. As a safety precaution, the NGINX One console will not allow you to delete an instance that is online. We will first have to shut down the instances before deleting them from the NGINX One console.
+
+1. Delete your Config Sync Group Instances by going into your **<GetVariable name="petname" />** Config Sync Group Details and selecting the *Actions* link on the far right, then select *delete* for each instance.
+
+    > TODO: add image
+
+1. Delete your Config Sync Group by going to the *Config Sync Groups* list and selecting the *Actions* link on the far right.  Then select *delete*.
 
 1. In the UDF deployment for this lab, click "Details" for the "NGINX OSS" component.
 
