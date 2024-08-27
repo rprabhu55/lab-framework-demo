@@ -436,31 +436,172 @@ Notice the configuration is empty when you first create a Config Sync Group. The
 
 We will now proceed with adding an NGINX instance to the Config Sync Group.
 
-#### Adding an existing instance
+#### Adding a New Instance
 
-Lets start by adding an existing NGINX Plus instance.
+Lets start by adding an new NGINX Plus instance.
 
 1. Click on *Add Instance to Config Sync Group*.
 
     ![Add Existing Instance](media/lab5-5.png)
 
-1. We will be using an existing NGINX instance so make sure *Add an existing instance to config sync group* is selected then click *Next*.
+1. We will be creating a new NGINX instance so make sure *Register a new instance with NGINX One then add to config sync group* is selected then click *Next*.
 
-1. Follow the instructions on the console of your NGINX Plus instance named, **<GetVariable name="nginx-plus-1" />**.
+    > TODO: insert image
 
-1. After the **nginx-agent** is restarted, you now see your first NGINX instance added to this Config Sync Group.
+1. Select *Use existing Key* then *Docker Container*.
+
+    > TODO: insert image
+
+1. The instruction on the screen tell you how to: 
+    - Login to the NGINX private registry
+    - Pull an NGINX Plus instance from the NGINX private registry
+    - Run the container with the required NGINX One Console connection details
+
+```shell
+# Login to Private Registry
+sudo docker login private-registry.nginx.com --username=YOUR_JWT_HERE --password=none
+
+# Pull the NGINX Plus container
+sudo docker pull private-registry.nginx.com/nginx-plus/agent:debian
+
+# Run the container and connect to NGINX One Console
+sudo docker run \
+--env=NMS_SERVER_GRPCPORT=443 \
+--env=NMS_SERVER_HOST=agent.connect.nginx.com \
+--env=NMS_SERVER_TOKEN="YOUR_DATA_PLANE_KEY" \
+--env=NGINX_AGENT_INSTANCE_GROUP=drunk-sloth \
+--env=NMS_TLS_ENABLE=true \
+--restart=always \
+--runtime=runc \
+-d private-registry.nginx.com/nginx-plus/agent:debian
+
+```
+
+For the lab, we have simplified this process for you: 
+
+1. Entering your *Config Sync Group* name below, which should be *<GetVariable name="petname" />* 
+
+    <InputVariable 
+        name="NGINX_AGENT_INSTANCE_GROUP"
+    />
+
+1. Click the *Run* button below to start a new NGINX Plus instance.
+
+    <Docker  
+        name="nginx-plus-2" 
+        desc="NGINX Plus R32 with Agent." 
+        image="private-registry.nginx.com/nginx-plus/agent:debian" 
+        env={[
+            {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+            {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+            {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+            {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+            {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+            {name: "NGINX_AGENT_INSTANCE_GROUP", isVariable: true}
+        ]}
+        attrs={[
+            { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
+        ]}
+    />
+
+1. Once the NGINX instance is up and running, press the *Test* button, to confirm the instance is online and responding to HTTP requests.
+
+1. Now, in the NGINX One Console, look at your Config Sync Group and you should see a new instance registered.
+
+    > TODO: update image
 
     ![First NGINX Instance](media/lab5-6.png)
 
-1. When you select the *Configuration* tab, notice the config here is the same as the config on the NGINX instance we just added.
+1. When you select the *Configuration* tab, notice the config here is the same as the same initial config on your first NGINX instance.  
+
+1. Based on what you have already learned, update the Config Sync Group configuration file **/etc/nginx/conf.d/default.conf** with the example below:
+
+    ```nginx
+    server {
+        listen       80 default_server;
+        server_name  localhost;
+
+        #access_log  /var/log/nginx/host.access.log  main;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        location /test_header {
+            add_header X-Test-App true;
+            return 200 'HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body>Howdy!</body></html>';
+        }
+    }
+    ```
+
+1. Now we will test your configuration by clicking the *Check* button below:
+
+    <APIHeaderCheck 
+        componentName="nginx-plus-2" 
+        headerName="X-Test-App"
+        headerValue="true"
+        path="/test_header" 
+        targetStatusCode={200}  
+    />
+
+Great! You have successfully created a Config Sync Group and synchronized your first configuration.  Next, we will add a new instance to the Config Sync Group.
 
 #### Adding a second NGINX Plus instance
 
-Now that we added our first NGINX Plus instance, let's add our second NGINX Plus instance, <GetVariable name="nginx-plus-2" />, to the Config Sync Group.
+Now that we added our first NGINX Plus instance to the Config Sync Group, let's add our second NGINX Plus instance, *<GetVariable name="nginx-plus-3" />*, to the Config Sync Group.
 
-TODO: Write this when N1 is back up and accessible
+1. Click the *Run* button below to start a new NGINX Plus instance.
 
-![Added Second NGINX Plus Instance](media/lab5-8.png)
+    <Docker
+        name="nginx-plus-3" 
+        desc="NGINX Plus R32 with Agent." 
+        image="private-registry.nginx.com/nginx-plus/agent:debian" 
+        env={[
+            {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+            {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+            {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+            {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+            {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+            {name: "NGINX_AGENT_INSTANCE_GROUP", isVariable: true}
+        ]}
+        attrs={[
+            { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
+        ]}
+    />
+
+1. Verify the new NGINX instance is part of your *<GetVariable name="petname" />* Config Sync Group and wait for the Config Sync Status to transition from *Sync in Progress* to *In Sync*.
+
+    >TODO: update picture
+
+    ![Added Second NGINX Plus Instance](media/lab5-8.png)
+
+1. Test that the configuration was synchronized to all instances:
+    <APICheckContainer>
+        <APIHeaderCheck 
+            componentName="nginx-plus-2" 
+            headerName="X-Test-App"
+            headerValue="true"
+            path="/test_header" 
+            targetStatusCode={200}  
+        />
+        <APIHeaderCheck 
+        componentName="nginx-plus-3" 
+        headerName="X-Test-App"
+        headerValue="true"
+        path="/test_header" 
+        targetStatusCode={200}  
+        />
+    </APICheckContainer>
 
 ### Updating and publishing configuration
 
@@ -468,17 +609,7 @@ Now that we have two instances in a Config Sync Group. Lets publish a new config
 
 We will be making an update to the configuration defined in the config sync group then publish the change
 
-1. In your **<GetVariable name="petname" />** Config Sync Group, go to the *Configuration* tab.
-
-1. Click *Edit Configuration*
-
-    ![Edit Configuration](media/lab5-9.png)
-
-1. An editor should now appear. We will want to update **default.conf** so be sure to click on that file.
-
-    ![Edit File](media/lab5-10.png)
-
-1. Add the following section to the **server** block then click *Next*
+1. Based on what you have already learned, add the following section to the **server** block:
 
     ```bash
     location /configsync {
@@ -514,83 +645,59 @@ We will be making an update to the configuration defined in the config sync grou
             root   /usr/share/nginx/html;
         }
 
-        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
-        #
-        #location ~ \.php$ {
-        #    proxy_pass   http://127.0.0.1;
-        #}
-
-        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-        #
-        #location ~ \.php$ {
-        #    root           html;
-        #    fastcgi_pass   127.0.0.1:9000;
-        #    fastcgi_index  index.php;
-        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
-        #    include        fastcgi_params;
-        #}
-
-        # deny access to .htaccess files, if Apache's document root
-        # concurs with nginx's one
-        #
-        #location ~ /\.ht {
-        #    deny  all;
-        #}
-
-        # enable /api/ location with appropriate access control in order
-        # to make use of NGINX Plus API
-        #
-        #location /api/ {
-        #    api write=on;
-        #    allow 127.0.0.1;
-        #    deny all;
-        #}
-
-        # enable NGINX Plus Dashboard; requires /api/ location to be
-        # enabled and appropriate access control for remote access
-        #
-        #location = /dashboard.html {
-        #    root /usr/share/nginx/html;
-        #}
-    
-        location = /nginx_status {
-            stub_status;
-            access_log off;
+        location /test_header {
+            add_header X-Test-App true;
+            return 200 'HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body>Howdy!</body></html>';
         }
 
         location /configsync {
-        default_type text/html;
-        return 200 '<html><body><h1>Published change made from NGINX One Config Sync Group</h1></body></html>';
-        }    
+            default_type text/html;
+            return 200 '<html><body><h1>Published change made from NGINX One Config Sync Group</h1></body></html>';
+        } 
     }
     ```
-
-1. The following screen will show a diff between existing and new config.
-
-    ![Confirm Edits](media/lab5-11.png)
-
-1. Confirm your changes and click *Save and Publish*.
 
 We can now confirm the configuration changes on the NGINX instance by clicking the *Check* button for each NGINX instance below:
 
     <APICheckContainer>
-        <APIResponseCheck 
-            componentName="nginx-plus-1" 
-            path="/configsync" 
-            searchString="Config Sync Group"
-            targetStatusCode={200}  
-        />
         <APIResponseCheck 
             componentName="nginx-plus-2" 
             path="/configsync" 
             searchString="Config Sync Group"
             targetStatusCode={200}  
         />
+        <APIResponseCheck 
+            componentName="nginx-plus-3" 
+            path="/configsync" 
+            searchString="Config Sync Group"
+            targetStatusCode={200}  
+        />
     </APICheckContainer>
+
+### Removing NGINX Instances from a Config Sync Group
+
+As part of your day-to-day tasks, you may need to remove NGINX instances from a Config Sync Group.  This section will walk you through this process:
+
+To remove NGINX Open Source from this instance group:
+
+1. Navigate to your *<GetVariable name="petname" />* Config Sync Group 
+
+1. Click the *Actions link for the *<GetVariable name="nginx-plus-3" />* instance and choose *delete*
+
+    > TODO: update image
+
+![Remove Instance](media/lab5-17.png)
+
+> **Note:** Removing an NGINX instance from a Config Sync Group will also remove the instances from the NGINX One Console but will not remove the last active configuration.
+
+#### Review
+
+Great job! You have now simulated a common Day-2 operation of scaling or upgrading your NGINX instances and NGINX One Console made this process extremely easy and fast!  You can also do this via the [NGINX One Console API](https://docs.nginx.com/nginx-one/api/api-reference-guide/) if you prefer to handle these steps through a pipeline.
+
 
 ### Create a Config Sync Group for NGINX OSS
 
-TODO: create content around the story "a customer can create a config sync group with a custom configuration and any NGINX instance, NGINX OSS in this example, will automatically
+> TODO: create content around the story "a customer can create a config sync group with a custom configuration and any NGINX instance, NGINX OSS in this example, will automatically
 pull it's configuration at start up."  Move the NGINX Docker OSS component here and update the component to pass the config sync group the user will create.
 
 1. Click the *Configuration* tab then click on *Edit Configuration*
@@ -607,12 +714,10 @@ pull it's configuration at start up."  Move the NGINX Docker OSS component here 
 
 ### Mixing NGINX Plus and NGINX Open Source Instances
 
-TODO: I am not a fan of negative examples, either remove this or find a better way to express what you are trying to explain - Cody
+> TODO: I am not a fan of negative examples, either remove this or find a better way to express what you are trying to explain - Cody
 
 You will be able to mix NGINX Plus and NGINX Open Source instances with the exception that the configuration must be compatible across NGINX OSS and NGINX Plus. 
 For example, you will not be able to publish NGINX Plus unique configurations like [JWT authenticate](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-jwt-authentication/) to NGINX Open Source.
-
-> **Note:** When you view details from an NGINX Open Source instance, there will be an error message that indicates thee status of the NGINX Open Source instance will be "Out of Sync". This will be resolved in an upcoming release.
 
 We will now go through the steps of adding an NGINX OSS instance to your existing Config Sync Group:
 
@@ -627,38 +732,6 @@ We will now go through the steps of adding an NGINX OSS instance to your existin
     ![Out of Sync Instance Details](media/lab5-16.png)
 
 We will not go through the exercise of resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your responsibility to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
-
-### Removing or Changing NGINX Instances in Config Sync Group
-
-We will now go though the steps to remove an instance from a config sync group. In the example here, the main configuration from our config sync group is not compatible with NGINX Open Source and we are going to remove it.
-
-To remove NGINX Open Source from this instance group:
-
-1. Open console access to your NGINX Open Source instance.
-
-1. Open **/var/lib/nginx-agent/agent-dynamic.conf** in a text editor and remove or comment out the following line.
-
-    ```bash
-    instance_group: labuser
-    ```
-
-    > :point_right: **Note:** You can also move an instance to another config sync group by changing the **instance_group** name.
-
-1. Restart NGINX Agent.
-
-    ```bash
-    sudo systemctl restart nginx-agent
-    ```
-
-There is not an interface on the UI that will allow you to either remove or change NGINX instance from the config sync group. If you do use the UI to remove an instance from the config sync group it will also remove the instance from being managed in NGINX One.
-
-The screenshot below show the "Details" screen from the config sync group. It appears I can remove the instance from this instance group but keep the instance managed in NGINX One.
-
-![Remove Instance](media/lab5-17.png)
-
-But if you delete it on that screen, you will also notice the NGINX instance is no longer managed by NGINX One.
-
-![Deleted Instance](media/lab5-18.png)
 
 ## NGINX OSS (Optional)
 
