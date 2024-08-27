@@ -255,15 +255,18 @@ async function validateAndFetchEnv(env) {
 export const execShellCommand = (containerId, command) => {
   return new Promise((resolve, reject) => {
 
-    // Add support for calling the Docker API instead of using docker.sock
-    const dockerApiUrl = getEnvVariable("DOCKER_API_URL");
-
-    exec(`docker ${dockerApiUrl ? `-H ${dockerApiUrl}` : ""} exec ${containerId} ${command}`, (error, stdout, stderr) => {
-      if (error) {
-        reject(new Error(stderr));
-      } else {
-        resolve(stdout);
-      }
-    });
+    // Support calling the Docker API instead of using docker.sock
+    const dockerApiKey = "DOCKER_API_URL";
+    getEnvVariable(dockerApiKey).then((dockerApiUrl) => {
+      const execCommand = `docker ${dockerApiUrl ? `-H ${dockerApiUrl} ` : ""}exec ${containerId} ${command}`;
+      exec(execCommand, (error, stdout, stderr) => {
+        if (error) {
+          console.log(`Docker exec failed: ${error}`)
+          reject(new Error(stderr));
+        } else {
+          resolve(stdout);
+        }
+      })
+    })
   });
 };
