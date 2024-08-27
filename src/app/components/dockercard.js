@@ -100,7 +100,7 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
   };
 
   return (
-    <div className={`max-w-md rounded overflow-hidden shadow-lg ${isMinimized ? "h-55" : "h-auto"}`}>
+    <div className={`max-w-md rounded overflow-hidden shadow-lg border border-gray-300 ${isMinimized ? "h-55" : "h-auto"}`}>
       <DockerLogs containerName={name} showBox={showBox} setShowBox={setShowBox} />
       <div className="px-4 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>

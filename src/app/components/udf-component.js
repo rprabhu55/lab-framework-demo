@@ -35,7 +35,7 @@ async function UDFComponent({ name }) {
   const webShellUrl = await getWebShellUrl(name);
 
   return (
-    <div className={`max-w-md rounded overflow-hidden shadow-lg h-55`}>
+    <div className={`max-w-sm rounded overflow-hidden shadow-lg h-55 border border-gray-300`}>
       <div className="px-4 py-4">
         <div className="font-bold text-xl mb-2">{name}</div>
         <UDFComponentButton webShellUrl={webShellUrl} />
