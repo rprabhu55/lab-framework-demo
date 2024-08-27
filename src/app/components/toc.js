@@ -8,16 +8,20 @@ export function ToC() {
   useEffect(() => {
     // Get all the headings on the page
     const headingElements = document.querySelectorAll("h1, h2, h3, h4")
-    const headings = Array.from(headingElements).map((heading) => ({
-      title: heading.innerText,
-      id: heading.innerText.toLowerCase().replace(/\s/g, "-"),
-      level: parseInt(heading.tagName.substring(1)), // Get the heading level
-    }))
+    const headings = Array.from(headingElements).map((heading) => {
+      const id = heading.innerText.toLowerCase().replace(/\s/g, "-")
+      heading.setAttribute("id", id) // Set the id attribute of the heading element
+      return {
+        title: heading.innerText,
+        id: id,
+        level: parseInt(heading.tagName.substring(1)), // Get the heading level
+      }
+    })
     setHeadings(headings)
   }, [])
 
   return (
-    <div className="toc-container p-1 w-80 sticky top-0 border-r-2 border-t-2 h-screen">
+    <div className="toc-container p-1 w-80 sticky top-0 border-r-2 border-t-2 h-screen overflow-y-auto">
       <ul className="list-none">
         {headings.map((heading, index) => (
           <li key={`${heading.id}_${index}`} className="" style={{ 
