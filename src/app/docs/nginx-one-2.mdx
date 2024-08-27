@@ -599,7 +599,7 @@ For the lab, we have simplified this process for you:
             {name: "NGINX_AGENT_INSTANCE_GROUP", isVariable: true}
         ]}
         attrs={[
-            { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
+            { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
         ]}
     />
 
@@ -674,7 +674,7 @@ Now that we have added our first NGINX Plus instance to the Config Sync Group, l
             {name: "NGINX_AGENT_INSTANCE_GROUP", isVariable: true}
         ]}
         attrs={[
-            { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
+            { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
         ]}
     />
 
