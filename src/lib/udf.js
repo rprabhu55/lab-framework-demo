@@ -5,7 +5,7 @@
  */
 
 import { LABINFO_API_URL, UDF_DEPLOYMENT_API_URL } from "./constants";
-import { setRedisVariable } from "./redis";
+import { setRedisVariable, fetchRedisVariable } from "./redis";
 
 /**
  * Recursively searches a JSON object for a key that matches the specified key and returns its value.
@@ -107,4 +107,67 @@ export async function fetchUDFInfo(variableName) {
   console.error("Unable to store the lab info in redis: ", error.message);
   });
   return variableValue;
+}
+
+/**
+ * Get Web Shell URL for UDF component
+ * 
+ * @param {string} componentName - The UDF component's name
+ * 
+ */
+export async function fetchUdfComponentWebShell(componentName = null) {
+  if(componentName === null) {
+    console.error('fetchUdfComponentWebShell Error: name must be defined');
+    return;
+
+  }
+
+  console.debug('fetchUdfComponentWebShell:componentName: ', componentName);
+
+  if(componentName === null) return;
+
+  //check if it's in Redis
+  const redisValue = await fetchRedisVariable(componentName);
+  if (redisValue !== null) {
+    return `https://${redisValue}`;
+  }
+
+  // get udf api payload
+  const response = await fetch(UDF_DEPLOYMENT_API_URL, { mode: "cors"});
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const jsonResponse = await response.json();
+
+  const components = jsonResponse.deployment.components;
+
+  let host = '';
+
+    for (const component of components) {
+        if (component.name === componentName) {
+            const httpsMethods = component.accessMethods.https;
+            for (const method of httpsMethods) {
+                if (method.label === "Web Shell") {
+                        host = method.host
+                }
+            }
+        }
+    }
+
+    if (host === '') {
+        console.error(`Web Shell host not found for ${componentName}`);
+        return null;
+    }
+
+    const url = `https://${host}`;
+
+    setRedisVariable(componentName, host).catch(error => {
+        console.error("Unable to store the lab info in redis: ", error.message);
+    });
+
+    console.log('fetchUdfComponentWebShell:url: ', url);
+
+    return url;
 }
