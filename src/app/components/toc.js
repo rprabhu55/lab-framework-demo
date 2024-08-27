@@ -1,34 +1,58 @@
 "use client";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
 export function ToC() {
-
-  const [headings, setHeadings] = useState([])
+  const [headings, setHeadings] = useState([]);
+  const [activeId, setActiveId] = useState("");
 
   useEffect(() => {
     // Get all the headings on the page
-    const headingElements = document.querySelectorAll("h1, h2, h3, h4")
+    const headingElements = document.querySelectorAll("h1, h2, h3, h4");
     const headings = Array.from(headingElements).map((heading) => {
-      const id = heading.innerText.toLowerCase().replace(/\s/g, "-")
-      heading.setAttribute("id", id) // Set the id attribute of the heading element
+      const id = heading.innerText.toLowerCase().replace(/\s/g, "-");
+      heading.setAttribute("id", id); // Set the id attribute of the heading element
       return {
         title: heading.innerText,
         id: id,
         level: parseInt(heading.tagName.substring(1)), // Get the heading level
-      }
-    })
-    setHeadings(headings)
-  }, [])
+      };
+    });
+    setHeadings(headings);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -80% 0px" } // Adjust as needed
+    );
+
+    headingElements.forEach((heading) => observer.observe(heading));
+
+    return () => {
+      headingElements.forEach((heading) => observer.unobserve(heading));
+    };
+  }, []);
 
   return (
     <div className="toc-container p-1 w-80 sticky top-0 border-r-2 border-t-2 h-screen overflow-y-auto">
       <ul className="list-none">
         {headings.map((heading, index) => (
-          <li key={`${heading.id}_${index}`} className="" style={{ 
-            fontSize: `${1.5 - (heading.level * 0.2)}em`, // Example: h1 -> 1.3em, h2 -> 1.1em, etc.
-            marginLeft: `${(heading.level - 1) * 20}px` // Example: h1 -> 0px, h2 -> 20px, etc.
-          }}>
-            <a className="no-underline text-gray-600 text-base" href={`#${heading.id}`}>
+          <li
+            key={`${heading.id}_${index}`}
+            className={activeId === heading.id ? "active" : ""}
+            style={{
+              fontSize: `${1.5 - heading.level * 0.2}em`, // Example: h1 -> 1.3em, h2 -> 1.1em, etc.
+              marginLeft: `${(heading.level - 1) * 20}px`, // Example: h1 -> 0px, h2 -> 20px, etc.
+            }}
+          >
+            <a
+              className="no-underline text-gray-600 text-base"
+              href={`#${heading.id}`}
+            >
               {heading.title}
             </a>
           </li>
