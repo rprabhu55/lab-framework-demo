@@ -6,7 +6,10 @@ import { Docker } from "@/app/components/docker";
 import { DockerStatus } from "@/app/components/docker-status";
 import { GetVariable } from "@/app/components/get-variable";
 import { InputVariable } from "@/app/components/input-var";
+import { SetVariable } from "@/app/components/set-variable";
+import UDFComponent from "@/app/components/udf-component";
 import { UdfDeploymentMetadata } from "@/app/components/udf-deployment-metadata";
+
 import DockerContainer from "@/app/components/docker-container";
 import APICheckContainer from "@/app/components/api-check-container";
 import dynamic from 'next/dynamic';
@@ -24,7 +27,9 @@ const MDXComponents = {
   DockerContainer,
   GetVariable,
   InputVariable,
+  UDFComponent,
   UdfDeploymentMetadata,
+  SetVariable,
   h1: (props) => <h1 id={formatId(props.children)} {...props} />,
   h2: (props) => <h2 id={formatId(props.children)} {...props} />,
   h3: (props) => <h3 id={formatId(props.children)} {...props} />,

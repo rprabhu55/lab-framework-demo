@@ -52,8 +52,10 @@ export function APIBase({
         onClick={handleCheck}
         className="py-2 px-4 size-min bg-blue-500 hover:bg-blue-600 text-white rounded focus:ring-indigo-500 focus:border-indigo-600 active:bg-blue-700"
         >Check</button>
-      {state.status && <p className="text-green-600 font-bold">Status: 200</p>}
-      {state.error && <p className="text-red-600 font-bold">Error: {state.error}</p>}
+      <div className={state.error ? "bg-red-50" : state.status ? "bg-green-50" : ""}>
+        {state.status && <p className="text-green-600 font-bold">Status: 200</p>}
+        {state.error && <p className="text-red-600 font-bold">Error: {state.error}</p>}
+      </div>
     </div>
   )
 }
