@@ -8,8 +8,19 @@ export function ToC() {
   useEffect(() => {
     // Get all the headings on the page
     const headingElements = document.querySelectorAll("h1, h2, h3, h4");
+    const idCounts = {}; // To keep track of the number of times an ID has been used
+
     const headings = Array.from(headingElements).map((heading) => {
-      const id = heading.innerText.toLowerCase().replace(/\s/g, "-");
+      let id = heading.innerText.toLowerCase().replace(/\s/g, "-");
+
+      // If the ID already exists, append a counter to make it unique
+      if (idCounts[id]) {
+        idCounts[id] += 1;
+        id = `${id}-${idCounts[id]}`;
+      } else {
+        idCounts[id] = 1;
+      }
+
       heading.setAttribute("id", id); // Set the id attribute of the heading element
       return {
         title: heading.innerText,
