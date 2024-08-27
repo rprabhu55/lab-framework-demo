@@ -799,6 +799,10 @@ Great job! You have now simulated a common Day-2 operation of scaling or upgradi
 > TODO: create content around the story "a customer can create a config sync group with a custom configuration and any NGINX instance, NGINX OSS in this example, will automatically
 pull it's configuration at start up."  Move the NGINX Docker OSS component here and update the component to pass the config sync group the user will create.
 
+Lets go ahead and try to create a custom NGINX configuration before any NGINX instances get added on a Config Sync Group.
+
+1. The previous lab will contain an existing NGINX configuration when the first NGINX instance was added. We will create a new Config Sync Group for this lab.
+
 1. Click the *Configuration* tab then click on *Edit Configuration*
 
     ![Manually Create Initial Configuration](media/lab5-3.png)
@@ -809,28 +813,73 @@ pull it's configuration at start up."  Move the NGINX Docker OSS component here 
 
 1. You can also add files by clicking on *Add File* but this is limited to the **/etc/nginx/** path.
 
+1. Use the following NGINX configuration for **/etc/nginx/nginx.conf**
+    ```nginx
+    user  nginx;
+    worker_processes  auto;
+
+    error_log  /var/log/nginx/error.log notice;
+    pid        /var/run/nginx.pid;
+
+    events {
+        worker_connections  1024;
+    }
+
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+        access_log  /var/log/nginx/access.log  main;
+        sendfile        on;
+        keepalive_timeout  65;
+        include /etc/nginx/conf.d/*.conf;
+    }
+    ```
+
+1. Create another file, **/etc/nginx/conf.d/default.conf**, and use the following NGINX configuration.
+
+    ```nginx
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        location /test_custom {
+            add_header X-Test-Custom-App true;
+            return 200 'HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body>Howdy!</body></html>';
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+    ```
+
 1. Select *Next* then *Save and Publish*
 
-### Mixing NGINX Plus and NGINX Open Source Instances
+1. Now lets add the first NGINX instance in this Config Sync Group.
+
+> TODO: Use button here?
+
+1. Now you can use the check below to confirm the **/test_custom** URL is functional.
+
+> TODO: Add ResponseCheck button
+
 
 > TODO: I am not a fan of negative examples, either remove this or find a better way to express what you are trying to explain - Cody
+>       [JW]: Removing the lab portion and leaving the explanation..
 
-You will be able to mix NGINX Plus and NGINX Open Source instances with the exception that the configuration must be compatible across NGINX OSS and NGINX Plus.
+Note: You will be able to mix NGINX Plus and NGINX Open Source instances with the exception that the configuration must be compatible across NGINX OSS and NGINX Plus.
 For example, you will not be able to publish NGINX Plus unique configurations like [JWT authenticate](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-jwt-authentication/) to NGINX Open Source.
 
-We will now go through the steps of adding an NGINX OSS instance to your existing Config Sync Group:
-
-1. Add your NGINX Open Source instance to your config sync group by repeating instructions from [Adding existing instance](#adding-existing-instance) that you did for NGINX Plus.
-
-1. When you add the Open Source instance, the status shows "Out of Sync".
-
-    ![Out of Sync Instance](media/lab5-15.png)
-
-1. Click on your Open Source instance to view additional details about this. Notice the error message showing the reason why the configuration cannot be applied.
-
-    ![Out of Sync Instance Details](media/lab5-16.png)
-
-We will not go through the exercise of resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your responsibility to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
+Great! Now you completed option 2 which pushes a customized NGINX configuration for all NGINX instances that join a Config Sync Group.
 
 ## NGINX OSS (Optional)
 
