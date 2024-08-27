@@ -258,7 +258,7 @@ export const execShellCommand = (containerId, command) => {
     // Add support for calling the Docker API instead of using docker.sock
     const dockerApiUrl = getEnvVariable("DOCKER_API_URL");
 
-    exec(`docker exec ${dockerApiUrl ? `-H ${dockerApiUrl}` : ""} ${containerId} ${command}`, (error, stdout, stderr) => {
+    exec(`docker ${dockerApiUrl ? `-H ${dockerApiUrl}` : ""} exec ${containerId} ${command}`, (error, stdout, stderr) => {
       if (error) {
         reject(new Error(stderr));
       } else {
