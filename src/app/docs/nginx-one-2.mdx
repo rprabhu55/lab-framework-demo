@@ -83,7 +83,7 @@ This view provides the following metrics for all NGINX instances.
     - Unsuccessful Response Codes
     - Top Network Usage
 
-#### Availability
+**Availability**
 
 The overall reachability and availability of your NGINX fleet is displayed here.
 
@@ -91,67 +91,67 @@ The overall reachability and availability of your NGINX fleet is displayed here.
 
     > Note: there is a default 24 hour period before NGINX One automatically removes *unavailable* NGINX instances.
 
-#### NGINX Versions
+**NGINX Versions**
 
 We can see at a glance what proportion of our fleet is running Plus vs. OSS, and how many instances are running outdated or non-standard versions.
 
 ![NGINX Versions View](media/lab1-8.png)
 
-#### OS Distribution
+**OS Distribution**
 
 Similarly, we can see which OSes are part of the fleet.
 
 ![NGINX OS Distribution View](media/lab1-9.png)
 
-#### Certificates
+**Certificates**
 
 This chart provides insight on expiring certificates that need attention, as well as expired ones that should be removed.
 
 ![NGINX Certificates View](media/lab1-10.png)
 
-#### Configuration Recommendations
+**Configuration Recommendations**
 
 NGINX One analyzes the configuration files on all of the instances it manages. When a configuration presents a potential security risk or is otherwise not in accordance with best practices, a recommendation is shown.
 
 ![NGINX Configuration Recommendations View](media/lab1-11.png)
 
-#### CVEs
+**CVEs**
 
 Any CVEs that apply to an instance in your fleet are shown here.
 
 ![NGINX CVEs View](media/lab1-12.png)
 
-#### CPU Utilization
+**CPU Utilization**
 
 The instances with the highest CPU Utilization are shown here for quick visibility into potential performance issues.
 
 ![NGINX CPU Utilization View](media/lab1-13.png)
 
-#### Memory Utilization
+**Memory Utilization**
 
 Top memory consumers are also shown here.
 
 ![NGINX Memory Utilization View](media/lab1-14.png)
 
-#### Disk Space Utilization
+**Disk Space Utilization**
 
 Along with CPU and memory, instances with the highest disk utilization are shown here to surface possible disk space issues.
 
 ![NGINX Disk Space Utilization View](media/lab1-15.png)
 
-#### Unsuccessful Responses
+**Unsuccessful Responses**
 
 Instances with the most 4xx or 5xx errors appear here to identify potential attacks, misconfigurations, or upstream application issues.
 
 ![NGINX Unsuccessful Responses View](media/lab1-16.png)
 
-#### Network Usage
+**Network Usage**
 
 Top network consumers can help identify targets for optimization. Unusual traffic patterns could potentially indicate an attack attempt.
 
 ![NGINX Network Usage View](media/lab1-17.png)
 
-#### Drilling Down
+**Drilling Down**
 
 Clicking a detail line in any of these charts will let you drill-down and see the instances affected by that particular finding.
 
@@ -789,23 +789,13 @@ To remove the NGINX OSS instance from this instance group:
 
 > **Note:** Removing an NGINX instance from a Config Sync Group will also remove the instances from the NGINX One Console but will not remove the last active configuration.
 
-#### Review
-
-Great job! You have now simulated a common Day-2 operation of scaling or upgrading your NGINX instances and NGINX One Console made this process extremely easy and fast!  You can also do this via the [NGINX One Console API](https://docs.nginx.com/nginx-one/api/api-reference-guide/) if you prefer to handle these steps through a pipeline.
-
 ### Create a Config Sync Group for NGINX OSS
 
 As you have seen so far, you can manage both NGINX Plus and OSS instances in the NGINX One console. In this portion of the lab, we will focus on NGINX OSS. We will see the benefit of from having consistent configuration across multiple NGINX OSS instances. When NGINX OSS instances are created that are pre-configured to use a Config Sync Group, they will automatically download their configuration on startup. This will save time, and ensure consistency between instances.
 
-    > Note: It is possible to mix NGINX Plus and NGINX OSS instances in a Config Sync Group with the condition that the configuration used must be compatible across the NGINX Plus and NGINX OSS instances. For example, you will not be able to publish configurations that are exclusive to NGINX Plus, like [JWT authentication](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-jwt-authentication/) to NGINX OSS.
-
-Since NGINX Plus has features and capabilities beyond the OSS edition, it is a good practice to create separate Config Sync Groups for them. Let's do that now.
-
 > TODO: Move the NGINX Docker OSS component here and update the component to pass the config sync group the user will create.
 
-Let's create a custom NGINX configuration before any NGINX instances are added to a Config Sync Group.
-
-1. The previous lab will contain an existing NGINX configuration when the first NGINX instance was added. We will create a new Config Sync Group for this lab.
+Let's create a custom NGINX configuration before any NGINX instances are added to a Config Sync Group. The previous lab contained an existing NGINX configuration when the first NGINX instance was added. We will create a new Config Sync Group for this lab.
 
 1. Click the *Configuration* tab then click on *Edit Configuration*
 
@@ -878,6 +868,12 @@ Let's create a custom NGINX configuration before any NGINX instances are added t
 > TODO: Add ResponseCheck button
 
 Great! Now you have completed option 2 (mentioned earlier in the lab), which pushes a customized NGINX configuration for all NGINX instances that join a Config Sync Group.
+
+### Review
+
+Great job! Through the use of Config Sync Groups, you have now accomplished a common Day-2 operation of scaling or upgrading your NGINX instances and NGINX One Console made this process extremely easy and fast!  You can also do this via the [NGINX One Console API](https://docs.nginx.com/nginx-one/api/api-reference-guide/) if you prefer to handle these steps through a pipeline.
+
+It is possible to mix NGINX Plus and NGINX OSS instances in a Config Sync Group with the condition that the configuration used must be compatible across the NGINX Plus and NGINX OSS instances. For example, you will not be able to publish configurations that are exclusive to NGINX Plus, like [JWT authentication](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-jwt-authentication/) to NGINX OSS. However, the ability to mix NGINX editions in a Config Sync Group can be very valuable in certain situations, such as when migrating from NGINX OSS to NGINX Plus.
 
 ## NGINX OSS (Optional)
 
