@@ -1,7 +1,7 @@
 ---
-title: NGINX One Console Lab - Getting Started
-description: Part 1 of an interactive lab highlighting the NGINX One Console
-order: 2
+title: Getting Started
+description: Getting console access, starting the lab
+order: 1
 ---
 
 ## What is NGINX One?
@@ -24,7 +24,7 @@ With NGINX One Console, you will get improved:
 
 ## Lab Introduction
 
-This lab will give you an overview of how NGINX One Console provides visibility into a global fleet of NGINX instances, both NGINX Plus and NGINX Open Source (OSS).
+This lab will give you an overview of how the NGINX One console provides visibility into a global fleet of NGINX instances, both NGINX Plus and NGINX Open Source (OSS).
 
 After this lab, you will be able to:
 
@@ -36,19 +36,56 @@ After this lab, you will be able to:
 
 ## Prerequisites
 
-### UDF Blueprint
+The "NGINX One Enablement Lab" UDF blueprint contains all the prerequisites for this lab. This includes:
 
-The **NGINX One Enablement Lab** blueprint contains the NGINX Plus and NGINX OSS instances that you will use during this lab. You should be comfortable accessing resources in UDF using SSH.
+- This interactive lab guide
+- NGINX Plus and NGINX OSS instances
+- F5 XC [lab tenant](https://f5-xc-lab-app.console.ves.volterra.io) access
 
-## Accessing Console
+## F5 Distributed Cloud Tenant Access
 
-1. Log into your F5 Distributed Cloud Sales tenant.
+Once you join the UDF session, your UDF deployment will start and create an ephemeral account on the F5 Distributed Cloud console (this may take 5-10min).
 
-1. Select the *NGINX One* product from the home screen.
+1. Once your ephemeral account is created, you will receive an email to set or update your password. Click the **Update Password** link in the email. Check the spam folder for the account used to register with UDF if you can't find the email.
+
+    ![XC Console Email](media/lab0-01.png)
+
+1. Update your password. Click **Submit**.
+
+    ![image](media/lab0-02.png)
+
+1. Click **Log In**.
+
+    ![image](media/lab0-03.png)
+
+1. Once redirected to the F5 Distributed Cloud console login, enter the lab tenant name (*f5-xc-lab-app*), and click **Next**. Enter your email and password and click **Sign in**.
+
+    ![image](media/lab0-11.png)
+    ![image](media/lab0-10.png)
+
+1. Check the radio box and click **Accept and Agree** after reviewing terms.
+
+    ![image](media/lab0-05.png)
+
+1. F5 XC console "persona" and the "skill level" settings dictate how services and configuration options are presented to the user. These settings are currently not applicable to the NGINX One console. Make any valid selection for each dialog. Click **Next** or **Get Started** depending on the dialog.
+
+    ![image](media/lab0-06.png)
+
+    ![image](media/lab0-07.png)
+
+1. Several **Guidance ToolTips** might appear. These are used to inform users of new features when the F5 XC console is updated. Close the dialogues and continue.
+
+## Accessing NGINX One Console
+
+Once logged into the F5 XC console, the "home" screen shows you various tiles which represent console features. For example, you might configure Multicloud networking from the "Multi-Cloud Network Connect" tile, build global server load balancing rules from the "DNS Management" tile, or view synthetic monitoring data from the "Observability" tile. In this lab, we'll focus on the Nginx One console.
+
+> :point_right: **Note:** Your permissions in the F5 XC console are specific to this lab. You don't have permissions to all the tiles on the "home" screen.
+
+1. Click the **NGINX One** tile from the home screen.
 
     ![NGINX One in the XC Console](media/lab1-1.png)
 
-1. The NGINX One welcome screen will appear. Click *Visit Service* to proceed to the NGINX One console.
+1. The NGINX One "welcome" screen will appear. Click **Visit Service** to proceed to the NGINX One console.
 
     ![The NGINX One Welcome Screen](media/lab1-2.png)
 
@@ -70,9 +107,10 @@ The agent uses a Data Plane Key to authenticate and identify itself to NGINX One
 
 ### Generating a Data Plane Key
 
-1. From the NGINX One console, in the left hand menu under the *Manage* section, select *Data Plane Keys*.
+1. From the NGINX One console, in the left hand menu under the "Manage" section, select **Data Plane Keys**.
 
-1. Click *Add Data Plane Key*.
+1. Click **Add Data Plane Key**.
+
 
 1. Give the key a name based on your lab's ephemeral name, such as *<GetVariable name="petname" />-nginx-key*.
 
@@ -80,17 +118,18 @@ The agent uses a Data Plane Key to authenticate and identify itself to NGINX One
 
 1. By default, the key expiration date will be set to 1 year.  Depending on your use case, you may want to set a shorter expiration date.  For this lab, we will use the default value.
 
-1. Click *Generate*.
+1. Click **Generate**.
+
 
     ![Generating a Data Plane Key](media/lab2-4.png)
 
 1. The Data Plane Key will be displayed. Click the *Copy* icon to copy the key to the clipboard.
 
-    > :warning: **Warning:** *SAVE THIS KEY SOMEWHERE SAFE*. There is no way to retrieve the key after you click close. This key will be used in multiple labs.
+    > :warning: **Warning:** *SAVE THIS KEY SOMEWHERE SAFE.* There is no way to retrieve the key after you click **close**. This key will be used in multiple labs.
 
     ![Data Plane Key](media/lab2-5.png)
 
-1. Now enter the Data Plane Key in the *Set Variable* component below and click the *Save* button; this will allow the lab guide to use the key in further steps.
+1. Now enter the Data Plane Key in the *Set Variable* component below and click the **Save** button; this will allow the lab guide to use the key in further steps.
 
     <InputVariable 
         name="NGINX_AGENT_SERVER_TOKEN"
@@ -102,7 +141,7 @@ Now that we have a data plane key, we can attach our first NGINX instance to the
 
 > **Note:** This lab will focus more on the NGINX One Console and less on how to install NGINX Agent on your NGINX instance and connect the instance to NGINX One.  If this is something you would like to explore in greater depth, check out the optional labs at the end of this lab guide.
 
-1. To start your NGINX instance, click the *Run* button for each NGINX instances to deploy them and have them automatically connect to the NGINX One Console:
+1. To start your NGINX instance, click the **Run** button for each NGINX instances to deploy them and have them automatically connect to the NGINX One Console:
 
     <DockerContainer>
         <Docker  
@@ -149,7 +188,7 @@ Now that we have a data plane key, we can attach our first NGINX instance to the
 
     > Note: If you receive an error, it may be that you have not input and saved the **NGINX_AGENT_SERVER_TOKEN** variable above.
 
-1. Once the NGINX instance is up and running, press the *Test* button, to confirm the instance is online and responding to HTTP requests.
+1. Once the NGINX instance is up and running, press the **Test** button, to confirm the instance is online and responding to HTTP requests.
 
 Now, lets get started on the lab!
 
