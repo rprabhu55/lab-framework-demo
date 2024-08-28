@@ -62,7 +62,7 @@ The NGINX One Console also provides various details about the NGINX instance suc
 
 The NGINX One Dashboard provides an at-a-glance view of metrics and findings about your global NGINX fleet.
 
-You can navigate to the NGINX One Dashboard view by selecting "Dashboard" under the *Overview* section on the left.
+You can navigate to the NGINX One Dashboard view by selecting *Dashboard* under the *Overview* section on the left.
 
 ![Dashboard Side Menu](media/lab1-5.png)
 
@@ -688,9 +688,9 @@ As part of your day-to-day tasks, you may need to remove NGINX instances from a 
 
 To remove the NGINX OSS instance from this instance group:
 
-1. Navigate to your *<GetVariable name="petname" />* Config Sync Group
+1. Navigate to your *<GetVariable name="petname" />* Config Sync Group.
 
-1. Click the *Actions* link for the *<GetVariable name="nginx-plus-3" />* instance and choose *delete*
+1. Click the *Actions* link for the *<GetVariable name="nginx-plus-3" />* instance and choose *Delete*.
 
 ![Remove Instance](media/lab5-17.png)
 
@@ -721,7 +721,7 @@ the Config Sync Group.
 
 1. After if it is re-created, click on the *<GetVariable name="petname" />* group.
 
-1.  Click the *Configuration* tab then click on *Edit Configuration*
+1.  Click the *Configuration* tab then click on *Edit Configuration*.
 
     ![Manually Create Initial Configuration](media/lab5-3.png)
 
@@ -764,11 +764,11 @@ the Config Sync Group.
 
     ![Add File](media/lab5-21.png)
 
-1. Create the file name **/etc/nginx/conf.d/default.conf**
+1. Create the file name **/etc/nginx/conf.d/default.conf**.
 
     ![Name File](media/lab5-22.png)
 
-1. Be sure the new file is selected in the text editor
+1. Be sure the new file is selected in the text editor:
 
     ![Select File](media/lab5-23.png)
 
@@ -800,13 +800,11 @@ the Config Sync Group.
 
     ![Final Config View](media/lab5-24.png)
 
-1. Select *Next*, then *Save and Publish*
+1. Select *Next*, then *Save and Publish*.
 
     ![Final Diff](media/lab5-25.png)
 
-1. Now let's add the first NGINX instance in this Config Sync Group.
-
-1. Now let's add two NGINX Open Source instance in this Config Sync Group. Select *Run* for each NGINX OSS instances below. As a convenience, the dataplane key and Config Sync Group have already been provided to the containers.
+1. Now let's add two new NGINX Open Source instances pre-configured to join this Config Sync Group. Select *Run* for each NGINX OSS instances below. As a convenience, the dataplane key and Config Sync Group have already been provided to the containers.
 
     <DockerContainer>
         <Docker
@@ -867,7 +865,7 @@ Great! Now you have now pushed a customized NGINX configuration to all NGINX ins
 
 Great job! Through the use of Config Sync Groups, you have now accomplished a common Day-2 operation of scaling or upgrading your NGINX instances and NGINX One Console made this process extremely easy and fast!  You can also do this via the [NGINX One Console API](https://docs.nginx.com/nginx-one/api/api-reference-guide/) if you prefer to handle these steps through a pipeline.
 
-> :point_right: It is possible to mix NGINX Plus and NGINX OSS instances in a Config Sync Group. But the NGINX configuration must be compatible for both the NGINX Plus and NGINX OSS instances. For example, you will not be able to publish configurations that are exclusive to NGINX Plus, like [JWT authentication](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-jwt-authentication/) to NGINX OSS. However, the ability to mix NGINX editions in a Config Sync Group can be very valuable in certain situations, such as when migrating from NGINX OSS to NGINX Plus.
+> :point_right: It is possible to mix NGINX Plus and NGINX OSS instances in a Config Sync Group. However, the NGINX configuration must be compatible for both the NGINX Plus and NGINX OSS instances. For example, you will not be able to publish configurations that are exclusive to NGINX Plus, like [JWT authentication](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-jwt-authentication/) to NGINX OSS. However, the ability to mix NGINX editions in a Config Sync Group can be very valuable in certain situations, such as when migrating from NGINX OSS to NGINX Plus.
 
 ## NGINX OSS (Optional)
 
@@ -899,7 +897,7 @@ Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.
 
     The install script will install any necessary dependencies, and install the NGINX Agent with the appropriate settings for your system. You will see a warning about "stub_status" not being configured. You can ignore that warning.
 
-1. Return to the NGINX One console. From the left menu in the "Manage" section, click "Instances". You should see your new instance in the list.
+1. Return to the NGINX One console. From the left menu in the *Manage* section, click *Instances*. You should see your new instance in the list.
 
 1. Click its hostname to view the instance details.
 
@@ -920,15 +918,15 @@ targetStatusCode={200}
 
 The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, refer to the [documentation](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/#pulling-the-image).
 
-1. Go to the "Details" page of your Config Sync Group then click "Add Instance to Config Sync Group"
+1. Go to the *Details* page of your Config Sync Group then click *Add Instance to Config Sync Group*.
 
-1. Select "Register a new instance with NGINX One then add to config sync group" then click "Next"
+1. Select *Register a new instance with NGINX One then add to config sync group* then click *Next*.
 
-1. If you saved your "Data Plane Key" from a previous lab, select "Use existing Key". Otherwise select "Generate new key"
+1. If you saved your Data Plane Key from a previous lab, select *Use existing Key*. Otherwise select *Generate new key*.
 
-1. Provide your Data Plane Key if you selected "Use existing Key"
+1. Provide your Data Plane Key if you selected *Use existing Key*.
 
-1. Select the "Docker Container" tab.
+1. Select the *Docker Container* tab.
 
     > TODO: Take a longer (in height) screenshot of the next image to show the missing command.
 
@@ -956,8 +954,7 @@ The **Lab Framework** from the UDF environment has **docker** installed and is s
         -d private-registry.nginx.com/nginx-plus/agent:debian
         ```
 
-
-1. Click "Done" to close out the window.
+1. Click *Done* to close the window.
 
 You will now see the second NGINX Plus instance added.
 
@@ -970,7 +967,7 @@ targetStatusCode={200}
 
 Time to clean up the resources you created in this lab. As a safety precaution, the NGINX One console will not allow you to delete an instance that is online. We will first have to shut down the instances before deleting them from the NGINX One console.
 
-1. Click "Stop" on all the Docker instances displayed below:
+1. Click *Stop* on all the Docker instances displayed below:
 
     <DockerContainer>
         <Docker
@@ -1054,22 +1051,22 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
         />
     </DockerContainer>
 
-1. In the UDF deployment for this lab, click "Details" for the "NGINX OSS" component.
+1. In the UDF deployment for this lab, click *Details* for the *NGINX OSS* component.
 
     ![Select the NGINX component details](media/cleanup-1.png)
 
-1. Click the "Stop" button for this component.
+1. Click the *Stop* button for this component.
 
     ![Select the NGINX component details](media/cleanup-2.png)
 
-1. From the NGINX One console, in the left-hand menu in the "Manage" section, select "Instances".
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Instances*.
 
-1. Wait until the instance transitions to the "Unavailable" state before proceeding. You may need to click the "Refresh" button at the top right of the instance list.
+1. Wait until the instance transitions to the **Unavailable** state before proceeding. You may need to click the *Refresh* button at the top right of the instance list.
 
     ![Instance Unavailable](media/cleanup-3.png)
 
 1. Once Select the context menu for the NGINX OSS instance, and select
-    "Delete".
+    *Delete*.
 
     > :warning: **Warning:** Make sure you are deleting your own instance and not someone else’s.
 
@@ -1081,15 +1078,15 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 
 1. Repeat steps 1-6 for any remaining **<GetVariable name="petname" />** instance.
 
-1. From the NGINX One console, in the left-hand menu in the Manage section, select "Config Sync Groups".
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Config Sync Groups*.
 
 1. Delete your Config Sync Group Instances by going into your **<GetVariable name="petname" />** Config Sync Group Details and selecting the *Actions* link on the far right, then select *Delete* for each instance.
 
     ![Delete Config Sync Group](media/cleanup-8.png)
 
-1. From the NGINX One console, in the left-hand menu in the "Manage" section, select "Data Plane Keys".
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Data Plane Keys*.
 
-1. Select the context menu for the Data Plane Key you created in lab 1, and select "Revoke".
+1. Select the context menu for the Data Plane Key you created in lab 1, and select *Revoke*.
 
     > :warning: **Warning:** Make sure you are revoking your own key and not someone else’s.
 
