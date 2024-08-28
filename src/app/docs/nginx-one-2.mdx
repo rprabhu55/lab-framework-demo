@@ -713,15 +713,9 @@ the Config Sync Group.
 
     ![List Config Sync Group](media/lab5-19.png)
 
-1. Delete your existing *<GetVariable name="petname" />* Config Sync Group
+1. Based on the work in the previous lab, in the NGINX One Console, create a new Config Sync Group named **<GetVariable name="petname" />-oss**.
 
-    ![Delete Config Sync Group](media/lab5-20.png)
-
-1. Re-create the Config Sync Group, *<GetVariable name="petname" />*.
-
-1. After if it is re-created, click on the *<GetVariable name="petname" />* group.
-
-1.  Click the *Configuration* tab then click on *Edit Configuration*.
+1. You will create a custom NGINX configuration before any NGINX instances are added to a Config Sync Group. Click the *Configuration* tab then click on *Edit Configuration*.
 
     ![Manually Create Initial Configuration](media/lab5-3.png)
 
@@ -729,7 +723,7 @@ the Config Sync Group.
 
     ![Manual Configuration](media/lab5-4.png)
 
-    Use the following NGINX configuration here.
+1. Insert the following NGINX configuration into the */etc/nginx/nginx.conf* file:
 
     ```nginx
     user  nginx;
@@ -760,11 +754,7 @@ the Config Sync Group.
     }
     ```
 
-1. You can also add files by clicking *Add File* but this is limited to the **/etc/nginx/** path.
-
-    ![Add File](media/lab5-21.png)
-
-1. Create the file name **/etc/nginx/conf.d/default.conf**.
+1. Create a file named **/etc/nginx/conf.d/default.conf**:
 
     ![Name File](media/lab5-22.png)
 
@@ -796,7 +786,7 @@ the Config Sync Group.
     }
     ```
 
-1. A screenshot after you completed the above should look like below.
+1. After you complete the above, it should look like the following screenshot:
 
     ![Final Config View](media/lab5-24.png)
 
@@ -817,7 +807,7 @@ the Config Sync Group.
                 {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
                 {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
                 {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
-                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}-oss`}
             ]}
             attrs={[
                 { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
@@ -833,7 +823,7 @@ the Config Sync Group.
                 {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
                 {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
                 {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
-                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}-oss`}
             ]}
             attrs={[
                 { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
@@ -1076,13 +1066,15 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 
     ![Confirming the deletion](media/cleanup-5.png)
 
-1. Repeat steps 1-6 for any remaining **<GetVariable name="petname" />** instance.
+1. Repeat the previous steps for any remaining **<GetVariable name="petname" />** instances.
 
 1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Config Sync Groups*.
 
 1. Delete your Config Sync Group Instances by going into your **<GetVariable name="petname" />** Config Sync Group Details and selecting the *Actions* link on the far right, then select *Delete* for each instance.
 
     ![Delete Config Sync Group](media/cleanup-8.png)
+
+1. Repeat the previous step, this time for the **<GetVariable name="petname" />-oss** Config Sync Group.
 
 1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Data Plane Keys*.
 
