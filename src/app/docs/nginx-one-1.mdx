@@ -22,7 +22,7 @@ This lab will give you an overview of how NGINX One Console provides visibility 
 
 After this lab, you will be able to:
 
-- Access and navigate the NGINX One console,
+- Access and navigate the NGINX One console
 - Manage NGINX configuration
 - Review recommendations from the NGINX One console
 - Setup Config Sync Groups
@@ -32,17 +32,17 @@ After this lab, you will be able to:
 
 ### UDF Blueprint
 
-The "NGINX One Enablement Lab" blueprint contains the NGINX Plus and NGINX OSS instances that you will use during this lab. You should be comfortable accessing resources in UDF using SSH.
+The **NGINX One Enablement Lab** blueprint contains the NGINX Plus and NGINX OSS instances that you will use during this lab. You should be comfortable accessing resources in UDF using SSH.
 
 ## Accessing Console
 
 1. Log into your F5 Distributed Cloud Sales tenant.
 
-1. Select the "NGINX One" product from the home screen.
+1. Select the *NGINX One* product from the home screen.
 
     ![NGINX One in the XC Console](media/lab1-1.png)
 
-1. The NGINX One welcome screen will appear. Click "Visit Service" to proceed to the NGINX One console.
+1. The NGINX One welcome screen will appear. Click *Visit Service* to proceed to the NGINX One console.
 
     ![The NGINX One Welcome Screen](media/lab1-2.png)
 
@@ -50,7 +50,7 @@ The "NGINX One Enablement Lab" blueprint contains the NGINX Plus and NGINX OSS i
 
     ![NGINX One Dashboard](media/lab1-3.png)
 
-1. In the left-hand menu in the "Manage" section is the "Instances" link. You may or may not have any existing instances in your tenant. Don’t worry if there aren’t any, you will be deploying two instances later in the lab. If there are any existing instances, click an instance’s hostname to view its details.
+1. In the left-hand menu in the *Manage* section is the *Instances* link. You may or may not have any existing instances in your tenant. Don’t worry if there aren’t any, you will be deploying two instances later in the lab. If there are any existing instances, click an instance’s hostname to view its details.
 
     ![NGINX One instance details](media/lab1-4.png)
 
@@ -64,9 +64,9 @@ The agent uses a Data Plane Key to authenticate and identify itself to NGINX One
 
 ### Generating a Data Plane Key
 
-1. From the NGINX One console, in the left hand menu under the "Manage" section, select "Data Plane Keys".
+1. From the NGINX One console, in the left hand menu under the *Manage* section, select *Data Plane Keys*.
 
-1. Click "Add Data Plane Key".
+1. Click *Add Data Plane Key*.
 
 1. Give the key a name based on your lab's ephemeral name, such as *<GetVariable name="petname" />-nginx-key*.
 
@@ -74,13 +74,13 @@ The agent uses a Data Plane Key to authenticate and identify itself to NGINX One
 
 1. By default, the key expiration date will be set to 1 year.  Depending on your use case, you may want to set a shorter expiration date.  For this lab, we will use the default value.
 
-1. Click "Generate"
+1. Click *Generate*.
 
     ![Generating a Data Plane Key](media/lab2-4.png)
 
-1. The Data Plane Key will be displayed. Click the "Copy" icon to copy the key to the clipboard.
+1. The Data Plane Key will be displayed. Click the *Copy* icon to copy the key to the clipboard.
 
-    > :warning: **Warning:** *SAVE THIS KEY SOMEWHERE SAFE.* There is no way to retrieve the key after you click close. This key will be used in multiple labs.
+    > :warning: **Warning:** *SAVE THIS KEY SOMEWHERE SAFE*. There is no way to retrieve the key after you click close. This key will be used in multiple labs.
 
     ![Data Plane Key](media/lab2-5.png)
 
