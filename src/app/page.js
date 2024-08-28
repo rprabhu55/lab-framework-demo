@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getIndexDocs } from "@/lib/mdxUtils"
+import { getPetname } from "@/lib/variables"
 
 export default async function Home() {
   const docs = await getIndexDocs()
@@ -13,8 +14,7 @@ export default async function Home() {
         src="/lab-framework-logo.png"
         alt="Lab Framework"
         width={200}
-        height={200}
-      />
+        height={200} />
       <p>
         The following are a list of pages in this lab.
       </p>
@@ -31,6 +31,7 @@ export default async function Home() {
           </li>
         ))}
       </ul>
+      <div className="text-white">{getPetname()}</div>
     </main>
   );
 }

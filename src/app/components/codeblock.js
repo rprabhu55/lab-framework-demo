@@ -60,8 +60,6 @@ export async function CodeBlock({ className, children }) {
 
   const childData = await processChildren(children);
 
-  console.log(childData);
-
   return (
     <div className="relative bg-gray-800 rounded-lg">
      <CodeBlockCopy>{childData}</CodeBlockCopy>
