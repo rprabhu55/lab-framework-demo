@@ -48,7 +48,7 @@ curl -X PUT 'http://host.docker.internal:5123/mockserver/expectation' \
     },
     "httpResponse": {
         "body": {
-            "petname":"drunk-sloth"
+            "petname":"happy-sloth"
         }
     }
 }
