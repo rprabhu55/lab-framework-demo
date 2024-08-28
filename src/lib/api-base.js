@@ -19,15 +19,15 @@ import { useState } from "react";
  * 
  * @returns {JSX.Element} The rendered component.
  */
-export function APIBase({ 
-    componentName = null,
-    headerName = null,
-    headerValue = null,
-    searchString = null,
-    path ="/", 
-    targetStatusCode = 200,
-    url = null  
-  }) {
+export function APIBase({
+  componentName = null,
+  headerName = null,
+  headerValue = null,
+  searchString = null,
+  path = "/",
+  targetStatusCode = 200,
+  url = null
+}) {
   const [state, setState] = useState({ status: null, error: null });
 
   /**
@@ -38,7 +38,7 @@ export function APIBase({
    */
   const handleCheck = async () => {
     try {
-      await checkAPI({ componentName, headerName, headerValue, searchString, path, targetStatusCode, url});
+      await checkAPI({ componentName, headerName, headerValue, searchString, path, targetStatusCode, url });
       setState({ status: true, error: null });
     } catch (error) {
       const errorMessage = "The API check failed"
@@ -51,10 +51,10 @@ export function APIBase({
       <button
         onClick={handleCheck}
         className="py-2 px-4 size-min bg-blue-500 hover:bg-blue-600 text-white rounded focus:ring-indigo-500 focus:border-indigo-600 active:bg-blue-700"
-        >Check</button>
-      <div className={state.error ? "bg-red-50" : state.status ? "bg-green-50" : ""}>
-        {state.status && <p className="text-green-600 font-bold">Status: 200</p>}
-        {state.error && <p className="text-red-600 font-bold">Error: {state.error}</p>}
+      >Check</button>
+      <div className={`${state.error ? "bg-red-50" : state.status ? "bg-green-50" : ""}${(state.status || state.error) ? " h-14 p-4 mt-4" : ""}`}>
+        {state.status && <span className="text-green-600 font-bold inline-block align-middle">Status: 200</span>}
+        {state.error && <span className="text-red-600 font-bold inline-block align-middle">Error: {state.error}</span>}
       </div>
     </div>
   )

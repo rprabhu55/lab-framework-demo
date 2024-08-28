@@ -64,6 +64,7 @@ export async function checkAPI({
   }
 
   try {
+    console.log(`Calling API Check at: ${url}`)
     const response = await fetch(url, { mode: "cors", cache: "no-store" });
     if (response.status != targetStatusCode) {
       throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
