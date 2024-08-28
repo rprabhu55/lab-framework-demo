@@ -1,6 +1,6 @@
 ---
-title: NGINX One Console Lab
-description: An interactive lab highlighting the NGINX One Console
+title: NGINX One Console Lab - Part 2
+description: Part 2 of an interactive lab highlighting the NGINX One Console
 order: 3
 ---
 
@@ -499,13 +499,7 @@ The instructions on the screen tell you how to:
 
 But for this lab, we have simplified this process for you:
 
-1. Entering your *Config Sync Group* name below, which should be *<GetVariable name="petname" />*.
-
-    <InputVariable
-        name="NGINX_AGENT_INSTANCE_GROUP"
-    />
-
-1. Click the *Run* button below to start a new NGINX Plus instance.
+1. Click the *Run* button below to start a new NGINX Plus instance. As a convenience, the dataplane key and Config Sync Group have already been provided to the containers.
 
     <Docker
         name="nginx-plus-2"
@@ -517,10 +511,10 @@ But for this lab, we have simplified this process for you:
             {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
             {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
             {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
-            {name: "NGINX_AGENT_INSTANCE_GROUP", isVariable: true}
+            {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
         ]}
         attrs={[
-            { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
+            { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
         ]}
     />
 
@@ -590,10 +584,10 @@ Now that we have added our first NGINX Plus instance to the Config Sync Group, l
             {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
             {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
             {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
-            {name: "NGINX_AGENT_INSTANCE_GROUP", isVariable: true}
+            {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
         ]}
         attrs={[
-            { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
+            { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
         ]}
     />
 
@@ -696,7 +690,9 @@ To remove the NGINX OSS instance from this instance group:
 
 1. Navigate to your *<GetVariable name="petname" />* Config Sync Group
 
-1. Click the *Actions link for the *<GetVariable name="nginx-plus-3" />* instance and choose *delete*
+1. Click the *Actions* link for the *<GetVariable name="nginx-plus-3" />* instance and choose *delete*
+
+    > TODO: update image
 
 ![Remove Instance](media/lab5-17.png)
 
@@ -810,65 +806,64 @@ the Config Sync Group.
 
     ![Final Diff](media/lab5-25.png)
 
-1. Now let's add two NGINX Open Source instance in this Config Sync Group. Select *Run* for each NGINX OSS instances below.
-    <Docker
-        name="nginx-oss-1"
-        desc="NGINX Open Source with Agent."
-        image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
-        env={[
-            {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
-            {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
-            {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
-            {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
-            {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
-            {name: "NGINX_AGENT_INSTANCE_GROUP", isVariable: true}
-        ]}
-        attrs={[
-            { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
-        ]}
-    />
+1. Now let's add the first NGINX instance in this Config Sync Group.
 
-    <Docker
-        name="nginx-oss-2"
-        desc="NGINX Open Source with Agent."
-        image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
-        env={[
-            {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
-            {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
-            {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
-            {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
-            {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
-            {name: "NGINX_AGENT_INSTANCE_GROUP", isVariable: true}
-        ]}
-        attrs={[
-            { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
-        ]}
-    />
+1. Now let's add two NGINX Open Source instance in this Config Sync Group. Select *Run* for each NGINX OSS instances below. As a convenience, the dataplane key and Config Sync Group have already been provided to the containers.
 
-    There will be two NGINX OSS instances in your *<GetVariable name="petname" />* group.
-
-    ![NGINX OSS Instances](media/lab5-26.png)
-
-1. Finally, use the check below to confirm the **/test_custom** URL is functional. This check the Header for **X-Test-Custom-App: true** using the path **/test_custom**.
-
-    <APICheckContainer>
-        <APIHeaderCheck
-            componentName="nginx-oss-1"
-            headerName="X-Test-Custom-App"
-            headerValue="true"
-            path="/test_custom"
-            targetStatusCode={200}
+    <DockerContainer>
+        <Docker
+            name="nginx-oss-1"
+            desc="NGINX OSS 1.27.1 with Agent."
+            image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
         />
-        <APIHeaderCheck
-            componentName="nginx-oss-2"
-            headerName="X-Test-Custom-App"
-            headerValue="true"
-            path="/test_custom"
-            targetStatusCode={200}
+        <Docker
+            name="nginx-oss-2"
+            desc="NGINX OSS 1.27.1 with Agent."
+            image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
         />
-    </APICheckContainer>
+    </DockerContainer>
 
-Great! Now you successfully created a custom NGINX configuration then pushed that to all NGINX instances that joined this Config Sync Group.
+1. Now you can use the check below to confirm the **/test_custom** URL is functional.
+<APICheckContainer>
+    <APIHeaderCheck
+        componentName="nginx-oss-1"
+        headerName="X-Test-Custom-App"
+        headerValue="true"
+        path="/test_custom"
+        targetStatusCode={200}
+    />
+    <APIHeaderCheck
+        componentName="nginx-oss-2"
+        headerName="X-Test-Custom-App"
+        headerValue="true"
+        path="/test_custom"
+        targetStatusCode={200}
+    />
+</APICheckContainer>
+
+Great! Now you have now pushed a customized NGINX configuration to all NGINX instances that joined a Config Sync Group.
 
 ### Review
 
@@ -895,7 +890,7 @@ Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.
     > **Note:** The bash prompt will continue to show the previous hostname unless you log out and log back in. This does not affect the lab.
 
         ```bash
-        sudo hostnamectl set-hostname unique-labname-ubuntu-oss
+        sudo hostnamectl set-hostname {{petname}}-ubuntu-oss
         ```
 
 1. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute data-plane-key with the key you saved in the first lab. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the directions in lab 1 to create a new Data Plane Key.
@@ -925,11 +920,7 @@ targetStatusCode={200}
 
 ## NGINX Docker (Optional)
 
-The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
-
-    ```bash
-    curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR_NGINX_PLUS_KEY --cert YOUR_NGINX_PLUS_CERT
-    ```
+The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, refer to the [documentation](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/#pulling-the-image).
 
 1. Go to the "Details" page of your Config Sync Group then click "Add Instance to Config Sync Group"
 
@@ -941,17 +932,32 @@ The **Lab Framework** from the UDF environment has **docker** installed and is s
 
 1. Select the "Docker Container" tab.
 
+    > TODO: Take a longer (in height) screenshot of the next image to show the missing command.
+
     ![Add New NGINX Plus Container](media/lab5-7.png)
 
-1. Open a Web Shell to the **Lab Framework** UDF instance and start an NGINX Plus container with the commands to join it to your Config Sync Group.
+    > **Note:** This system already cached the container image, so Steps 1 and 2 from above can be skipped.
 
-    > **Note:** This system already pulled the container image, so Steps 1 and 2 from above can be skipped.
+1. Open a Web Shell to the **Lab Framework** UDF instance and start an NGINX Plus container with the commands to join it to your Config Sync Group.
 
     <UDFComponent
         name="Lab Framework"
     />
 
 1. Run the *docker run* command outlined in Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
+
+        ```shell
+        sudo docker run \
+        --env=NMS_SERVER_GRPCPORT=443 \
+        --env=NMS_SERVER_HOST=agent.connect.nginx.com \
+        --env=NMS_SERVER_TOKEN="{{NGINX_AGENT_SERVER_TOKEN}}" \
+        --env=NGINX_AGENT_INSTANCE_GROUP={{NGINX_AGENT_INSTANCE_GROUP_OSS}} \
+        --env=NMS_TLS_ENABLE=true \
+        --restart=always \
+        --runtime=runc \
+        -d private-registry.nginx.com/nginx-plus/agent:debian
+        ```
+
 
 1. Click "Done" to close out the window.
 
@@ -965,6 +971,90 @@ targetStatusCode={200}
 ## Lab Cleanup
 
 Time to clean up the resources you created in this lab. As a safety precaution, the NGINX One console will not allow you to delete an instance that is online. We will first have to shut down the instances before deleting them from the NGINX One console.
+
+1. Click "Stop" on all the Docker instances displayed below:
+
+    <DockerContainer>
+        <Docker
+            name="nginx-plus-1"
+            desc="NGINX Plus R32 with Agent."
+            image="private-registry.nginx.com/nginx-plus/agent:debian"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+        <Docker
+            name="nginx-plus-2"
+            desc="NGINX Plus R32 with Agent."
+            image="private-registry.nginx.com/nginx-plus/agent:debian"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+        <Docker
+            name="nginx-plus-3"
+            desc="NGINX Plus R32 with Agent."
+            image="private-registry.nginx.com/nginx-plus/agent:debian"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+        <Docker
+            name="nginx-oss-1"
+            desc="NGINX OSS 1.27.1 with Agent."
+            image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}-oss`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+        <Docker
+            name="nginx-oss-2"
+            desc="NGINX OSS 1.27.1 with Agent."
+            image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}-oss`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+    </DockerContainer>
 
 1. In the UDF deployment for this lab, click "Details" for the "NGINX OSS" component.
 

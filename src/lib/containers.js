@@ -21,28 +21,28 @@ import { exec } from "child_process";
  * @returns {string[]} An array of strings that can be used as arguments for the specified Docker command
  */
 function buildDockerCommand(command, containerName, image, env = [], port = null, attrs = [], network) {
-    switch (command) {
-        case "logs":
-            return ["logs", `${containerName}`];
-        case "ps-all":
-            return ["ps", "-a", "--format", "{{json .}},"];
-        case "ps":
-            return ["ps", "-a", "--filter", `name=${containerName}`, "--filter", "status=running", "--quiet"];
-        case "rm":
-            return ["rm", "-f", containerName];
-        case "run":
-            return [
-                "run", "-d", "--name", containerName,
-                ...env.map(({ name, value }) => `--env=${name}=${value}`),
-                ...(port ? ["-p", `${port.host}:${port.container}`] : []),
-                ...attrs.map(({ name, value }) => `--${name}=${value}`),
-                `--hostname=${containerName}`,
-                `--network=${network}`,
-                image
-            ];
-        default:
-            throw new Error("Invalid command");
-    }
+  switch (command) {
+    case "logs":
+      return ["logs", `${containerName}`];
+    case "ps-all":
+      return ["ps", "-a", "--format", "{{json .}},"];
+    case "ps":
+      return ["ps", "-a", "--filter", `name=${containerName}`, "--filter", "status=running", "--quiet"];
+    case "rm":
+      return ["rm", "-f", containerName];
+    case "run":
+      return [
+        "run", "-d", "--name", containerName,
+        ...env.map(({ name, value }) => `--env=${name}=${value}`),
+        ...(port ? ["-p", `${port.host}:${port.container}`] : []),
+        ...attrs.map(({ name, value }) => `--${name}=${value}`),
+        `--hostname=${containerName}`,
+        `--network=${network}`,
+        image
+      ];
+    default:
+      throw new Error("Invalid command");
+  }
 }
 
 
@@ -60,31 +60,31 @@ function buildDockerCommand(command, containerName, image, env = [], port = null
  * @returns {Promise<boolean|*>} A promise resolving to `true` if the command was successful, or a specific value depending on the command type
  */
 async function handleDockerClose(command, code, containerName, stdoutData, port) {
-    if (code !== 0) {
-        throw new Error(`Child process exited with code ${code}`);
-    }
+  if (code !== 0) {
+    throw new Error(`Child process exited with code ${code}`);
+  }
 
-    switch (command) {
-        case "logs":
-            return stdoutData;
-        case "ps":
-            if (stdoutData.trim() === "") {
-                throw new Error("Container not running");
-            }
-            console.log("Container is running");
-            return true;
-        case "ps-all":
-            return stdoutData;
-        case "run":
-            await setRedisVariable(`components:${containerName}`,
-                { status: "running", url: `http://${containerName}`, ...(port && { ports: port }) });
-            break;
-        case "rm":
-            await removeRedisVariable(`components:${containerName}`);
-            break;
-        default:
-            return true;
-    }
+  switch (command) {
+    case "logs":
+      return stdoutData;
+    case "ps":
+      if (stdoutData.trim() === "") {
+        throw new Error("Container not running");
+      }
+      console.log("Container is running");
+      return true;
+    case "ps-all":
+      return stdoutData;
+    case "run":
+      await setRedisVariable(`components:${containerName}`,
+        { status: "running", url: `http://${containerName}`, ...(port && { ports: port }) });
+      break;
+    case "rm":
+      await removeRedisVariable(`components:${containerName}`);
+      break;
+    default:
+      return true;
+  }
 }
 
 
@@ -101,37 +101,37 @@ async function handleDockerClose(command, code, containerName, stdoutData, port)
  */
 async function runDockerCommand(command, name = "", image, env = [], port, attrs = [], network = "lab-framework") {
 
-    const containerName = await getComponentName(name);
-    let docker_cmd = buildDockerCommand(command, containerName, image, env, port, attrs, network);
+  const containerName = await getComponentName(name);
+  let docker_cmd = buildDockerCommand(command, containerName, image, env, port, attrs, network);
 
-    // Add support for calling the Docker API instead of using docker.sock
-    const dockerApiUrl = await getEnvVariable("DOCKER_API_URL");
-    if (dockerApiUrl) {
-        docker_cmd.unshift(dockerApiUrl)
-        docker_cmd.unshift("-H")
-    }
-    const docker = spawn("docker", docker_cmd);
+  // Add support for calling the Docker API instead of using docker.sock
+  const dockerApiUrl = await getEnvVariable("DOCKER_API_URL");
+  if (dockerApiUrl) {
+    docker_cmd.unshift(dockerApiUrl)
+    docker_cmd.unshift("-H")
+  }
+  const docker = spawn("docker", docker_cmd);
 
-    let stdoutData = "";
-    docker.stdout.on("data", (data) => {
-        stdoutData += data.toString();
+  let stdoutData = "";
+  docker.stdout.on("data", (data) => {
+    stdoutData += data.toString();
+  });
+
+  docker.stderr.on("data", (data) => {
+    console.error(`stderr: ${data}`);
+    throw new Error(data.toString());
+  });
+
+  return new Promise((resolve, reject) => {
+    docker.on("close", async (code) => {
+      try {
+        const result = await handleDockerClose(command, code, containerName, stdoutData, port);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
     });
-
-    docker.stderr.on("data", (data) => {
-        console.error(`stderr: ${data}`);
-        throw new Error(data.toString());
-    });
-
-    return new Promise((resolve, reject) => {
-        docker.on("close", async (code) => {
-            try {
-                const result = await handleDockerClose(command, code, containerName, stdoutData, port);
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        });
-    });
+  });
 }
 
 /**
@@ -141,14 +141,14 @@ async function runDockerCommand(command, name = "", image, env = [], port, attrs
  * @throws {Error} If the container is not running.
  */
 export async function getAllContainerStatus() {
-    try {
-        const commandResult = await runDockerCommand("ps-all");
-        // hack to remove final comma and newline
-        const parsed = JSON.parse(`[${commandResult.substring(0, commandResult.length - 2)}]`);
-        return parsed;
-    } catch (error) {
-        return false;
-    }
+  try {
+    const commandResult = await runDockerCommand("ps-all");
+    // hack to remove final comma and newline
+    const parsed = JSON.parse(`[${commandResult.substring(0, commandResult.length - 2)}]`);
+    return parsed;
+  } catch (error) {
+    return false;
+  }
 }
 
 /**
@@ -159,12 +159,12 @@ export async function getAllContainerStatus() {
  * @throws {Error} If the container is not running.
  */
 export async function getContainerStatus(name) {
-    try {
-        await runDockerCommand("ps", name);
-        return true;
-    } catch (error) {
-        return false;
-    }
+  try {
+    await runDockerCommand("ps", name);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 /**
@@ -179,13 +179,13 @@ export async function getContainerStatus(name) {
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function createContainer(name = null, image = null, env = [], port = null, attrs = []) {
-    if (name === null || image === null)
-        throw new Error('createContainer expects a name and image');
-    await validateAndFetchEnv(env);
-    const response = await runDockerCommand("run", name, image, env, port, attrs);
-    const containerName = await getComponentName(name);
-    await setVariable(name, containerName);
-    return response;
+  if (name === null || image === null)
+    throw new Error('createContainer expects a name and image');
+  await validateAndFetchEnv(env);
+  const response = await runDockerCommand("run", name, image, env, port, attrs);
+  const containerName = await getComponentName(name);
+  await setVariable(name, containerName);
+  return response;
 }
 
 /**
@@ -196,9 +196,9 @@ export async function createContainer(name = null, image = null, env = [], port 
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function stopContainer(name) {
-    const response = await runDockerCommand("rm", name);
-    await removeRedisVariable(name);
-    return response;
+  const response = await runDockerCommand("rm", name);
+  await removeRedisVariable(name);
+  return response;
 }
 
 /**
@@ -208,17 +208,17 @@ export async function stopContainer(name) {
  * @returns {Promise<string|null>} - The logs of the Docker container, or null if the name is not provided or an error occurs.
  */
 export async function getContainerLogs(name) {
-    if (!name) {
-        return null;
-    }
+  if (!name) {
+    return null;
+  }
 
-    try {
-        const logs = await runDockerCommand("logs", name);
-        return logs;
-    } catch (error) {
-        console.error(`Error retrieving logs for container ${name}:`, error.message);
-        return null;
-    }
+  try {
+    const logs = await runDockerCommand("logs", name);
+    return logs;
+  } catch (error) {
+    console.error(`Error retrieving logs for container ${name}:`, error.message);
+    return null;
+  }
 }
 
 /**
@@ -228,22 +228,22 @@ export async function getContainerLogs(name) {
  * @throws {Error} If any environment variable is null or undefined and cannot be fetched.
  */
 async function validateAndFetchEnv(env) {
-    if (!env) {
-        throw new Error('validateAndFetchEnv requires an array of environment variables');
-    }
+  if (!env) {
+    throw new Error('validateAndFetchEnv requires an array of environment variables');
+  }
 
-    for (let i = 0; i < env.length; i++) {
-        const { name, value, isVariable } = env[i];
-        if (isVariable) {
-            if (value === null || value === undefined) {
-                const fetchedValue = await getVariable(name);
-                if (fetchedValue === null || fetchedValue === undefined) {
-                    throw new Error(`Environment variable ${name} could not be resolved`);
-                }
-                env[i].value = fetchedValue;
-            }
+  for (let i = 0; i < env.length; i++) {
+    const { name, value, isVariable } = env[i];
+    if (isVariable) {
+      if (value === null || value === undefined) {
+        const fetchedValue = await getVariable(name);
+        if (fetchedValue === null || fetchedValue === undefined) {
+          throw new Error(`Environment variable ${name} could not be resolved`);
         }
+        env[i].value = fetchedValue;
+      }
     }
+  }
 }
 
 /**
@@ -253,13 +253,20 @@ async function validateAndFetchEnv(env) {
  * @returns {Promise<string>} A promise that resolves with the command output.
  */
 export const execShellCommand = (containerId, command) => {
-    return new Promise((resolve, reject) => {
-      exec(`docker exec ${containerId} ${command}`, (error, stdout, stderr) => {
+  return new Promise((resolve, reject) => {
+
+    // Support calling the Docker API instead of using docker.sock
+    const dockerApiKey = "DOCKER_API_URL";
+    getEnvVariable(dockerApiKey).then((dockerApiUrl) => {
+      const execCommand = `docker ${dockerApiUrl ? `-H ${dockerApiUrl} ` : ""}exec ${containerId} ${command}`;
+      exec(execCommand, (error, stdout, stderr) => {
         if (error) {
+          console.log(`Docker exec failed: ${error}`)
           reject(new Error(stderr));
         } else {
           resolve(stdout);
         }
-      });
-    });
-  };
+      })
+    })
+  });
+};
