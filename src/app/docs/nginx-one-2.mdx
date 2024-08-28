@@ -569,7 +569,7 @@ Lets start by adding an new NGINX Plus instance.
         --env=NMS_SERVER_GRPCPORT=443 \
         --env=NMS_SERVER_HOST=agent.connect.nginx.com \
         --env=NMS_SERVER_TOKEN="YOUR_DATA_PLANE_KEY" \
-        --env=NGINX_AGENT_INSTANCE_GROUP=drunk-sloth \
+        --env=NGINX_AGENT_INSTANCE_GROUP={{petname}} \
         --env=NMS_TLS_ENABLE=true \
         --restart=always \
         --runtime=runc \
@@ -894,7 +894,7 @@ Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.
     > **Note:** The bash prompt will continue to show the previous hostname unless you log out and log back in. This does not affect the lab.
 
         ```bash
-        sudo hostnamectl set-hostname unique-labname-ubuntu-oss
+        sudo hostnamectl set-hostname {{petname}}-ubuntu-oss
         ```
 
 1. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute data-plane-key with the key you saved in the first lab. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the directions in lab 1 to create a new Data Plane Key.
