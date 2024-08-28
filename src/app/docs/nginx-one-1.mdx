@@ -4,13 +4,19 @@ description: Getting console access, starting the lab
 order: 1
 ---
 
-NGINX made big news at the F5 annual user conference, [AppWorld](https://www.f5.com/appworld), by introducing [NGINX One](https://www.nginx.com/introducing-nginx-one/). NGINX One will give all F5 and NGINX customers access to a SaaS console for managing NGINX instances as part of the [F5 Distributed Cloud](https://www.f5.com/cloud). **NGINX One is released for testing in Early Access, and will be GA (Generally Available) in September.**
+## What is NGINX One?
 
-Once live, NGINX One will give NGINX users unrivaled visibility, delivery and optimization capabilities combined with the speed and flexibility of the F5 Distributed Cloud Platform.
+NGINX One is an all-in-one platform that integrates the best of NGINX’s offerings into a unified package that includes a cloud-based dashboard and access to [F5 Distributed Cloud](https://www.f5.com/cloud). Customers get advanced load balancing, web and application server capabilities, API gateway functionalities, and security features. The goal of NGINX One is to provide unparalleled performance, security, and scalability for modern applications, whether they are deployed in the cloud, on-premises, or in hybrid environments.
+
+## NGINX One Console
+
+NGINX One Console gives all NGINX users access to a SaaS experience for managing NGINX instances as part of the F5 Distributed Cloud. It gives NGINX users unrivaled visibility, delivery and optimization capabilities combined with the speed and flexibility of the F5 Distributed Cloud Platform.
+
+The NGINX One Console is valuable because it simplifies the complexities of modern application delivery by integrating multiple functionalities into a single platform. This reduces the need for disparate tools, lowers operational overhead and costs, and ensures robust security for your applications. Additionally, its comprehensive feature set—including advanced load balancing, enhanced security, and performance optimization—provides customers with a reliable, scalable, and secure solution for managing their applications.
 
 You will be able to accelerate application delivery and time-to-value like never before with flexible pricing and SaaS capabilities.
 
-With NGINX One, you will get improved:
+With NGINX One Console, you will get improved:
 
 - Performance at scale
 - Visibility and insight
@@ -87,7 +93,7 @@ Once logged into the F5 XC console, the "home" screen shows you various tiles wh
 
     ![NGINX One Dashboard](media/lab1-3.png)
 
-1. In the left-hand menu in the "Manage" section is the "Instances" link. You may or may not have any existing instances in your tenant. Don’t worry if there aren’t any, you will be deploying two instances later in the lab. If there are any existing instances, click an instance’s hostname to view its details.
+1. In the left-hand menu in the *Manage* section is the *Instances* link. You may or may not have any existing instances in your tenant. Don’t worry if there aren’t any, you will be deploying two instances later in the lab. If there are any existing instances, click an instance’s hostname to view its details.
 
     ![NGINX One instance details](media/lab1-4.png)
 
@@ -105,6 +111,7 @@ The agent uses a Data Plane Key to authenticate and identify itself to NGINX One
 
 1. Click **Add Data Plane Key**.
 
+
 1. Give the key a name based on your lab's ephemeral name, such as *<GetVariable name="petname" />-nginx-key*.
 
     > :point_right: **Note:** You are working in a shared tenant; keep track of your resources, and be careful not to accidentally modify anyone else's.
@@ -113,9 +120,10 @@ The agent uses a Data Plane Key to authenticate and identify itself to NGINX One
 
 1. Click **Generate**.
 
+
     ![Generating a Data Plane Key](media/lab2-4.png)
 
-1. The Data Plane Key will be displayed. Click the "Copy" icon to copy the key to the clipboard.
+1. The Data Plane Key will be displayed. Click the *Copy* icon to copy the key to the clipboard.
 
     > :warning: **Warning:** *SAVE THIS KEY SOMEWHERE SAFE.* There is no way to retrieve the key after you click **close**. This key will be used in multiple labs.
 
@@ -173,6 +181,12 @@ Now that we have a data plane key, we can attach our first NGINX instance to the
         name="nginx-oss-2"
         isComponent="true"
     />
+    <SetVariable
+        name="NGINX_AGENT_INSTANCE_GROUP_OSS"
+        value={`${process.env["PETNAME"]}-oss`}
+    />
+
+    > Note: If you receive an error, it may be that you have not input and saved the **NGINX_AGENT_SERVER_TOKEN** variable above.
 
 1. Once the NGINX instance is up and running, press the **Test** button, to confirm the instance is online and responding to HTTP requests.
 

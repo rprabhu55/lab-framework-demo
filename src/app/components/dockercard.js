@@ -140,7 +140,11 @@ export function DockerCard({ name, desc, image, env, port, attrs, initialIsRunni
               ))}
             </div>
 
+        {isRunning && (
+          <>
             <DockerShellTerminal containerId={componentName} /> {/* Add the new component */}
+          </>
+        )}
           </>
         )}
       </div>

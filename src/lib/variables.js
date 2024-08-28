@@ -52,6 +52,7 @@ export async function getPetname() {
         const petData = await response.json();
         petname = petData[petnameKey];
         await setRedisVariable(petnameKey, petname);
+        process.env["PETNAME"] = petname;
     return petname;
     } catch (error) {
         console.error("Error fetching pet name:", error);

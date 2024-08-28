@@ -9,9 +9,6 @@ export default async function Home() {
       <h1 className="text-4xl font-bold text-center">
         Welcome to Lab Framework
       </h1>
-      <p className="text-lg text-center">
-        A demo of the lab framework capabilities
-      </p>
       <Image
         src="/lab-framework-logo.png"
         alt="Lab Framework"
