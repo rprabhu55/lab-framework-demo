@@ -136,6 +136,10 @@ Now that we have a data plane key, we can attach our first NGINX instance to the
         name="nginx-oss-2"
         isComponent="true"
     />
+    <SetVariable
+        name="NGINX_AGENT_INSTANCE_GROUP_OSS"
+        value={`${process.env["PETNAME"]}-oss`}
+    />
 
     > Note: If you receive an error, it may be that you have not input and saved the **NGINX_AGENT_SERVER_TOKEN** variable above.
 
