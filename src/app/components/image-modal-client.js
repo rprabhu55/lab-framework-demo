@@ -34,15 +34,17 @@ const ImageModalClient = ({ src, alt }) => {
         alt={`${alt} (thumbnail)`}
       />
       {modalSrc && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="relative">
-            <img src={modalSrc} alt={`${alt} (full size)`} className="max-w-full max-h-full" />
+        <div onClick={closeModal} className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="relative ">
+            <img src={modalSrc} alt={`${alt} (full size)`} onClick={closeModal} className="max-w-full max-h-full scale-100" />
+            <span className="m-2 absolute top-0 right-0">
             <button
               onClick={closeModal}
-              className="absolute top-0 right-0 m-4 text-white text-2xl"
+              className="text-white bg-black w-6" 
             >
               &times;
             </button>
+            </span>
           </div>
         </div>
       )}
