@@ -9,6 +9,30 @@ order: 3
 The NGINX One Console supports both NGINX Plus and NGINX OSS. Both products leverage the NGINX Agent to communicate with the NGINX One Console API.
 The UDF blueprint contains a Ubuntu host with the package maintainer’s version of NGINX OSS installed.  In this section we will install NGINX Agent and connect this instance to the NGINX One Console.
 
+### Generating a Data Plane Key
+
+Since you were instructed to revoke your Data Plane Key at the end of the previous lab, you will need to generate a new one.
+
+1. From the NGINX One console, in the left hand menu under the "Manage" section, select **Data Plane Keys**.
+
+1. Click **Add Data Plane Key**.
+
+1. Give the key a name based on your lab's ephemeral name, such as **<GetVariable name="petname" />-nginx-key**
+
+    > :point_right: **Note:** You are working in a shared environment; keep track of your resources, and be careful not to accidentally modify anyone else's.
+
+1. By default, the key expiration date will be set to 1 year.  Depending on your use case, you may want to set a shorter expiration date.  For this lab, we will use the default value.
+
+1. Click **Generate**.
+
+    ![Generating a Data Plane Key](media/lab2-4.png)
+
+1. The Data Plane Key will be displayed. Click the *Copy* icon to copy the key to the clipboard.
+
+    > :warning: **Warning:** *SAVE THIS KEY SOMEWHERE SAFE.* There is no way to retrieve the key after you click **close**. This key will be used until the completion of this lab.
+
+    ![Data Plane Key](media/lab2-5.png)
+
 ### Create a Config Sync Group
 
 1. Create a Config Sync Group called **<GetVariable name="petname" />-manual** based on what you learned earlier in the lab. Note this name, as you will need it in the commands you run below.
@@ -32,7 +56,7 @@ Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.
 
 1. From the NGINX OSS instance, run the following command to install the NGINX Agent, and automatically join the Config Sync Group you created above. In the command below, make the following substitutions:
 
-    - Substitute **data-plane-key** with the key you used above
+    - Substitute **data-plane-key** with the key you created above
     - Substitute **config-sync-group** with the name Config Sync Group you just created
 
     ```bash
@@ -168,7 +192,7 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 
 1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Data Plane Keys*.
 
-1. Select the context menu for the Data Plane Key you created in lab 1, and select *Revoke*.
+1. Select the context menu for the Data Plane Key you created earlier in this lab, and select *Revoke*.
 
     > :warning: **Warning:** Make sure you are revoking your own key and not someone else’s.
 
@@ -178,4 +202,8 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 
     ![Confirming the revocation](media/cleanup-7.png)
 
-END OF LAB
+## End of Lab
+
+You have reached the end of the optional lab.
+
+Thank you for your time and attention to experience NGINX One Console!
