@@ -21,6 +21,7 @@ import { APIBase } from "@/lib/api-base"
  *    path="/example-path" 
  *    targetStatusCode={200} 
  *    url="https://api.example.com" 
+ *    tlsComponent={false}
  *  />
  */
 export function APICheck({

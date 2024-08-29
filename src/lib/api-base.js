@@ -16,6 +16,7 @@ import { useState } from "react";
  * @param {string} [props.path="/"] - The path to append to the URL for the API check.
  * @param {number} [props.targetStatusCode=200] - The expected HTTP status code from the API check.
  * @param {string} [props.url=null] - The URL to check.
+ * @param {boolean} [props.tlsComponent=false] - If a component name is specified, use TLS (https) to connect to the component. Default is no TLS (http).
  * 
  * @returns {JSX.Element} The rendered component.
  */
@@ -26,7 +27,8 @@ export function APIBase({
   searchString = null,
   path = "/",
   targetStatusCode = 200,
-  url = null
+  url = null,
+  tlsComponent = false
 }) {
   const [state, setState] = useState({ status: null, error: null });
 
@@ -38,7 +40,7 @@ export function APIBase({
    */
   const handleCheck = async () => {
     try {
-      await checkAPI({ componentName, headerName, headerValue, searchString, path, targetStatusCode, url });
+      await checkAPI({ componentName, headerName, headerValue, searchString, path, targetStatusCode, url, tlsComponent });
       setState({ status: true, error: null });
     } catch (error) {
       const errorMessage = "The API check failed"
