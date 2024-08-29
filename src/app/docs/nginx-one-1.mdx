@@ -81,7 +81,7 @@ Once you join the UDF session, your UDF deployment will start and create an ephe
 
 Once logged into the F5 XC console, the "home" screen shows you various tiles which represent console features. For example, you might configure Multicloud networking from the "Multi-Cloud Network Connect" tile, build global server load balancing rules from the "DNS Management" tile, or view synthetic monitoring data from the "Observability" tile. In this lab, we'll focus on the NGINX One console.
 
-> :point_right: **Note:** Your permissions in the F5 XC console are specific to this lab. You don't have permissions to all the tiles on the "home" screen.
+    > :point_right: **Note:** Your permissions in the F5 XC console are specific to this lab. You don't have permissions to all the tiles on the "home" screen.
 
 1. Click the **NGINX One** tile from the home screen.
 
@@ -109,14 +109,14 @@ The agent uses a Data Plane Key to authenticate and identify itself to NGINX One
 
 ### Generating a Data Plane Key
 
-As you continue through this lab, you will be using a randomly-generated name that you will use to create items in the NGINX One console.<br/>Your assigned name is: **<GetVariable name="petname" />**.<br />
+As you continue through this lab, you will be using a randomly-generated name that you will use to create items in the NGINX One console.<br/>Your assigned name is: **<GetVariable name="petname" />**<br />
 You will notice it appear throughout the lab guide content. The use of this name is *crucial* when creating objects in the NGINX One Console in order to differentiate your items from those of other students also working in this shared environment.
 
 1. From the NGINX One console, in the left hand menu under the "Manage" section, select **Data Plane Keys**.
 
 1. Click **Add Data Plane Key**.
 
-1. Give the key a name based on your lab's ephemeral name, such as **<GetVariable name="petname" />-nginx-key**.
+1. Give the key a name based on your lab's ephemeral name, such as **<GetVariable name="petname" />-nginx-key**
 
     > :point_right: **Note:** You are working in a shared environment; keep track of your resources, and be careful not to accidentally modify anyone else's.
 
@@ -142,7 +142,7 @@ You will notice it appear throughout the lab guide content. The use of this name
 
 Now that we have a data plane key, we can attach our first NGINX instance to the NGINX One Console.
 
-> **Note:** This lab will focus more on the NGINX One Console and less on how to install NGINX Agent on your NGINX instance and connect the instance to NGINX One.  If this is something you would like to explore in greater depth, check out the optional labs at the end of this lab guide.
+    > **Note:** This lab will focus more on the NGINX One Console and less on how to install NGINX Agent on your NGINX instance and connect the instance to NGINX One.  If this is something you would like to explore in greater depth, check out the optional labs at the end of this lab guide.
 
 1. To start your NGINX instance, click the **Run** button for each NGINX instances to deploy them and have them automatically connect to the NGINX One Console:
 
