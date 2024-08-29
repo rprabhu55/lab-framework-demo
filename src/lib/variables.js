@@ -13,11 +13,11 @@ import { fetchLabInfo, fetchUDFInfo } from "./udf";
  * @param {string} - a name
  * @return {string} - a unique and normalized component name
  */
-export async function getComponentName(name){
+export async function getComponentName(name) {
     try {
         const petname = await getPetname();
         return petname + "-" + name.replace(/[^a-zA-Z0-9 ]/g, "").replace(/ /g, "-").toLowerCase();
-    } catch(error) {
+    } catch (error) {
         throw new Error("Error getting component name: ", error.message)
     }
 }
@@ -53,7 +53,7 @@ export async function getPetname() {
         petname = petData[petnameKey];
         await setRedisVariable(petnameKey, petname);
         process.env["PETNAME"] = petname;
-    return petname;
+        return petname;
     } catch (error) {
         console.error("Error fetching pet name:", error);
     }

@@ -1,7 +1,6 @@
 import { getMdxContent } from "@/lib/mdxUtils"
 
 export default async function Page({ params }) {
-
   const { content, frontmatter } = await getMdxContent(params.doc)
   return (
     <>

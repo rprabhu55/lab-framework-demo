@@ -9,7 +9,7 @@ import { fetchRedisVariable } from "./redis";
  * constructs the base URL and port, and returns the full URL.
  * 
  * @param {string} name - The URL or component name to check.
- * @param {boolean} [tls] - A True value will use TLS (https) to connect to the component. A False value is no TLS (http).
+ * @param {boolean} tls - A True value will use TLS (https) to connect to the component. A False value is no TLS (http).
  * @returns {Promise<string>} - The full URL of the component.
  * @throws {Error} - Throws an error if petname or component data is missing or invalid.
  */
@@ -22,7 +22,7 @@ async function getComponentUrl(name, tls) {
   const port = componentData?.ports?.host;
   if (port) return `${protocol}://host.docker.internal:${port}`;
 
-  return componentData?.url || `${protocol}://${componentName}`;
+  return `${protocol}://${componentData?.host}`;
 }
 
 /**
