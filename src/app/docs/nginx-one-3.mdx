@@ -9,6 +9,10 @@ order: 3
 The NGINX One Console supports both NGINX Plus and NGINX OSS. Both products leverage the NGINX Agent to communicate with the NGINX One Console API.
 The UDF blueprint contains a Ubuntu host with the package maintainer’s version of NGINX OSS installed.  In this section we will install NGINX Agent and connect this instance to the NGINX One Console.
 
+### Create a Config Sync Group
+
+1. Create a Config Sync Group called **<GetVariable name="petname" />-manual** based on what you learned earlier in the lab. Note this name, as you will need it in the commands you run below.
+
 ### Installing NGINX Agent on NGINX OSS
 
 1. Connect to the "NGINX OSS" instance in UDF through the Web Shell access method by clicking the *Open Web Shell* button below:
@@ -26,13 +30,18 @@ Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.
         sudo hostnamectl set-hostname {{petname}}-ubuntu-oss
         ```
 
-1. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute data-plane-key with the key you saved in the first lab. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the directions in lab 1 to create a new Data Plane Key.
+1. From the NGINX OSS instance, run the following command to install the NGINX Agent, and automatically join the Config Sync Group you created above. In the command below, make the following substitutions:
 
-        ```bash
-        curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='data-plane-key' sh -s -- -y
-        ```
+    - Substitute **data-plane-key** with the key you used above
+    - Substitute **config-sync-group** with the name Config Sync Group you just created
 
-    The install script will install any necessary dependencies, and install the NGINX Agent with the appropriate settings for your system. You will see a warning about "stub_status" not being configured. You can ignore that warning.
+    ```bash
+    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='data-plane-key' sh -s -- -y -c config-sync-group
+    ```
+
+    > Note: Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the [directions in lab 1](nginx-one-1.mdx#generating-a-data-plane-key) to create a new Data Plane Key.
+
+    The install script will install any necessary dependencies, and install the NGINX Agent with the appropriate settings for your system. You will see a warning about "stub_status" not being configured. You can ignore that warning, as we are not using any features that currently require it.
 
 1. Return to the NGINX One console. From the left menu in the *Manage* section, click *Instances*. You should see your new instance in the list.
 
@@ -44,20 +53,22 @@ Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.
 
     ![Instance Details](media/lab4-3.png)
 
-    Note that this instance has a different set of configuration recommendations than the vanilla NGINX Plus instance did. Package maintainers may ship NGINX with their own sets of defaults, which may or may not align with best practices. NGINX One provides a centralized view of such recommendations across the organization.
+    > Notice this instance has a different set of configuration recommendations than the NGINX Plus instance you used earlier in the lab did. Package maintainers may ship NGINX OSS with their own sets of defaults, which may or may not align with best practices. NGINX One provides a centralized view of such recommendations across the organization.
 
 <APICheck
-url="http://1.1.1.6"
+url="http://10.1.1.6"
 targetStatusCode={200}
 />
 
 ## NGINX Docker (Optional)
 
-The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, refer to the [documentation](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/#pulling-the-image).
+The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent image tags, refer to the [documentation](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/#pulling-the-image).
 
-1. Go to the *Details* page of your Config Sync Group then click *Add Instance to Config Sync Group*.
+1. In the NGINX One Console, go to the *Details* page of the last Config Sync Group you created.
 
-1. Select *Register a new instance with NGINX One then add to config sync group* then click *Next*.
+1. Click *Add Instance to Config Sync Group*.
+
+1. Select *Register a new instance with NGINX One then add to config sync group*, then click *Next*.
 
 1. If you saved your Data Plane Key from a previous lab, select *Use existing Key*. Otherwise select *Generate new key*.
 
@@ -67,7 +78,7 @@ The **Lab Framework** from the UDF environment has **docker** installed and is s
 
     ![Add New NGINX Plus Container](media/lab5-17.png)
 
-    > **Note:** This system already cached the container image, so Steps 1 and 2 from above can be skipped.
+    > **Note:** This system already cached the container image, so Steps 1 and 2 from the image above can be skipped.
 
 1. Open a Web Shell to the **Lab Framework** UDF instance and start an NGINX Plus container with the commands to join it to your Config Sync Group.
 
@@ -75,25 +86,96 @@ The **Lab Framework** from the UDF environment has **docker** installed and is s
         name="Lab Framework"
     />
 
-1. Run the *docker run* command outlined in Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
+1. Execute the *docker run* command outlined in Step 6 to start the NGINX Plus with Agent container. Use the shell command below, with the following substitutions:
 
-        ```shell
-        sudo docker run \
-        --env=NMS_SERVER_GRPCPORT=443 \
-        --env=NMS_SERVER_HOST=agent.connect.nginx.com \
-        --env=NMS_SERVER_TOKEN="{{NGINX_AGENT_SERVER_TOKEN}}" \
-        --env=NGINX_AGENT_INSTANCE_GROUP={{NGINX_AGENT_INSTANCE_GROUP_OSS}} \
-        --env=NMS_TLS_ENABLE=true \
-        --restart=always \
-        --runtime=runc \
-        -d private-registry.nginx.com/nginx-plus/agent:debian
-        ```
+    - Substitute **data-plane-key** with the key you used above
+    - Substitute **config-sync-group** with the name Config Sync Group you just created
+
+    ```shell
+    sudo docker run \
+    --env=NMS_SERVER_GRPCPORT=443 \
+    --env=NMS_SERVER_HOST=agent.connect.nginx.com \
+    --env=NMS_SERVER_TOKEN="data-plane-key" \
+    --env=NGINX_AGENT_INSTANCE_GROUP=config-sync-group \
+    --env=NMS_TLS_ENABLE=true \
+    --restart=always \
+    --runtime=runc \
+    -d private-registry.nginx.com/nginx-plus/agent:debian
+    ```
 
 1. Click *Done* to close the window.
 
-You will now see the second NGINX Plus instance added.
+1. In the console, navigate to *Instances*. You will see that a new NGINX Plus instance added to the NGINX One Console. This instance will be randomly named based on the Docker container that was created, since a name was not provided.
+
+    ![Container instance in list](media/lab4-4.png)
+
+1. Use the API Check below to ensure that the NGINX instance is responding.
 
 <APICheck
-url="http://1.1.1.7"
+url="http://10.1.1.7"
 targetStatusCode={200}
 />
+
+## Lab Cleanup
+
+Time to clean up the resources you created in this lab. As a safety precaution, the NGINX One console will not allow you to delete an instance that is online. We will first have to shut down the instances before deleting them from the NGINX One console.
+
+1. In the UDF deployment for this lab, click *Details* for the **NGINX OSS** component.
+
+    ![Select the NGINX component details](media/cleanup-1.png)
+
+1. Click the **Stop** button for this component.
+
+    ![Select the NGINX component details](media/cleanup-2.png)
+
+
+1. Open a Web Shell to the **Lab Framework** UDF instance.
+
+    <UDFComponent
+        name="Lab Framework"
+    />
+
+1. Execute the *docker stop* command with the following substitution:
+
+    - Substitute **container-id** with the hostname of the Docker container NGINX Plus instance appearing in the *Instances* list of the NGINX One Console. (Hint: you saw it in Step 10 of the previous section).
+
+    ```shell
+    docker stop container-id
+    ```
+
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Instances*.
+
+1. Wait until your **<GetVariable name="petname" />-ubuntu-oss** and Docker container instance transition into the **Unavailable** state before proceeding. You may need to click the *Refresh* button at the top right of the instance list.
+
+1. On each of your instances, select the *Actions* "..." context menu, and select
+    *Delete*.
+
+    > :warning: **Warning:** Make sure you are deleting your own instances and not someone else’s.
+
+1. Confirm the deletion.
+
+    ![Confirming the deletion](media/cleanup-5.png)
+
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Config Sync Groups*.
+
+1. Delete your **<GetVariable name="petname" />-manual** Config Sync Group by selecting the *Actions* "..." context menu, then select *Delete*.
+
+    ![Delete Config Sync Group](media/cleanup-8.png)
+
+1. Confirm the deletion.
+
+    ![Confirming the deletion](media/cleanup-9.png)
+
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Data Plane Keys*.
+
+1. Select the context menu for the Data Plane Key you created in lab 1, and select *Revoke*.
+
+    > :warning: **Warning:** Make sure you are revoking your own key and not someone else’s.
+
+    ![Revoking a Data Plane Key](media/cleanup-6.png)
+
+1. Confirm the revocation.
+
+    ![Confirming the revocation](media/cleanup-7.png)
+
+END OF LAB

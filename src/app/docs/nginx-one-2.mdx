@@ -664,6 +664,8 @@ Now that we have two instances in the **<GetVariable name="petname" />** Config 
 
 1. Click *Next*, then *Save and Publish*.
 
+    > **Note:** If you see a warning about unsaved changes, you can ignore it.
+
 1. We can now confirm the configuration changes on the NGINX instances by clicking the *Check* button for each NGINX instance below:
 
     <APICheckContainer>
@@ -695,7 +697,7 @@ To remove an NGINX Plus instance from this instance group:
 
 1. Confirm by clicking *Delete*.
 
-> **Note:** Removing an NGINX instance from a Config Sync Group will also remove the instances from the NGINX One Console, but will not remove the last active configuration.
+    > **Note:** Removing an NGINX instance from a Config Sync Group will also remove the instances from the NGINX One Console, but will not remove the last active configuration.
 
 ### (Option 2) Create a Config Sync Group for NGINX OSS
 
@@ -712,7 +714,7 @@ the Config Sync Group.
 
     ![List Config Sync Group](media/lab5-9.png)
 
-1. Based on the work in the previous lab, in the NGINX One Console, create a new Config Sync Group named **<GetVariable name="petname" />-oss**.
+1. Based on the work in the previous lab, in the NGINX One Console, create a new Config Sync Group named **<GetVariable name="petname" />-oss**
 
 1. You will create a custom NGINX configuration before any NGINX instances are added to a Config Sync Group. Click the *Configuration* tab then click on *Edit Configuration*.
 
@@ -859,7 +861,7 @@ Great! Now you have now pushed a customized NGINX configuration to all NGINX ins
 
 Great job! Through the use of Config Sync Groups, you have now accomplished a common Day-2 operation of scaling or upgrading your NGINX instances and NGINX One Console made this process extremely easy and fast!  You can also do this via the [NGINX One Console API](https://docs.nginx.com/nginx-one/api/api-reference-guide/) if you prefer to handle these steps through a pipeline.
 
-> :point_right: It is possible to mix NGINX Plus and NGINX OSS instances in a Config Sync Group. However, the NGINX configuration must be compatible for both the NGINX Plus and NGINX OSS instances. For example, you will not be able to publish configurations that are exclusive to NGINX Plus, like [JWT authentication](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-jwt-authentication/) to NGINX OSS. However, the ability to mix NGINX editions in a Config Sync Group can be very valuable in certain situations, such as when migrating from NGINX OSS to NGINX Plus.
+    > :point_right: It is possible to mix NGINX Plus and NGINX OSS instances in a Config Sync Group. However, the NGINX configuration must be compatible for both the NGINX Plus and NGINX OSS instances. For example, you will not be able to publish configurations that are exclusive to NGINX Plus, like [JWT authentication](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-jwt-authentication/) to NGINX OSS. However, the ability to mix NGINX editions in a Config Sync Group can be very valuable in certain situations, such as when migrating from NGINX OSS to NGINX Plus.
 
 ## Lab Cleanup
 
@@ -949,13 +951,7 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
         />
     </DockerContainer>
 
-1. In the UDF deployment for this lab, click *Details* for the **NGINX OSS** component.
-
-    ![Select the NGINX component details](media/cleanup-1.png)
-
-1. Click the **Stop** button for this component.
-
-    ![Select the NGINX component details](media/cleanup-2.png)
+    > **Note:** If some of the instances above initially show a green **Run** button, you will need to refresh the lab guide page.
 
 1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Instances*.
 
