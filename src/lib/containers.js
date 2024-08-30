@@ -137,7 +137,7 @@ async function runDockerCommand(command, name = "", image, env = [], port, attrs
 /**
  * Handles the GET request to the status of all containers.
  * 
- * @returns {Object} The status of all containers.
+ * @returns {Promise<any>} The status of all containers.
  * @throws {Error} If the container is not running.
  */
 export async function getAllContainerStatus() {
@@ -155,7 +155,7 @@ export async function getAllContainerStatus() {
  * Handles the GET request to check if a container is running.
  * 
  * @param {string} name - The name of the container.
- * @returns {boolean} If the container is running or not.
+ * @returns {Promise<boolean>} If the container is running or not.
  * @throws {Error} If the container is not running.
  */
 export async function getContainerStatus(name) {
@@ -175,7 +175,7 @@ export async function getContainerStatus(name) {
  * @param {Array} env - The environment variables to set.
  * @param {Object} port - The port mapping to use.
  * @param {Object} attrs - Additional attributes for the container.
- * @returns {Promise} The promise object representing the result of the command.
+ * @returns {Promise<any>} The promise object representing the result of the command.
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function createContainer(name = null, image = null, env = [], port = null, attrs = []) {
@@ -192,7 +192,7 @@ export async function createContainer(name = null, image = null, env = [], port 
  * Stops a container.
  * 
  * @param {String} name - The name of the container.
- * @returns {Promise} The promise object representing the result of the command.
+ * @returns {Promise<any>} The promise object representing the result of the command.
  * @throws {Error} If the command is invalid or the container is not running.
  */
 export async function stopContainer(name) {

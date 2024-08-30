@@ -13,7 +13,7 @@ export const LOCAL_DOCS_PATH = path.join(process.cwd(), "src/app/docs");
 
 /**
  * Returns all document-loading related settings.
- * @returns {any} object containing named constants.
+ * @returns {Promise<any>} object containing named constants.
  */
 async function getDocsSettings() {
   // these values need to be pulled from ENV, to avoid remote code execution
@@ -111,7 +111,7 @@ async function getRemoteDocument(url, cacheSeconds) {
 
 /**
  * Gets a list of MD(X) documents from a local or remote source depending on whether a repo is specified in the env vars.
- * @returns {any} array of document data sorted by order metadata in frontmatter
+ * @returns {Promise<any>} array of document data sorted by order metadata in frontmatter
  */
 export async function getIndexDocs() {
   const docsSettings = await getDocsSettings();
@@ -121,7 +121,7 @@ export async function getIndexDocs() {
 /**
  * Gets a list of MD(X) documents from a remote source, GitHub.
  * @param {string} cacheSeconds - The number of seconds to cache the fetched content in nextjs.
- * @returns {any} array of document data sorted by order metadata in frontmatter
+ * @returns {Promise<any>} array of document data sorted by order metadata in frontmatter
  */
 async function getGitHubDocs(cacheSeconds) {
 
@@ -158,7 +158,7 @@ async function getGitHubDocs(cacheSeconds) {
  * Fetches document from GitHub using API to return its frontmatter.
  * @param {any} url to fetch the document from.
  * @param {any} options to be used by the fetch operation.
- * @returns {any} The document content and frontmatter.
+ * @returns {Promise<any>} The document content and frontmatter.
  */
 async function getGitHubFileContent(url, options) {
   const response = await fetch(url, options)
@@ -170,7 +170,7 @@ async function getGitHubFileContent(url, options) {
 /**
  * Gets a list of MD(X) documents from the local file system.
  * @param {any} docsPath the file system path to scan for MD(X) documents.
- * @returns {any} array of document data sorted by order metadata in frontmatter
+ * @returns {Promise<any>} array of document data sorted by order metadata in frontmatter
  */
 async function getLocalDocs(docsPath) {
 

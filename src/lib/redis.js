@@ -8,7 +8,7 @@ import { REDIS_URL } from "./constants";
 /**
  * Creates and connects a Redis client.
  *
- * @returns {Object} The connected Redis client
+ * @returns {Promise<Object>} The connected Redis client
  */
 async function connectRedis() {
   const redis = createClient({ url: REDIS_URL });
@@ -25,7 +25,7 @@ function normalizePathName(name) {
  * Fetches data from the Redis store.
  *
  * @param {string} path - The Redis key to fetch data for
- * @returns {Object|string|null} The fetched data, or null if the key does not exist
+ * @returns {Promise<Object|string|null>} The fetched data, or null if the key does not exist
  */
 export async function fetchRedisVariable(path) {
   const normalizedPath = normalizePathName(path); 
@@ -49,7 +49,8 @@ export async function fetchRedisVariable(path) {
 * Sets a value in the Redis store.
 *
 * @param {string} path - The Redis key to set data for
-* @param {*} value - The value to store in Redis
+* @param {any} value - The value to store in Redis
+* @returns {Promise<void>}
 */
 export async function setRedisVariable(path, value) {
 
@@ -71,6 +72,7 @@ export async function setRedisVariable(path, value) {
 * Removes a key from the Redis store.
 *
 * @param {string} path - The Redis key to remove
+* @returns {Promise<void>}
 */
 export async function removeRedisVariable(path) {
   const normalizedPath = normalizePathName(path);
