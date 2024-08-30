@@ -113,6 +113,7 @@ export async function fetchUDFInfo(variableName) {
  * Get Web Shell URL for UDF component
  * 
  * @param {string} componentName - The UDF component's name
+ * @returns {Promise<void>}
  * 
  */
 export async function fetchUdfComponentWebShell(componentName = null) {

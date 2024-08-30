@@ -11,7 +11,7 @@ import { fetchLabInfo, fetchUDFInfo } from "./udf";
  * Returns a normalized component name prefixed with petname
  * 
  * @param {string} - a name
- * @return {string} - a unique and normalized component name
+ * @return {Promise<string>} - a unique and normalized component name
  */
 export async function getComponentName(name) {
     try {
@@ -26,7 +26,7 @@ export async function getComponentName(name) {
  * Retrieves an environment variable by name.
  *
  * @param {string} name - The name of the environment variable to retrieve
- * @returns {string|null} The value of the environment variable, or null if it does not exist
+ * @returns {Promise<string|null>} The value of the environment variable, or null if it does not exist
  */
 export async function getEnvVariable(name) {
     return process.env[name] || null;
@@ -35,7 +35,7 @@ export async function getEnvVariable(name) {
 /**
  * Retrieves a random pet name from the UDF pet name service.
  * 
- * @returns {string} A random pet name
+ * @returns {Promise<string>} A random pet name
  */
 export async function getPetname() {
     const petnameKey = "petname";
@@ -51,8 +51,8 @@ export async function getPetname() {
         }
         const petData = await response.json();
         petname = petData[petnameKey];
-        await setRedisVariable(petnameKey, petname);
         process.env["PETNAME"] = petname;
+        await setRedisVariable(petnameKey, petname);
         return petname;
     } catch (error) {
         console.error("Error fetching pet name:", error);
@@ -68,7 +68,7 @@ export async function getPetname() {
  *  - UDF API
  *
  * @param {string} name - The name of the variable to retrieve
- * @returns {string|null} The value of the variable, or null if it does not exist
+ * @returns {Promise<string|null>} The value of the variable, or null if it does not exist
  */
 export async function getVariable(name) {
     const sources = [getEnvVariable, fetchRedisVariable, fetchLabInfo, fetchUDFInfo];
@@ -88,7 +88,7 @@ export async function getVariable(name) {
  *
  * @param {string} key - The key of the variable to set
  * @param {string} value - The value of the variable to set
- 
+ * @returns {Promise<void>}
  */
 export async function setVariable(key, value) {
     await setRedisVariable(key, value);

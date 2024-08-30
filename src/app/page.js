@@ -4,6 +4,7 @@ import { getIndexDocs } from "@/lib/mdxUtils"
 import { getPetname } from "@/lib/variables"
 
 export default async function Home() {
+  const petname = await getPetname()
   const docs = await getIndexDocs()
   return (
     <main className="flex flex-col items-center justify-between p-24">
@@ -31,7 +32,7 @@ export default async function Home() {
           </li>
         ))}
       </ul>
-      <div className="text-white">{getPetname()}</div>
+      <div className="text-white">{petname}</div>
     </main>
   );
 }
