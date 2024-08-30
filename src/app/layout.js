@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import Loading from "./loading"
 import { Inter } from "next/font/google";
 import { Header } from "@/app/components/header";
 import "./globals.css";
@@ -16,7 +18,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Header />
-        {children}
+        <Suspense fallback={<Loading />}>{children}</Suspense>
       </body>
     </html>
   );
