@@ -8,6 +8,7 @@ import { getVariable, getEnvVariable } from "./variables"
 import MDXComponents from "./mdxComponents"
 import { mapAsync, filterAsync } from "lodasync"
 import matter from "gray-matter";
+import { delay } from "@/lib/utils"
 
 export const LOCAL_DOCS_PATH = path.join(process.cwd(), "src/app/docs");
 
@@ -114,6 +115,7 @@ async function getRemoteDocument(url, cacheSeconds) {
  * @returns {Promise<any>} array of document data sorted by order metadata in frontmatter
  */
 export async function getIndexDocs() {
+  if (await getEnvVariable("SIMULATE_LOAD_DELAY")) await delay(5000);
   const docsSettings = await getDocsSettings();
   return docsSettings.remoteDocsRepoServer ? await getGitHubDocs(docsSettings.remoteDocsRepoCacheSeconds) : await getLocalDocs(LOCAL_DOCS_PATH)
 }
