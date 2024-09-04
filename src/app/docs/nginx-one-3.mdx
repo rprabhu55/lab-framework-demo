@@ -113,6 +113,8 @@ The **Lab Framework** from the UDF environment has **docker** installed and is s
     - Substitute **data-plane-key** with the key you used above
     - Substitute **config-sync-group** with the name Config Sync Group you just created
 
+    > **Note:** Notice the extra argument where we are mapping the container's port **80** to the host's port **8080**.
+
     ```shell
     sudo docker run \
     --env=NMS_SERVER_GRPCPORT=443 \
@@ -158,13 +160,15 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
         name="Lab Framework"
     />
 
-1. Execute the *docker stop* command with the following substitution:
+1. Remove the NGINX Plus container using command below with the following substitution:
 
-    - Substitute **container-id** with the hostname of the Docker container NGINX Plus instance appearing in the *Instances* list of the NGINX One Console. (Hint: you saw it in Step 10 of the previous section).
+    - Substitute **container-id** with the hostname of the Docker container NGINX Plus instance appearing in the
+    *Instances* list of the NGINX One Console.
+      - Hint: You saw it in Step 10 of the previous section.
+      - Hint: You can also find this by running **docker ps**
 
     ```shell
-    docker stop container-id
-    docker rm container-id
+    docker rm -f container-id
     ```
 
 1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Instances*.
@@ -201,6 +205,17 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 1. Confirm the revocation.
 
     ![Confirming the revocation](media/cleanup-7.png)
+
+1. Select **Revoked Keys**. Then, select the context menu for the Data Plane Key you created at the beginning of this
+lab, and select *Delete*.
+
+    ![Revoking a Data Plane Key](media/cleanup-10.png)
+
+1. Confirm the deletion.
+
+    ![Confirming the deletion](media/cleanup-11.png)
+
+1. You can close out all **Web Shell** windows that were opened during this lab.
 
 ## End of Lab
 
