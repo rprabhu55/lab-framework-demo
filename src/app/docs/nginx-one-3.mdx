@@ -54,13 +54,14 @@ Ensure that you are working on the NGINX Plus instance (default hostname ip-10.1
         sudo hostnamectl set-hostname {{petname}}-ubuntu-plus
         ```
 
-1. From the NGINX Plus instance, run the following command to install the NGINX Agent, and automatically join the Config Sync Group you created above. In the command below, make the following substitutions:
+1. From the NGINX Plus instance, run the following command to install the NGINX Agent, and automatically join the
+Config Sync Group you created above. In the command below, confirm the following substitutions:
 
-    - Substitute **data-plane-key** with the key you created above
-    - Substitute **config-sync-group** with the name Config Sync Group you just created
+    - Confirm **DATA_PLANE_KEY** is set using the Data Plane Key you created above.
+    - Confirm the **Config Sync Group Name** (the variable after the **-c** switch) is the name of the Config Sync Group you just created above.
 
     ```bash
-    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='data-plane-key' sh -s -- -y -c config-sync-group
+    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='{{NGINX_AGENT_SERVER_TOKEN}}' sh -s -- -y -c {{petname}}-ubuntu-plus
     ```
 
     > Note: Make sure you are working on the NGINX Plus instance; if you accidentally install on the **Lab Framework**, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the [directions in lab 1](nginx-one-1.mdx#generating-a-data-plane-key) to create a new Data Plane Key.
@@ -108,10 +109,11 @@ The **Lab Framework** from the UDF environment has **docker** installed and is s
         name="Lab Framework"
     />
 
-1. Execute the *docker run* command outlined in Step 6 to start the NGINX Plus with Agent container. Use the shell command below, with the following substitutions:
+1. Execute the *docker run* command outlined in Step 6 to start the NGINX Plus with Agent container. Use the shell
+command below and confirm the following substitutions:
 
-    - Substitute **data-plane-key** with the key you used above
-    - Substitute **config-sync-group** with the name Config Sync Group you just created
+    - Confirm **NMS_SERVER_TOKEN** is using the Data Plane Key you created above.
+    - Confirm **NGINX_AGENT_INSTANCE_GROUP** is set using the name of the Config Sync Group you just created above.
 
     > **Note:** Notice the extra argument where we are mapping the container's port **80** to the host's port **8080**.
 
@@ -119,8 +121,8 @@ The **Lab Framework** from the UDF environment has **docker** installed and is s
     sudo docker run \
     --env=NMS_SERVER_GRPCPORT=443 \
     --env=NMS_SERVER_HOST=agent.connect.nginx.com \
-    --env=NMS_SERVER_TOKEN="data-plane-key" \
-    --env=NGINX_AGENT_INSTANCE_GROUP=config-sync-group \
+    --env=NMS_SERVER_TOKEN="{{NGINX_AGENT_SERVER_TOKEN}}" \
+    --env=NGINX_AGENT_INSTANCE_GROUP={{petname}}-ubuntu-plus \
     --env=NMS_TLS_ENABLE=true \
     --restart=always \
     --runtime=runc \
