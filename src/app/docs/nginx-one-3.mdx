@@ -13,7 +13,7 @@ The UDF blueprint contains a Ubuntu host with NGINX Plus installed.  In this sec
 
 Since you were instructed to revoke your Data Plane Key at the end of the previous lab, you will need to generate a new one.
 
-1. From the NGINX One console, in the left hand menu under the "Manage" section, select **Data Plane Keys**.
+1. From the NGINX One Console, in the left hand menu under the "Manage" section, select **Data Plane Keys**.
 
 1. Click **Add Data Plane Key**.
 
@@ -68,7 +68,7 @@ Config Sync Group you created above. In the command below, take the following ac
 
     The install script will install any necessary dependencies, and install the NGINX Agent with the appropriate settings for your system. You will see a warning about "stub_status" not being configured. You can ignore that warning, as we are not using any features that currently require it.
 
-1. Return to the NGINX One console. From the left menu in the *Manage* section, click *Instances*. You should see your new instance in the list.
+1. Return to the NGINX One Console. From the left menu in the *Manage* section, click *Instances*. You should see your new instance in the list.
 
 1. Click its hostname to view the instance details.
 
@@ -130,7 +130,7 @@ command below, take the following actions:
     -d private-registry.nginx.com/nginx-plus/agent:debian
     ```
 
-1. In the N1SC console, navigate to *Instances*. You will see a new NGINX Plus instance added to the NGINX One Console. This instance will be randomly named based on the Docker container that was created, since a name was not provided.
+1. In the NGINX One Console, navigate to *Instances*. You will see a new NGINX Plus instance added to the NGINX One Console. This instance will be randomly named based on the Docker container that was created, since a name was not provided.
 
     ![Container instance in list](media/optional1-3.png)
 
@@ -148,7 +148,7 @@ You added an NGINX Virtual Machine instance and an NGINX container instance!
 
 ## Lab Cleanup
 
-Time to clean up the resources you created in this lab. As a safety precaution, the NGINX One console will not allow you to delete an instance that is online. We will first have to shut down the instances before deleting them from the NGINX One console.
+Time to clean up the resources you created in this lab. As a safety precaution, the NGINX One Console will not allow you to delete an instance that is online. We will first have to shut down the instances before deleting them from the NGINX One console.
 
 1. In the UDF deployment for this lab, click *Details* for the **NGINX Plus** component.
 
@@ -176,7 +176,7 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
     docker rm -f container-id
     ```
 
-1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Instances*.
+1. From the NGINX One Console, in the left-hand menu in the *Manage* section, select *Instances*.
 
 1. Wait until your **<GetVariable name="petname" />-ubuntu-plus** and Docker container instance transition into the **Unavailable** state before proceeding. You may need to click the *Refresh* button at the top right of the instance list.
 
@@ -189,7 +189,7 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 
     ![Confirming the deletion](media/cleanup-5.png)
 
-1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Config Sync Groups*.
+1. From the NGINX One Console, in the left-hand menu in the *Manage* section, select *Config Sync Groups*.
 
 1. Delete your **<GetVariable name="petname" />-manual** Config Sync Group by selecting the *Actions* "..." context menu, then select *Delete*.
 
@@ -199,7 +199,7 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 
     ![Confirming the deletion](media/cleanup-9.png)
 
-1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Data Plane Keys*.
+1. From the NGINX One Console, in the left-hand menu in the *Manage* section, select *Data Plane Keys*.
 
 1. Select the context menu for the Data Plane Key you created earlier in this lab, and select *Revoke*.
 
