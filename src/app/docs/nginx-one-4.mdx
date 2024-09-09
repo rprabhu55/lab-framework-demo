@@ -36,39 +36,19 @@ On the *Configuration* tab, there is a view that defines the NGINX configuration
 
 ![Configuration View](media/lab5-5.png)
 
-Notice the configuration is empty when you first create a Config Sync Group. There are two ways to handle the initial configuration.
-
-**Option 1:** Auto-generate the Config Sync Group's configuration by adding the first NGINX instance. The existing config from the NGINX instance will be used as the config for your Config Sync Group.
-
-**Option 2:** Manually define the NGINX configurations before adding any NGINX instances using the UI text editor.
-
-
-
-
-
-
-
-
-
 
 
 ---
 #### Adding new NGINX instances to config sync group
 
-We will now proceed with populating our Config Sync Group with two NGINX Plus instances: an NGINX Plus Virtual Machine provided by the lab blueprint, and an NGINX Plus Docker Container which we will create on our own. We will be using the existing configuration from this first NGINX instance as the Config Sync Group's configuration.
+We will now proceed with populating our Config Sync Group with two NGINX Plus instances: an NGINX Plus Virtual Machine provided by the lab blueprint, and an NGINX Plus Docker Container which we will create on our own. We will use the default configuration provided by the NGINX Plus virtual machine as the Config Sync Group's configuration.
 
-You can do it by taking the following actions from the NGINX One console: select *Add Instance to Config Sync Group* ->
-select *Register a new instance with NGINX One then add to config sync group* ->
-select *Next* ->
-select *Use existing Key* -> provide *Data Plane Key*
-select *Docker Container* tab.
-
-We have two ways of adding instances to our sync group:
+We have two methods of adding instances to our sync group:
 1. If the instance is NOT already registered with NGINX One, we will need to run a series of setup commands to register and add the instance to the config sync group.
-1. If the instance is already registered with NGINX One and has a running NGINX Agent, manually updating the agent's config will automatically add the instance to the sync group.
+1. If the instance is already registered with NGINX One and has a running NGINX Agent, manually updating the agent's config with the sync group parameter will add the instance to the sync group.
 
-As we are using a fresh environment for this lab, **we will only use the first method** to add our NGINX instances to the config sync group.
-When adding an NGINX Plus docker container, the instructions on the screen tell you how to:
+As we are using a fresh environment for this lab, **we will only use the first method** which will automatically register and add our NGINX Plus instances to the config sync group.
+Note that, when adding an NGINX Plus docker container, the instructions provided by the NGINX One console tell you how to:
     - Login to the NGINX private registry
     - Pull an NGINX Plus instance from the NGINX private registry
     - Run the container with the required NGINX One Console connection details
@@ -96,10 +76,7 @@ But for this lab, we have already automated the first two steps of this process 
     ```
     Once the installation has completed, the NGINX Plus container will appear as an instance managed by your config sync group. If it doesn't immediately appear in the list, try clicking the refresh button.
 
-
-
-
-
+---
 #### (Additional Info) Adding an already registered instance to the config sync group
 
 Though not applicable for the purposes of this lab, this method assumes that a target NGINX instance is already registered in the NGINX One console, and therefore has a running NGINX agent associated with the console. In order to add a registered instance to a config sync group, we need to manually update the agent's configuration with our config sync group's information.
@@ -140,15 +117,6 @@ This NGINX Instance will then appear as an instance managed by a config sync gro
 
 > :warning: **Warning:** It is not advisable to use this method for registered NGINX Plus containers due to their inherently ephemeral nature. If you wish to add a containerized NGINX Plus instance to your config sync group, it is highly recommended to create a new NGINX Plus container within the config sync group using the method described earlier.
 
-
-
-
-
-
-
-
-
-
 ---
 
 ### Viewing Logs
@@ -169,12 +137,12 @@ To do so, we'll examine the logs of the NGINX Agent (and others) in real-time fo
     ```bash
     docker exec -it [NGINX PLUS CONTAINER ID] bash
     ```
-    This will open up a bash shell session in the container. Once inside, use the same command in step 1 to access the NGINX Agent log within the container.
+    This will open up a bash shell session within the container. Once inside, use the same command in step 1 to access the NGINX Agent log within the container.
     ```bash
     sudo tail -f /var/log/nginx-agent/agent.log
     ```
 
-1. Navigate to your sync group's configuration tab. Here, you can make any valid edits to the Config Sync Group configuration that you wish. In this case, we will add the following section to the server block of the /etc/nginx/conf.d/default.conf file:
+1. Navigate to your sync group's configuration tab. Here, you can make any valid edits to the Config Sync Group configuration that you wish. In this case, we will add the following section to the server block of the **/etc/nginx/conf.d/default.conf** file:
 
     ```nginx
     location /test_publish {
@@ -182,11 +150,11 @@ To do so, we'll examine the logs of the NGINX Agent (and others) in real-time fo
         return 200 '<html><body><h1>Published change made from NGINX One Config Sync Group</h1></body></html>';
     }
     ```
-1. Save and publish these changes. Now pay attention to the agent.log feed on both instances as the configuration update is applied.
+1. Make sure the edits you made are valid, then save and publish these changes. Now pay attention to the agent.log feed on both instances as the configuration update is applied.
 ---
-### De-synchronizing a managed instance
+### Modifying a managed instance
 
-What happens if we decide to make changes to the config of a particular NGINX instance which is under the management a Config Sync Group?
+What happens if we try to make configuration changes to a particular NGINX instance inside a Config Sync Group?
 
 1. Open an SSH Window for your **NGINX Plus** instance, then navigate to the **/etc/nginx/conf.d/** directory, then open the **demo.conf** file in a text editor of your choice.
 
@@ -230,7 +198,7 @@ What happens if we decide to make changes to the config of a particular NGINX in
 
 Feel free to repeat this process and make as many edits as you want to the demo.conf file. As soon as you save your changes, NGINX One will automatically override them and re-apply the Config Sync Group's configuration to the instance.
 
-
+> :point_right: If a permanent configuration change needs to be made to a specific instance within a config sync group, the instance should be removed from a config sync group so that it can be managed individually.
 
 
 ---
@@ -245,11 +213,16 @@ Great job! Through the use of Config Sync Groups, you have now accomplished a co
 
 Time to clean up the resources you created in this lab. As a safety precaution, the NGINX One console will not allow you to delete an instance that is online. We will first have to shut down the instances before deleting them from the NGINX One console.
 
-1. Click **Stop** on all the Docker instances displayed below:
+1. On the **Lab Framework** machine, stop any running NGINX Plus Docker instances. First identify the container ID's using the following command:
+    ```bash
+    docker ps | grep nginx-plus
     ```
-    Instructions to stop running instances
+    This will list all running NGINX Plus Docker instances. Take note of the container IDs, then run the following command to stop each container:
+    ```bash
+    docker stop [NGINX Container ID]
     ```
-    
+
+1. Go to your NGINX Plus instance in UDF and click **Stop** to shut down the VM.     
 1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Instances*.
 
 1. Wait until your **<GetVariable name="petname" />*** instances transition into the **Unavailable** state before proceeding. You may need to click the *Refresh* button at the top right of the instance list.
