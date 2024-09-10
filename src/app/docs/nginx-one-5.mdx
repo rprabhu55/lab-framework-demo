@@ -1,7 +1,7 @@
 ---
 title: NGINX One Console Lab - Adding NGINX Instances to NGINX One - Part 2
 description: Fix it lab
-order: 5
+order: 8
 ---
 
 ## Introduction
@@ -68,7 +68,7 @@ Now let's take a look at the NGINX agent logs. The logs can be examined by conne
 
 1. Looking at the logs we see that there is authentication issue and the container is unable to communicate with agent.connect.nginx.com:443.
 
-![Container Logs](media/fixitlab-1.png)
+![Container Logs](media/lab8-1.png)
 
 1. Next, delete the container and re-deploy with the data plane key you saved earlier.
 
@@ -97,7 +97,7 @@ Now let's take a look at the NGINX agent logs. The logs can be examined by conne
     docker exec -it YOUR_CONTAINER_ID /bin/bash
     tail -f /var/log/nginx-agent/agent.log
     ```
-![Container Logs](media/fixitlab-2.png)
+![Container Logs](media/lab8-2.png)
 
 Great job! You now know where to start troubleshooting your NGINX instance not being able to connect to the NGINX One Console.
 
