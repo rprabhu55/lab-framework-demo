@@ -3,9 +3,13 @@ title: NGINX One Console Lab - Config Sync Groups
 description: An interactive lab covering uses for Config Sync Groups in the NGINX One Console
 order: 6
 ---
-## Config Sync Groups
+## Use Case 2: Config Sync Groups
 
 Config Sync Groups allow us to group multiple NGINX instances and leverage an identical configuration across all instances. This feature is extremely helpful in ephemeral environments, such as Docker and Kubernetes, as the NGINX instance can pull its configuration versus needing to rebuild the NGINX container every time the configuration changes. This section will go through using this feature.
+
+The high level diagram showing this interaction can be seen below.
+
+![](media/upskill/presentation-5.png)
 
 ### Creating a Config Sync Group
 
