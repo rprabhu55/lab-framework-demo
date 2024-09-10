@@ -49,16 +49,16 @@ We have two methods of adding instances to our sync group:
 
 As we are using a fresh environment for this lab, **we will only use the first method** which will automatically register and add our NGINX Plus instances to the config sync group.
 Note that, when adding an NGINX Plus docker container, the instructions provided by the NGINX One console tell you how to:
-    - Login to the NGINX private registry
-    - Pull an NGINX Plus instance from the NGINX private registry
-    - Run the container with the required NGINX One Console connection details
+    1. Login to the NGINX private registry
+    2. Pull an NGINX Plus instance from the NGINX private registry
+    3. Run the container with the required NGINX One Console connection details
 
 But for this lab, we have already automated the first two steps of this process for you, so you will only need to deploy the NGINX Plus image from within the Lab Framework component.
 
-1. SSH into your **NGINX Plus** component and use the following command to install and run the NGINX Agent. Make sure to use your dataplane key where indicated.
+1. SSH into your **NGINX Plus** component and use the following command to install and run the NGINX Agent. Make sure to use your Data Plane Key and config sync group name where indicated.
 
     ```bash
-    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY="[YOUR DATA PLANE KEY]" sh -s -- -y -c ace-kite
+    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY="[YOUR DATA PLANE KEY]" sh -s -- -y -c [YOUR CONFIG SYNC GROUP]
     ```
     Once the installation has completed, the NGINX Instance will appear as an instance managed by your config sync group. If it doesn't immediately appear in the list, try clicking the refresh button.
 
@@ -83,7 +83,7 @@ Though not applicable for the purposes of this lab, this method assumes that a t
 
 1. On the target NGINX instance, navigate to the agent's config file in the **/var/lib/nginx-agent/** directory, then open the **agent-dynamic.conf** file in a text editor.
 
-1. The following code is added to the bottom of the **agent-dynamic.conf** file and save the config file.
+1. The following code is added to the bottom of the **agent-dynamic.conf** file.
 
     ```nginx
     instance_group: [YOUR CONFIG SYNC GROUP NAME GOES HERE]
@@ -107,13 +107,13 @@ Though not applicable for the purposes of this lab, this method assumes that a t
     instance_group: [YOUR CONFIG SYNC GROUP NAME GOES HERE]
     ```
 
-1. Restart the NGINX Agent using the following command:
+1. The NGINX Agent is restarted using the following command:
 
     ```bash
     sudo systemctl restart nginx-agent
     ```
 
-This NGINX Instance will then appear as an instance managed by a config sync group.
+This NGINX Instance will then appear as an instance managed by a config sync group after a few minutes.
 
 > :warning: **Warning:** It is not advisable to use this method for registered NGINX Plus containers due to their inherently ephemeral nature. If you wish to add a containerized NGINX Plus instance to your config sync group, it is highly recommended to create a new NGINX Plus container within the config sync group using the method described earlier.
 
@@ -222,7 +222,11 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
     docker stop [NGINX Container ID]
     ```
 
-1. Go to your NGINX Plus instance in UDF and click **Stop** to shut down the VM.     
+1. Go to your NGINX Plus instance in UDF and uninstall the NGINX Agent using the following command:
+    ```bash
+    sudo systemctl stop nginx-agent && sudo apt-get remove nginx-agent -y
+    ```
+
 1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Instances*.
 
 1. Wait until your **<GetVariable name="petname" />*** instances transition into the **Unavailable** state before proceeding. You may need to click the *Refresh* button at the top right of the instance list.
