@@ -1,0 +1,142 @@
+---
+title: NGINX One Console Lab - Adding NGINX Instances to NGINX One - Part 2
+description: Fix it lab
+order: 5
+---
+
+## Introduction
+
+In this demo we are going to deploy another container and inspect the logs to learn how to troubleshoot issues with the NGINX agent connecting to the NGINX One Console. 
+
+## Interactive Lab
+    
+The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, refer to the [documentation](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/#pulling-the-image).
+
+1. Go to *Instances* under *Manage* and click *Add Instance*.
+
+1. Select *Use existing Key*. Use the data plane key below.
+
+    ```
+    Data Plane Key: abc2jcK8Fm1yQItpXZv0zks1KKQUXmJzJMkjButWAOY=
+    ```
+
+1. Provide your Data Plane Key.
+
+1. Select the *Docker Container* tab.
+
+    ![Add New NGINX Plus Container](media/lab5-17.png)
+
+    > **Note:** This system already cached the container image, so Steps 1 and 2 from above can be skipped.
+
+1. Open a Web Shell to the **Lab Framework** UDF instance and start an NGINX Plus container with the commands below.
+
+1. Run the *docker run* command outlined in Step 3 to start the NGINX Plus with Agent container. Start the Docker container. Replace YOUR_DATA_PLANE_KEY with your actual NGINX One data plane key and VERSION_TAG with the specific version tag you pulled.
+
+    ```shell
+
+    sudo docker run --hostname=YOUR_HOSTNAME --name=YOUR_CONTAINER_NAME \
+    --env=NGINX_AGENT_SERVER_GRPCPORT=443 \
+    --env=NGINX_AGENT_SERVER_HOST=agent.connect.nginx.com \
+    --env=NGINX_AGENT_SERVER_TOKEN=abc2jcK8Fm1yQItpXZv0zks1KKQUXmJzJMkjButWAOY= \
+    --env=NGINX_AGENT_TLS_ENABLE=true \
+    --env=NGINX_AGENT_TLS_SKIP_VERIFY=false \
+    --restart=always \
+    --runtime=runc \
+    -d private-registry.nginx.com/nginx-plus/agent:VERSION_TAG
+    ```
+
+1. Click *Done* to close the window.
+
+1. Return to the NGINX One console. From the left menu in the Manage section, click Instances. You should see your new instance in the list. If not, let's troubleshoot to see what went wrong.
+
+
+### Viewing Logs
+
+Now let's take a look at the NGINX agent logs. The logs can be examined by connecting to the container.
+
+1. Start an interactive Bash shell session inside the specified container
+
+    ``` bash
+    docker exec -it YOUR_CONTAINER_ID /bin/bash
+    ```
+
+1. Use the following command to view the NGINX Agent logs in real time.
+
+    ``` bash
+    tail -f /var/log/nginx-agent/agent.log
+    ```
+
+1. Looking at the logs we see that there is authentication issue and the container is unable to communicate with agent.connect.nginx.com:443.
+
+![Container Logs](media/fixitlab-1.png)
+
+1. Next, delete the container and re-deploy with the data plane key you saved earlier.
+
+    > **Note:** Use your existing data plane key if you still have a valid one, if not then generate a new one. 
+
+    ```
+    docker stop YOUR_CONTAINER_ID
+    docker rm YOUR_CONTAINER_ID
+    ```
+
+    ```
+    sudo docker run --hostname=YOUR_HOSTNAME --name=YOUR_CONTAINER_NAME \
+    --env=NGINX_AGENT_SERVER_GRPCPORT=443 \
+    --env=NGINX_AGENT_SERVER_HOST=agent.connect.nginx.com \
+    --env=NGINX_AGENT_SERVER_TOKEN=YOUR_DATA_PLANE_KEY \
+    --env=NGINX_AGENT_TLS_ENABLE=true \
+    --env=NGINX_AGENT_TLS_SKIP_VERIFY=false \
+    --restart=always \
+    --runtime=runc \
+    -d private-registry.nginx.com/nginx-plus/agent:VERSION_TAG
+    ```
+
+1.  Now let's go look at the agent logs again and see what information they give us.
+
+    ``` bash
+    docker exec -it YOUR_CONTAINER_ID /bin/bash
+    tail -f /var/log/nginx-agent/agent.log
+    ```
+![Container Logs](media/fixitlab-2.png)
+
+Great job! You now know where to start troubleshooting your NGINX instance not being able to connect to the NGINX One Console.
+
+
+## Lab Cleanup
+
+Time to clean up the resources you created in this lab. As a safety precaution, the NGINX One console will not allow you to delete an instance that is online. We will first have to shut down the instances before deleting them from the NGINX One console.
+
+1. For the Docker containers running NGINX run the commands below to stop and remove the container from the NGINX Plus instance in your UDF deployment.
+
+    ``` docker
+    docker stop YOUR_CONTAINER_ID
+    docker rm YOUR_CONTAINER_ID
+    ```
+
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Instances*.
+
+1. Wait until your instance transitions into the **Unavailable** state before proceeding. You may need to click the *Refresh* button at the top right of the instance list.
+
+    ![Instance Unavailable](media/cleanup-3.png)
+
+1. Find your instance, select the *Actions* "..." context menu, and select *Delete*.
+
+    > :warning: **Warning:** Make sure you are deleting your own instances and not someone else’s.
+
+    ![Deleting an instance](media/cleanup-4.png)
+
+1. Confirm the deletion.
+
+    ![Confirming the deletion](media/cleanup-5.png)
+
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Data Plane Keys*.
+
+1. Select the context menu for the Data Plane Key you created in lab 1, and select *Revoke*.
+
+    > :warning: **Warning:** Make sure you are revoking your own key and not someone else’s.
+
+    ![Revoking a Data Plane Key](media/cleanup-6.png)
+
+1. Confirm the revocation.
+
+    ![Confirming the revocation](media/cleanup-7.png)
