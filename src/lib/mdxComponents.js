@@ -9,6 +9,7 @@ import { InputVariable } from "@/app/components/input-var";
 import { SetVariable } from "@/app/components/set-variable";
 import UDFComponent from "@/app/components/udf-component";
 import { UdfDeploymentMetadata } from "@/app/components/udf-deployment-metadata";
+import { Collapsible } from "@/app/components/collapsible";
 
 import DockerContainer from "@/app/components/docker-container";
 import APICheckContainer from "@/app/components/api-check-container";
@@ -28,6 +29,7 @@ const MDXComponents = {
   GetVariable,
   InputVariable,
   UDFComponent,
+  Collapsible,
   UdfDeploymentMetadata,
   SetVariable,
   h1: (props) => <h1 id={formatId(props.children)} {...props} />,
