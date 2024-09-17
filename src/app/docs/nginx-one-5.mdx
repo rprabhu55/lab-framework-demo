@@ -6,11 +6,10 @@ order: 5
 
 ## Use Case 1: NGINX Instance Management
 
-This lab will detail the use case for adding NGINX Instances to the NGINX One Console. Below is a system diagram diagram
-showing this interaction can be seen below.
+This lab will detail the use case of managing NGINX Instances from the NGINX One Console. Below is a system diagram
+showing this interaction.
 
 ![](media/upskill/presentation-4.png)
-
 
 ## Lab Introduction
 
@@ -19,11 +18,11 @@ instances, both NGINX Plus and NGINX Open Source (OSS).
 
 After this lab, you will be able to:
 
+- Install the NGINX Agent on both NGINX Plus and NGINX OSS instances
 - Manage and update NGINX configuration from NGINX One Console
   - Publish changes
   - Enable TLS
 - Review recommendations from the NGINX One console
-- Install the NGINX Agent on both NGINX Plus and NGINX OSS instances
 
 ## Prerequisites
 
@@ -39,7 +38,7 @@ in its window, or press the Escape key.
 ## Demo lab
 
 I will now do a demo lab. The instructions I am going though is here. You can watch me go thought the demo or follow
-along with me.
+along with me. I will be going [here](nginx-one-1.mdx#connecting-to-the-console)
 
 ## Interactive lab
 
@@ -77,13 +76,13 @@ expiration date.  For this lab, we will use the default value.
 
     ![Data Plane Key](media/lab2-5.png)
 
-## NGINX OSS (Open Source)
+### NGINX OSS (Open Source)
 
 The NGINX One Console supports both NGINX Plus and NGINX OSS. Both products leverage the NGINX Agent to communicate with
 the NGINX One Console API. The UDF blueprint contains a Ubuntu host with the package maintainer’s version of NGINX OSS
 installed.  In this section we will install NGINX Agent and connect this instance to the NGINX One Console.
 
-### Installing NGINX Agent on NGINX OSS
+#### Installing NGINX Agent on NGINX OSS
 
 1. Connect to the "NGINX OSS" instance in UDF through the Web Shell access method by clicking the *Open Web Shell* button below:
 
@@ -138,7 +137,7 @@ the example command by select the copy button.
 
 1. You now successfully added an NGINX Open Source instance to NGINX One Console.
 
-### Viewing Logs
+#### Viewing logs
 
 Logs that contain information relating to the connection between this instance and NGINX One Console can be found in
 the NGINX agent logs located at **/var/log/nginx-agent** from the NGINX instance.
@@ -153,7 +152,7 @@ the NGINX agent logs located at **/var/log/nginx-agent** from the NGINX instance
 
     ![Instance](media/upskill/use-case-1/6.png)
 
-## NGINX Docker
+### NGINX container instance
 
 Now that we've added an NGINX instance that is on a Virtual Machine, we will now try adding an NGINX container instance.
 
@@ -177,11 +176,15 @@ has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with 
 1. Open a Web Shell to the **Lab Framework** UDF instance and start an NGINX Plus container with the commands below.
 
 1. Because we are using a shared XC tenant, we will be modifying the command from Step 3 so you can distinguish your
-NGINX container instance from others. Run the *docker run* command outlined in Step 3 to start the NGINX Plus with Agent
-container. Replace YOUR_DATA_PLANE_KEY with your Data Plane Key.
+NGINX container instance from others. Below is the *docker run* command outlined in Step 3 but with the following
+modifications.
+    - A **hostname** and **name** is defined
+    - Replace YOUR_DATA_PLANE_KEY with your Data Plane Key.
 
     ```shell
-    sudo docker run --hostname={{petname}}-nginx-plus-manual --name={{petname}}-nginx-plus-manual \
+    sudo docker run \
+    --hostname={{petname}}-nginx-plus-manual \
+    --name={{petname}}-nginx-plus-manual \
     --env=NGINX_AGENT_SERVER_GRPCPORT=443 \
     --env=NGINX_AGENT_SERVER_HOST=agent.connect.nginx.com \
     --env=NGINX_AGENT_TLS_ENABLE=true \
@@ -192,28 +195,29 @@ container. Replace YOUR_DATA_PLANE_KEY with your Data Plane Key.
     -d private-registry.nginx.com/nginx-plus/agent:debian
     ```
 
-1. Click *Done* to close the window.
+1. Return to your NGINX One Console. You may need to click *Done* to close the window with "Docker Container"
+instructions.
 
-1. Return to the NGINX One console. From the left menu in the Manage section, click Instances. You should see your new instance in the list.
+1. From the left menu in the *Manage* section, click *Instances*. You should see your new instance in the list.
+
+    ![New NGINX Plus Instance](media/upskill/use-case-1/7.png)
 
 
-### Viewing Logs
+#### Viewing Logs
 
-Now let's take a look at the NGINX agent logs. The logs can be examined by connecting to the container.
+Viewing logs from container instances are similar to virtual machines. The difference is you will need to view them
+from the NGINX instance container. The path to the NGINX agent logs are located at the same location as the virtual
+machine instance, **/var/log/nginx-agent**. Now let's take examine the logs by connecting to the container.
 
-1. Start an interactive Bash shell session inside the specified container
+1. Start a Web Shell session to **Lab Framework**.
+
+1. Use the **more** command to display the NGINX agent logs.
 
     ``` bash
-    docker exec -it YOUR_CONTAINER_ID /bin/bash
+    docker exec {{petname}}-nginx-plus-manual more /var/log/nginx-agent/agent.log
     ```
 
-1. Use the following command to view the NGINX Agent logs in real time.
-
-    ``` bash
-    tail -f /var/log/nginx-agent/agent.log
-    ```
-
-## Console Overview
+### Console Overview
 
 Now that we have set up our data plane key and deployed our NGINX instances we can take a look around the NGINX One Console:
 
@@ -223,7 +227,7 @@ Now that we have set up our data plane key and deployed our NGINX instances we c
 
     ![NGINX One Instance List](media/lab2-7.png)
 
-### Explore the instance details
+#### Explore the instance details
 
 The NGINX One Console provides several key metrics for us to evaluate:
 
@@ -303,262 +307,105 @@ Clicking a detail line in any of these charts will let you drill-down and see th
 
 ---
 
-## Configuration via the Console
+### Configuration via the Console
 
 In this section, we will leverage NGINX One Console to enable the [stub_status](https://nginx.org/en/docs/http/ngx_http_stub_status_module.html?_ga=2.62776364.1844058681.1724599557-1323320886.1720986347)
-location in our **<GetVariable name="nginx-plus-1" />** NGINX instance's configuration.
+location in our **<GetVariable name="petname" />-ubuntu-oss** NGINX instance's configuration.
 
-The stub_status allows users to collect basic metrics about the NGINX instance such as:
+The *stub_status* allows users to collect basic metrics about the NGINX instance such as:
 
 - Active connections
 - Total number of accepted client connections
 - Total number of client requests
 - and many more
 
-### Adding a stub_status directive
+We won't go into detail about the NGINX configuration because we already have done this in the Demo Lab. So we will be
+skipping though each config detail.
+
+#### Adding a stub_status directive
 
 1. In the NGINX One console, select *Manage* and then *Instances* from the left menu.
 
-1. You should see your **<GetVariable name="nginx-plus-1" />** instance in the list. Click it to view the instance details.
+1. You should see your **<GetVariable name="petname" />-ubuntu-oss** instance in the list. Click it to view the instance details.
 
-1. Click the *Configuration* link near the top of the instance screen. You will be presented with the configuration editor.
+1. Click the *Configuration* tab near the top of the instance screen. You will be presented with the configuration editor.
 
-    ![Configuration link](media/lab3-1.png)
-
-
-#### NGINX Configuration
-
-Now let's take a look at what the **/etc/nginx/nginx.conf** configuration is doing:
-
-    ```nginx
-    user  nginx;
-    worker_processes  auto;
-
-    error_log  /var/log/nginx/error.log notice;
-    pid        /var/run/nginx.pid;
-
-    events {
-        worker_connections  1024;
-    }
-    ```
-
-Let's break down this portion of the NGINX configuration:
-
-**1. *user  nginx;***
-
-This line specifies the user under which NGINX will run as a process. In this case, it's running as the *nginx* user. This is important for security and permission reasons.
-
-When NGINX starts, it needs to bind to certain system resources (e.g., network sockets). By specifying a specific user, we ensure that any processes started by NGINX will run with minimal privileges, reducing the risk of unauthorized access or resource consumption.
-
-**2. worker_processes  auto;**
-
-This line configures how many worker processes NGINX will create to handle incoming requests. The value is set to *auto*, which means that NGINX will automatically determine the optimal number of workers based on the system's capabilities and load.
-
-The *auto* value tells NGINX to:
-
-    * On systems with multiple CPU cores, create a worker process for each core.
-    * On systems with a single CPU core, use the system's default maximum process limit (usually 1024).
-    * Consider other factors like memory availability and load when deciding on the optimal number of workers.
-
-**3. error_log  /var/log/nginx/error.log notice;**
-
-This line configures how NGINX logs errors that occur during execution. The *notice* level is set, which means that:
-
-    * Errors with a severity level greater than or equal to NOTICE will be logged.
-    * Other error levels (e.g., ERROR, WARNING) won't be logged.
-
-The log file location */var/log/nginx/error.log* indicates where NGINX will write its error messages. This is the standard log location for most Linux distributions.
-
-**4. pid /var/run/nginx.pid;**
-
-This line specifies the file path where NGINX will store its process ID (PID). The PID is a unique identifier that allows you to manage and monitor running processes on your system.
-
-In this case, the PID is written to */var/run/nginx.pid*, which is a common location for Linux services like NGINX.
-
-**5. worker_connections 1024;**
-
-This line specifies the maximum number of simultaneous connections a worker process can handle. In this case, it's set to 1024, which means each worker process will be able to accept up to 1024 simultaneous client connections.
-
-    ```nginx
-    http {
-        include       /etc/nginx/mime.types;
-        default_type  application/octet-stream;
-
-        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                        '$status $body_bytes_sent "$http_referer" '
-                        '"$http_user_agent" "$http_x_forwarded_for"';
-
-        access_log  /var/log/nginx/access.log  main;
-
-        sendfile        on;
-        #tcp_nopush     on;
-
-        keepalive_timeout  65;
-
-        #gzip  on;
-
-        include /etc/nginx/conf.d/*.conf;
-    }
-    ```
-
-Here's a brief explanation of this portion of the NGINX configuration:
-
-**HTTP Block**
-
-This block configures how NGINX handles HTTP requests.
-
-**1. include /etc/nginx/mime.types;**
-
-Includes the MIME types file, which maps file extensions to their corresponding content types.
-
-**2. default_type application/octet-stream;**
-
-Specifies the default response type for unknown content types.
-
-**3. log_format main ...**
-
-Defines a custom log format called "main", which logs various request details (e.g., client IP, user agent).
-
-**4. access_log /var/log/nginx/access.log main;**
-
-Enables access logging to the specified file using the defined log format.
-
-**5. sendfile on;**
-
-Enables the sendfile() method for sending files directly from disk to clients, improving performance.
-
-**6. keepalive_timeout 65;**
-
-Sets the keep-alive timeout to 65 seconds, allowing NGINX to maintain connections with clients for a longer period.
-
-**7. include /etc/nginx/conf.d/*.conf;**
-
-Includes all configuration files in the specified directory (e.g., virtual hosts).
-
-Now lets take a look at what the **/etc/nginx/conf.d/default.conf** configuration is doing:
-
-    ```nginx
-    server {
-        listen       80 default_server;
-        server_name  localhost;
-
-        #access_log  /var/log/nginx/host.access.log  main;
-
-        location / {
-            root   /usr/share/nginx/html;
-            index  index.html index.htm;
-        }
-
-        #error_page  404              /404.html;
-
-        # redirect server error pages to the static page /50x.html
-        #
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   /usr/share/nginx/html;
-        }
-    }
-    ```
-
-Here's a brief overview of this NGINX configuration:
-
-**Server Block**
-
-This block configures a single server that listens on port 80 and responds to requests for the domain *localhost*.
-
-- *listen 80 default_server;* specifies that this server should listen on port 80 by default.
-- *server_name localhost;* indicates that this server will respond to requests from the domain *localhost*.
-
-**Root Directory and Indexing**
-
-The configuration sets up a single location block that serves files from the */usr/share/nginx/html* directory:
-
-- *root /usr/share/nginx/html;* specifies the root directory for this location.
-- *index index.html index.htm;* specifies the default index file to serve when no specific file is requested (in this case, either *index.html* or *index.htm*).
-
-**Error Handling**
-
-The configuration also sets up error handling:
-
-- *error_page 500 502 503 504 /50x.html;* specifies that if any of these specific HTTP errors occur, the client should be redirected to the static page */50x.html*.
-- *location = /50x.html* specifies where NGINX can find the error page file.
-
-#### Edit the NGINX Configuration
+    ![Configuration link](media/upskill/use-case-1/8.png)
 
 1. Click the *Edit Configuration* button above the editor.
 
     ![Edit Configuration link](media/lab3-2.png)
 
-1. Select the **/etc/nginx/conf.d/default.conf** file from the tree view on the left side of the configuration editor.
+1. Select the **/etc/nginx/conf.d/demo.conf** file from the tree view on the left side of the configuration editor.
 
-    ![Select default.conf file](media/lab3-3.png)
+    ![Configuration link](media/upskill/use-case-1/9.png)
 
-1. Edit the selected file to include a location block at the end of the server block with
-    the **stub_status** directive. Add the following location block to the server block:
+1. Edit the selected file to include a location block at the end of the server block with the **stub_status** directive.
+   The location block with **stub_status** defined is shown below.
 
-        ```nginx
-            location = /nginx_status {
-                stub_status;
-            }
-        ```
+    ```nginx
+        location = /nginx_status {
+            stub_status;
+        }
+    ```
 
     The file should like this (commented out configurations have been removed):
 
-        ```nginx
-        server {
-            listen       80 default_server;
-            server_name  localhost;
+    ```nginx
+    server {
+        listen 80 default_server;
+        server_name app_server;
 
-            #access_log  /var/log/nginx/host.access.log  main;
+        root /usr/share/nginx/html;
+        error_log /var/log/nginx/app-server-error.log notice;
+        index demo-index.html index.html;
+        expires -1;
 
-            location / {
-                root   /usr/share/nginx/html;
-                index  index.html index.htm;
-            }
-
-            #error_page  404              /404.html;
-
-            # redirect server error pages to the static page /50x.html
-            #
-            error_page   500 502 503 504  /50x.html;
-            location = /50x.html {
-                root   /usr/share/nginx/html;
-            }
-
-            location = /nginx_status {
-                stub_status;
-                access_log off;
-            }
+        sub_filter_once off;
+        sub_filter 'server_hostname' '$hostname';
+        sub_filter 'server_address'  '$server_addr:$server_port';
+        sub_filter 'server_url'      '$request_uri';
+        sub_filter 'remote_addr'     '$remote_addr:$remote_port';
+        sub_filter 'server_date'     '$time_local';
+        sub_filter 'client_browser'  '$http_user_agent';
+        sub_filter 'request_id'      '$request_id';
+        sub_filter 'nginx_version'   '$nginx_version';
+        sub_filter 'document_root'   '$document_root';
+        sub_filter 'proxied_for_ip'  '$http_x_forwarded_for';
+        location = /nginx_status {
+            stub_status;
         }
-        ```
+        
+    }
+    ```
 
-1. You will see that there is a message below the editor:
-
-    > *1 recommendation found for /etc/nginx/conf.d/default.conf <br />
-        Security - Error: stub_status should have access control list defined*.
-
-    - **Why?** NGINX One includes a configuration advisor and it identified that exposing the **stub_status** endpoint open to the world is considered a security risk.
-    - We can remediate this by adding an ACL to the **/nginx_status** location block to only allow our lab environments's local networks and NGINX Agent (running locally on the instance) to access the stub status endpoint.
+1. You will see that there is a message below the editor.
 
     ![config warning](media/lab3-4.png)
 
+    - **Why?** NGINX One Console includes a configuration advisor and it identified that exposing the **stub_status**
+    endpoint open to the world is considered a security risk.
+    - We can remediate this by adding an ACL to the **/nginx_status** location block to only allow our lab
+    environments's local networks and NGINX Agent (running locally on the instance) to access the stub status endpoint.
+
+
 1. Update that section of the configuration to the following:
 
-        ```nginx
-            location /nginx_status {
-                stub_status;
-                allow 10.0.0.0/8;
-                allow 172.18.0.0/16;
-                allow 127.0.0.1;
-                deny all;
-            }
-        ```
+    ```nginx
+        location /nginx_status {
+            stub_status;
+            allow 10.0.0.0/8;
+            allow 172.18.0.0/16;
+            allow 127.0.0.1;
+            deny all;
+        }
+    ```
 
     Note that the warning should disappear.
 
 1. Click *Next* to display the diff viewer. This view will show you the changes made to the configuration.
 
-    ![Diff viewer](media/lab3-5.png)
+    ![Diff viewer](media/upskill/use-case-1/10.png)
 
 1. Click *Save and Publish*. You will see a status message indicating changes are being published, followed by a success message after several seconds.
 
@@ -569,22 +416,31 @@ The configuration also sets up error handling:
 1. Check that the *stub_status* module is working by clicking the *Check* button below.
 
     <APICheck
-        componentName="nginx-plus-1"
+        url="http://10.1.1.6"
         path="/nginx_status"
         targetStatusCode={200}
     />
 
-### Using a TLS certificate
+1. You can also check using the HTTP page by going to the **NGINX OSS** UDF System -> selecting **ACCESS** ->
+selecting **NGINX HTTP**.
 
-In this section, we will configure our **<GetVariable name="nginx-plus-1" />** NGINX instance to leverage an SSL/TLS certificate.
+1. Update the URL to include the **nginx_status** path.
 
-1. In the NGINX One Console, edit the **/etc/nginx/conf.d/default.conf** file again on the **<GetVariable name="nginx-plus-1" />** instance. Add the following to the server block:
+    ![nxginx stats](media/upskill/use-case-1/11.png)
 
-        ```nginx
-            listen 443 ssl;
-            ssl_certificate /etc/nginx/ssl/wildcard.f5demos.com.crt.pem;
-            ssl_certificate_key /etc/nginx/ssl/wildcard.f5demos.com.key.pem;
-        ```
+#### Adding a TLS certificate
+
+In this section, we will configure our **<GetVariable name="petname" />-ubuntu-oss** NGINX instance to leverage an
+SSL/TLS certificate, which is already created for this lab.
+
+1. In the NGINX One Console, edit the **/etc/nginx/conf.d/demo.conf** file again on the
+**<GetVariable name="petname" />-ubuntu-oss** instance. Add the following to the server block:
+
+    ```nginx
+        listen 443 ssl;
+        ssl_certificate /etc/nginx/ssl/wildcard.f5demos.com.crt.pem;
+        ssl_certificate_key /etc/nginx/ssl/wildcard.f5demos.com.key.pem;
+    ```
 
 1. Click *Next* to display the diff viewer. This view will show you the changes made to the configuration.
 
