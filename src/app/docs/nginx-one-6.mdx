@@ -83,7 +83,14 @@ But for this lab, we have already automated the first two steps of this process 
     ```bash
     docker ps | grep nginx-plus
     ```
+
+    ![](media/lab6-1.png)
+
     Once the installation has completed, the NGINX Plus container will appear as an instance managed by your config sync group. If it doesn't immediately appear in the list, try clicking the refresh button.
+
+Your config sync group should now be populated by two NGINX Plus instances, one VM and one running Docker container.
+
+![](media/lab6-2.png)
 
 ---
 #### (Additional Info) Adding an already registered instance to the config sync group
@@ -150,13 +157,14 @@ To do so, we'll examine the logs of the NGINX Agent (and others) in real-time fo
     ```bash
     tail -f /var/log/nginx-agent/agent.log
     ```
-    
-    Navigate to your sync group's configuration tab. Here, you can make any valid edits to the Config Sync Group configuration that you wish. In this case, we will add the following simple comment at the top of the **/etc/nginx/conf.d/demo.conf** file:
+1. Place both SSH windows side-by-side so you can observe them both simultaneously.
+    ![](media/lab6-3.png)
+1. Navigate to your sync group's configuration tab. Here, you can make any valid edits to the Config Sync Group configuration that you wish. In this case, we will add the following simple comment at the top of the **/etc/nginx/conf.d/demo.conf** file:
 
     ```nginx
     ## This is a config change made through the Config Sync Group.
     ```
-    The updated configuration should look similar to the example below. Note the location of the comment we made:
+    The updated configuration should look similar to the example below. Note the location of the comment we made at the top:
     ```nginx
     ## This is a config change made through the Config Sync Group.
     server {
@@ -182,7 +190,9 @@ To do so, we'll examine the logs of the NGINX Agent (and others) in real-time fo
     }
     ```
 
-1. Make sure the edits you made are valid, then save and publish these changes. Now pay attention to the agent.log feed on both instances as the configuration update is applied.
+1. Make sure the edits you made are valid, then save and publish these changes. Now observe the agent.log feed on both instances as the configuration update is applied. For both instances you will see a series of log messages appear, indicating that the configuration change is being sent and applied to each instance.
+    ![](media/lab6-4.png)
+
 ---
 #### Modifying a managed instance
 
@@ -253,12 +263,12 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
     ```bash
     docker ps | grep nginx-plus
     ```
-    This will list all running NGINX Plus Docker instances. Take note of the container IDs, then run the following command to stop each container:
+    This will list all running NGINX Plus Docker instances. Take note of the container IDs, then run the following command to stop and remove each container:
     ```bash
-    docker stop [NGINX Container ID]
+    docker stop [NGINX Container ID] && docker rm [NGINX Container ID]
     ```
 
-1. Go to your NGINX Plus instance in UDF and uninstall the NGINX Agent using the following command:
+1. Go to your **NGINX Plus** instance and uninstall the NGINX Agent using the following command:
     ```bash
     sudo systemctl stop nginx-agent && sudo apt-get remove nginx-agent -y
     ```
