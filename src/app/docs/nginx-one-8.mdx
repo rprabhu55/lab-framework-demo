@@ -1,0 +1,177 @@
+---
+title: NGINX One Console Lab - Config Sync Groups - Part 2
+description: A fix-it lab for Config Sync Groups in the NGINX One Console
+order: 7
+---
+## Introduction
+
+In this lab, you will be taking a look at a config sync group consisting of a mix of NGINX Plus and NGINX OSS instances. Follow the steps below to set up the lab environment:
+
+1. Based on what you have learned earlier, create a new Config Sync Group using your unique lab deployment name, **<GetVariable name="petname" />**.
+
+1. Now click on **Run** for each of the NGINX Plus and NGINX OSS containers listed below. They will be added to the config sync group you just created.
+
+    <DockerContainer>
+        <Docker
+            name="nginx-plus-1"
+            desc="NGINX Plus R32 with Agent."
+            image="private-registry.nginx.com/nginx-plus/agent:debian"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+        <Docker
+            name="nginx-plus-2"
+            desc="NGINX Plus R32 with Agent."
+            image="private-registry.nginx.com/nginx-plus/agent:debian"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+        <Docker
+            name="nginx-oss-1"
+            desc="NGINX OSS 1.27.1 with Agent."
+            image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}-oss`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+    </DockerContainer>
+
+---
+## Fix-It Lab
+
+Once the NGINX containers have been successfully added to your config sync group, your lab environment setup is complete. You will notice that the group will be out-of-sync and unable to resolve itself. Your objective is to find out why this is happening and resolve the issue.
+
+---
+
+## Lab Cleanup
+
+Time to clean up the resources you created in this lab. As a safety precaution, the NGINX One console will not allow you to delete an instance that is online. We will first have to shut down the instances before deleting them from the NGINX One console.
+
+1. Click **Stop** on all the Docker instances displayed below:
+
+    <DockerContainer>
+        <Docker
+            name="nginx-plus-1"
+            desc="NGINX Plus R32 with Agent."
+            image="private-registry.nginx.com/nginx-plus/agent:debian"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+        <Docker
+            name="nginx-plus-2"
+            desc="NGINX Plus R32 with Agent."
+            image="private-registry.nginx.com/nginx-plus/agent:debian"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+        <Docker
+            name="nginx-oss-1"
+            desc="NGINX OSS 1.27.1 with Agent."
+            image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}-oss`}
+            ]}
+            attrs={[
+                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
+            ]}
+        />
+    </DockerContainer>
+
+    > **Note:** If some of the instances above initially show a green **Run** button, you will need to refresh the lab guide page.
+
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Instances*.
+
+1. Wait until your **<GetVariable name="petname" />*** instances transition into the **Unavailable** state before proceeding. You may need to click the *Refresh* button at the top right of the instance list.
+
+    ![Instance Unavailable](media/cleanup-3.png)
+
+1. For each of your **<GetVariable name="petname" />*** instances, select the *Actions* "..." context menu, and select
+    *Delete*.
+
+    > :warning: **Warning:** Make sure you are deleting your own instances and not someone else’s.
+
+    ![Deleting an instance](media/cleanup-4.png)
+
+1. Confirm the deletion.
+
+    ![Confirming the deletion](media/cleanup-5.png)
+
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Config Sync Groups*.
+
+1. Delete your **<GetVariable name="petname" />*** Config Sync Groups by selecting the *Actions* "..." context menu, then select *Delete* for each.
+
+    ![Delete Config Sync Group](media/cleanup-8.png)
+
+1. Confirm the deletion.
+
+    ![Confirming the deletion](media/cleanup-9.png)
+
+1. From the NGINX One console, in the left-hand menu in the *Manage* section, select *Data Plane Keys*.
+
+1. Select the context menu for the Data Plane Key you created in lab 1, and select *Revoke*.
+
+    > :warning: **Warning:** Make sure you are revoking your own key and not someone else’s.
+
+    ![Revoking a Data Plane Key](media/cleanup-6.png)
+
+1. Confirm the revocation.
+
+    ![Confirming the revocation](media/cleanup-7.png)
+
+1. Select **Revoked Keys**. Then, select the context menu for the Data Plane Key you created in lab 1, and select *Delete*.
+
+    ![Revoking a Data Plane Key](media/cleanup-10.png)
+
+1. Confirm the deletion.
+
+    ![Confirming the deletion](media/cleanup-11.png)
+
+Thank you for your time and attention to experience NGINX One Console!
