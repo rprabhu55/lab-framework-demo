@@ -52,13 +52,6 @@ We have two methods of adding instances to our sync group:
 1. If the instance is already registered with NGINX One and has a running NGINX Agent, manually updating the agent's config with the sync group parameter will add the instance to the sync group.
 
 As we are using a fresh environment for this lab, **we will only use the first method** which will automatically register and add our NGINX Plus instances to the config sync group.
-Note that, when adding an NGINX Plus docker container, the instructions provided by the NGINX One console tell you how to:
-    1. Login to the NGINX private registry
-    2. Pull an NGINX Plus instance from the NGINX private registry
-    3. Run the container with the required NGINX One Console connection details
-
-But for this lab, we have already automated the first two steps of this process for you, so you will only need to deploy the NGINX Plus image from within the Lab Framework component.
-
 1. SSH into your **NGINX Plus** component and use the following command to install and run the NGINX Agent. Make sure to use your Data Plane Key and config sync group name where indicated.
 
     ```bash
@@ -66,7 +59,12 @@ But for this lab, we have already automated the first two steps of this process 
     ```
     Once the installation has completed, the NGINX Instance will appear as an instance managed by your config sync group. If it doesn't immediately appear in the list, try clicking the refresh button.
 
-1. Now SSH into the **Lab Framework** component and run the following command to deploy a new NGINX Plus Container. The prior steps of logging into the NGINX private registry and pulling an NGINX Plus container image have already been completed for you. Make sure you use your data plane key and the name of your config sync group where indicated:
+1. Now SSH into the **Lab Framework** component and run the following command to deploy a new NGINX Plus Container. Make sure you use your data plane key and the name of your config sync group where indicated:
+   >**Note:** When adding an NGINX Plus docker container, the instructions provided by the NGINX One console tell you how to:
+   > 1. Login to the NGINX private registry
+   > 2. Pull an NGINX Plus instance from the NGINX private registry
+   > 3. Run the container with the required NGINX One Console connection details
+   > For the purpose of this lab, we have already completed the first two steps for you, so you will only need to deploy the NGINX Image.
     ```bash
     sudo docker run \
     --env=NMS_SERVER_GRPCPORT=443 \
@@ -190,9 +188,11 @@ To do so, we'll examine the logs of the NGINX Agent (and others) in real-time fo
     }
     ```
 
-1. Make sure the edits you made are valid, then save and publish these changes. Now observe the agent.log feed on both instances as the configuration update is applied. For both instances you will see a series of log messages appear, indicating that the configuration change is being sent and applied to each instance.
-    ![](media/lab6-4.png)
+1. Make sure the edits you made are valid, then save and publish these changes.
 
+1. Now observe the agent.log feed on both instances as the configuration update is applied. For both instances you will see a series of log messages appear, indicating that the configuration change is being sent and applied to each instance.
+    ![](media/lab6-4.png)
+    You will notice several matching log records for both instances as the update is being applied. Note the highlighted lines in the log and observe the timestamps for both, they are identical. When a configuration update is made to a Config Sync Group, it is applied to every instance in the group simultaneously via the NGINX Agent.
 ---
 #### Modifying a managed instance
 
@@ -241,9 +241,10 @@ What happens if we try to make configuration changes to a particular NGINX insta
     Now save and exit the file.
 1. Go back to the **details** tab of your config sync group and take note of the **Config Sync Status**. You should see a yellow indicator with the text "**Sync In Progress**". After a few seconds, this indicator should turn green with the text **"In Sync"**.
 1. Now return to the SSH window for your NGINX Plus instance and re-open the **demo.conf** file. The location block we added earlier should have been removed entirely.
-
+    ![](media/lab6-5.png)
+1. Now view the **/var/log/nginx-agent/agent.log**. You will notice log records indicating that the NGINX Agent had retrieved and applied the Config Sync Group configuration once again.
+    ![](media/lab6-6.png)
 Feel free to repeat this process and make as many edits as you want to the demo.conf file. As soon as you save your changes, NGINX One will automatically override them and re-apply the Config Sync Group's configuration to the instance.
-
 > :point_right: If a permanent configuration change needs to be made to a specific instance within a config sync group, the instance should be removed from a config sync group so that it can be managed individually.
 
 
