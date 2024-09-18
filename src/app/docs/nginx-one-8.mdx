@@ -9,7 +9,7 @@ In this lab, you will be taking a look at a config sync group consisting of a mi
 
 1. Based on what you have learned earlier, create a new Config Sync Group using your unique lab deployment name, **<GetVariable name="petname" />**.
 
-1. Now click on **Run** for each of the NGINX Plus and NGINX OSS containers listed below. They will be added to the config sync group you just created.
+1. Now click on **Run** for each of the NGINX Plus containers listed below. They will be added to the config sync group you just created.
 
     <DockerContainer>
         <Docker
@@ -44,28 +44,28 @@ In this lab, you will be taking a look at a config sync group consisting of a mi
                 { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
             ]}
         />
-        <Docker
-            name="nginx-oss-1"
-            desc="NGINX OSS 1.27.1 with Agent."
-            image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
-            env={[
-                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
-                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
-                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
-                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
-                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
-                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}-oss`}
-            ]}
-            attrs={[
-                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
-            ]}
-        />
     </DockerContainer>
+
+1. Now let's add an NGINX OSS instance to our Config Sync group. SSH into your **NGINX OSS** component and install the NGINX Agent using the following command
+    ```bash
+    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY="[YOUR DATA PLANE KEY]" sh -s -- -y -c [YOUR CONFIG SYNC GROUP]
+    ```
 
 ---
 ## Fix-It Lab
 
 Once the NGINX containers have been successfully added to your config sync group, your lab environment setup is complete. You will notice that the group will be out-of-sync and unable to resolve itself. Your objective is to find out why this is happening and resolve the issue.
+
+![](media/lab7-1.png)
+
+---
+## Solutions
+
+Here are two ways to resolve this situation:
+
+1. The most straight-forward way to synchronize the config sync group is to remove the offending instance from the config sync group.
+
+1. Another approach is modify the Config Sync Group configuration such that is compatible with both NGINX Plus and NGINX Open Source instances.
 
 ---
 
@@ -102,22 +102,6 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
                 {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
                 {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
                 {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}`}
-            ]}
-            attrs={[
-                { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
-            ]}
-        />
-        <Docker
-            name="nginx-oss-1"
-            desc="NGINX OSS 1.27.1 with Agent."
-            image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
-            env={[
-                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
-                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
-                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
-                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
-                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
-                {name: "NGINX_AGENT_INSTANCE_GROUP", value: `${process.env["PETNAME"]}-oss`}
             ]}
             attrs={[
                 { name: "volume", value: `${process.env["CONTAINER_MOUNT_BASE_DIR"]}/ssl:/etc/nginx/ssl` }
